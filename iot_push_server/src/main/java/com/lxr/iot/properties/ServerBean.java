@@ -2,8 +2,6 @@ package com.lxr.iot.properties;
 
 import com.lxr.iot.bootstrap.handler.mqtt.MqttHander;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 

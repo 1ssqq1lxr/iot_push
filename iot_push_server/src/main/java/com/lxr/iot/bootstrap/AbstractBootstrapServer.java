@@ -1,6 +1,5 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bootstrap.BootstrapServer;
 import com.lxr.iot.properties.ServerBean;
 import com.lxr.iot.ssl.SecureSocketSslContextFactory;
 import com.lxr.iot.util.SpringBeanUtils;

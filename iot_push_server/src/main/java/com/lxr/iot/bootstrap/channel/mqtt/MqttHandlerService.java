@@ -4,7 +4,6 @@ import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.bootstrap.MqttHandlerIntf;
 import com.lxr.iot.bootstrap.channel.mqtt.enums.QosStatus;
-import com.lxr.iot.pool.StandardThreadExecutor;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.util.AttributeKey;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**

@@ -6,7 +6,6 @@ import com.lxr.iot.bootstrap.channel.mqtt.bean.MqttChannel;
 import com.lxr.iot.bootstrap.channel.mqtt.bean.WillMeaasge;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
-import io.netty.handler.codec.mqtt.MqttPubAckMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
 
 import java.util.List;

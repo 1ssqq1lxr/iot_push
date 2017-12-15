@@ -4,21 +4,15 @@ package com.lxr.iot.bootstrap.channel.mqtt.bean;/**
 
 import com.lxr.iot.bootstrap.channel.mqtt.enums.SessionStatus;
 import com.lxr.iot.bootstrap.channel.mqtt.enums.SubStatus;
-import com.lxr.iot.bootstrap.channel.mqtt.publish.PublishApiSevice;
-import com.lxr.iot.util.MessageId;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.handler.codec.mqtt.*;
 import io.netty.util.AttributeKey;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * channel 封装类
