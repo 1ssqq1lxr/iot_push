@@ -1,0 +1,11 @@
+lxr:
+  iot:
+    server:
+       serverName: test
+       port: 1884
+       keepalive: true
+       backlog: 1024
+       ssl: true
+       mqttHander: com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler
+       initalDelay: 10
+       period: 10
