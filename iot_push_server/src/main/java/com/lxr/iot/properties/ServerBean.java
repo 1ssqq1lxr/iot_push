@@ -43,6 +43,12 @@ public class ServerBean {
 
     private boolean ssl =false;
 
+    private String jksFile;
+
+    private String jksStorePassword;
+
+    private String jksCertificatePassword;
+
     private Class<MqttHander> mqttHander ;
 
     private int  initalDelay =2;
