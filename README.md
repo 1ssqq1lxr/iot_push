@@ -43,6 +43,7 @@
  * 压力测试：推荐使用jmeter 的mqtt插件 [插件](https://github.com/tuanhiep/mqtt-jmeter)
  
  
+ ### 交流群号 658212670
 
  
 
