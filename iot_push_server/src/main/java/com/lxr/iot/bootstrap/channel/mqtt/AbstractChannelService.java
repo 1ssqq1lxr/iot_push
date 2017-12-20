@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 抽象类
@@ -35,7 +37,7 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     protected  static char SPLITOR = '/';
 
-    protected StandardThreadExecutor standardThreadExecutor  ;
+    protected ExecutorService executorService =Executors.newCachedThreadPool();
 
 
     protected static CacheMap<String,MqttChannel> cacheMap= new CacheMap<>();
@@ -50,9 +52,8 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     protected  static  Cache<String, Collection<MqttChannel>> mqttChannelCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
-    public AbstractChannelService( Scheduled scheduled, StandardThreadExecutor standardThreadExecutor) {
+    public AbstractChannelService( Scheduled scheduled) {
             super(scheduled);
-            this.standardThreadExecutor=standardThreadExecutor;
     }
 
     protected  Collection<MqttChannel> getChannels(String topic,TopicFilter topicFilter){

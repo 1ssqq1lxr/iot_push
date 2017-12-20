@@ -46,7 +46,7 @@ public class MqttChannelService extends AbstractChannelService{
     private final  Scheduled scheduled;
 
     public MqttChannelService(Scheduled scheduled) {
-        super(scheduled,new StandardThreadExecutor());
+        super(scheduled);
         this.scheduled = scheduled;
     }
 
@@ -131,7 +131,7 @@ public class MqttChannelService extends AbstractChannelService{
             });         //发送 session  数据
             ConcurrentLinkedQueue<SessionMessage> sessionMessages = clientSessionService.getByteBuf(payload.clientIdentifier());
             doIfElse(sessionMessages, messages -> messages != null && !messages.isEmpty(), byteBufs -> {
-                standardThreadExecutor.execute(() -> {
+                executorService.execute(() -> {
                     SessionMessage sessionMessage;
                     while ((sessionMessage = byteBufs.poll()) != null) {
                         log.info("【发送会话消息】"+channel.remoteAddress()+":"+sessionMessage.getString()+"【成功】");
@@ -214,7 +214,7 @@ public class MqttChannelService extends AbstractChannelService{
             MqttChannel mqttChannel = mqttChannels.get(deviceId);
             mqttChannel.setSubStatus(SubStatus.YES); // 设置订阅主题标识
             mqttChannel.addTopic(strings);
-            standardThreadExecutor.execute(() -> {
+            executorService.execute(() -> {
                 Optional.ofNullable(mqttChannel).ifPresent(mqttChannel1 -> {
                     if(mqttChannel1.isLogin()){
                         strings.parallelStream().forEach(topic -> {
@@ -254,7 +254,7 @@ public class MqttChannelService extends AbstractChannelService{
         ByteBuf payload = mqttPublishMessage.payload();
         byte[] bytes = ByteBufUtil.copyByteBuf(payload); //
         int messageId = mqttPublishVariableHeader.messageId();
-        standardThreadExecutor.execute(() -> {
+        executorService.execute(() -> {
             if (channel.hasAttr(_login) && mqttChannel != null) {
                 switch (mqttFixedHeader.qosLevel()) {
                     case AT_MOST_ONCE: // 至多一次
@@ -336,7 +336,7 @@ public class MqttChannelService extends AbstractChannelService{
      */
     @Override
     public void closeSuccess(String deviceId,boolean isDisconnect) {
-        standardThreadExecutor.execute(() -> {
+        executorService.execute(() -> {
             MqttChannel mqttChannel = mqttChannels.get(deviceId);
             Optional.ofNullable(mqttChannel).ifPresent(mqttChannel1 -> {
                 mqttChannel1.setSessionStatus(SessionStatus.CLOSE); // 设置关闭
@@ -394,9 +394,7 @@ public class MqttChannelService extends AbstractChannelService{
                 }
                 if(mqttChannel1.isWill()){     // 发送遗言
                     if(!isDisconnect){ // 不是disconnection操作
-                        standardThreadExecutor.execute(() -> {
                             willService.doSend(deviceId);
-                        });
                     }
                 }
             });
