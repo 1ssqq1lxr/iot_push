@@ -19,3 +19,5 @@ lxr:
        jksFile:  /securesocket.jks # ssl 加密 jks文件地址
        jksStorePassword: mu$tch8ng3 # 读取jks密码
        jksCertificatePassword: inc0rrect # 读取私钥密码
+       bossThread: 8
+       workThread:  16

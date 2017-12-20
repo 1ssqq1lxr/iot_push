@@ -10,6 +10,7 @@ import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jboss.netty.util.internal.SystemPropertyUtil;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -40,6 +41,9 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
      */
     protected  void initHandler(ChannelPipeline channelPipeline,ServerBean serverBean){
         if(serverBean.isSsl()){
+            if(ObjectUtils.allNotNull(serverBean.getJksCertificatePassword(),serverBean.getJksFile(),serverBean.getJksStorePassword())){
+                throw  new NullPointerException("SSL file and password is null");
+            }
             initSsl(serverBean);
             SSLEngine engine =
                     SERVER_CONTEXT.createSSLEngine();

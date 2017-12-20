@@ -1,6 +1,9 @@
 package com.lxr.iot.init;
 
+import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
+import com.lxr.iot.bootstrap.handler.mqtt.MqttHander;
 import com.lxr.iot.properties.ServerBean;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +30,39 @@ public class ServerAutoConfigure {
     @Bean(initMethod = "open", destroyMethod = "close")
     @ConditionalOnMissingBean
     public InitServer initServer(ServerBean serverBean, Environment env){
+        if(ObjectUtils.allNotNull(serverBean.getPort(),serverBean.getServerName())){
+            throw  new NullPointerException("not set port");
+        }
+        if(serverBean.getBacklog()<1){
+            serverBean.setBacklog(1024);
+        }
+        if(serverBean.getBossThread()<1){
+            serverBean.setBossThread(Runtime.getRuntime().availableProcessors());
+        }
+        if(serverBean.getInitalDelay()<0){
+            serverBean.setInitalDelay(10);
+        }
+        if(serverBean.getPeriod()<1){
+            serverBean.setPeriod(10);
+        }
+        if(serverBean.getRead()<1){
+            serverBean.setRead(120);
+        }
+        if(serverBean.getWrite()<1){
+            serverBean.setWrite(120);
+        }
+        if(serverBean.getReadAndWrite()<1){
+            serverBean.setReadAndWrite(120);
+        }
+        if(serverBean.getRevbuf()<1){
+            serverBean.setRevbuf(10*1024*1024);
+        }
+        if(serverBean.getSndbuf()<1){
+            serverBean.setSndbuf(10*1024*1024);
+        }
+        if(serverBean.getWorkThread()<1){
+            serverBean.setWorkThread(Runtime.getRuntime().availableProcessors()*2);
+        }
         return new InitServer(serverBean);
     }
 

@@ -5,6 +5,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * netty服务启动参数
  *
@@ -18,30 +21,29 @@ public class ServerBean {
 
     private int port =8088;
 
+    private String serverName ;
 
-    private String serverName ="defaultServer";
+    private boolean keepalive ;
 
-    private boolean keepalive =true;
-
-    private boolean reuseaddr =true;
-
-
-    private boolean tcpNodelay =true;
-
-    private int backlog =1024;
-
-    private  int  sndbuf =10*1024*1024;
-
-    private int revbuf =10*1024*1024;
+    private boolean reuseaddr ;
 
 
-    private int read =60;
+    private boolean tcpNodelay ;
 
-    private int write =60;
+    private int backlog ;
 
-    private int readAndWrite =60;
+    private  int  sndbuf ;
 
-    private boolean ssl =false;
+    private int revbuf ;
+
+
+    private int read ;
+
+    private int write ;
+
+    private int readAndWrite ;
+
+    private boolean ssl ;
 
     private String jksFile;
 
@@ -51,8 +53,13 @@ public class ServerBean {
 
     private Class<MqttHander> mqttHander ;
 
-    private int  initalDelay =2;
 
-    private  int period =2;
+    private int  initalDelay ;
+
+    private  int period ;
+
+    private int bossThread;
+
+    private int workThread;
 
 }

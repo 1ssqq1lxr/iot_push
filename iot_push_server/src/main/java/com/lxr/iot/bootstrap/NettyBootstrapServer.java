@@ -77,14 +77,14 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
 //        Multimap multima = ImmutableMultimap.builder().build();
 //        HashMultimap<Object, Object> objectObjectHashMultimap = HashMultimap.create();
         bootstrap= new ServerBootstrap();
-        bossGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors(), new ThreadFactory() {
+        bossGroup = new NioEventLoopGroup(serverBean.getBossThread(), new ThreadFactory() {
             private AtomicInteger index = new AtomicInteger(0);
 
             public Thread newThread(Runnable r) {
                 return new Thread(r, "BOSS_" + index.incrementAndGet());
             }
         });
-        workGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory() {
+        workGroup = new NioEventLoopGroup(serverBean.getWorkThread(), new ThreadFactory() {
             private AtomicInteger index = new AtomicInteger(0);
 
             public Thread newThread(Runnable r) {
