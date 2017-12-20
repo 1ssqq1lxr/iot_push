@@ -30,7 +30,7 @@ public class ServerAutoConfigure {
     @Bean(initMethod = "open", destroyMethod = "close")
     @ConditionalOnMissingBean
     public InitServer initServer(ServerBean serverBean, Environment env){
-        if(ObjectUtils.allNotNull(serverBean.getPort(),serverBean.getServerName())){
+        if(!ObjectUtils.allNotNull(serverBean.getPort(),serverBean.getServerName())){
             throw  new NullPointerException("not set port");
         }
         if(serverBean.getBacklog()<1){

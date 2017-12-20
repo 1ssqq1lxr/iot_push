@@ -41,7 +41,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
      */
     protected  void initHandler(ChannelPipeline channelPipeline,ServerBean serverBean){
         if(serverBean.isSsl()){
-            if(ObjectUtils.allNotNull(serverBean.getJksCertificatePassword(),serverBean.getJksFile(),serverBean.getJksStorePassword())){
+            if(!ObjectUtils.allNotNull(serverBean.getJksCertificatePassword(),serverBean.getJksFile(),serverBean.getJksStorePassword())){
                 throw  new NullPointerException("SSL file and password is null");
             }
             initSsl(serverBean);
