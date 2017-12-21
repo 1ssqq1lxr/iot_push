@@ -1,4 +1,4 @@
-package com.lxr.iot.init;
+package com.lxr.iot.auto;
 
 import com.lxr.iot.bootstrap.BootstrapServer;
 import com.lxr.iot.bootstrap.NettyBootstrapServer;

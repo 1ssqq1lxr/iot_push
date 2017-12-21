@@ -1,7 +1,5 @@
-package com.lxr.iot.init;
+package com.lxr.iot.auto;
 
-import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
-import com.lxr.iot.bootstrap.handler.mqtt.MqttHander;
 import com.lxr.iot.properties.ServerBean;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
