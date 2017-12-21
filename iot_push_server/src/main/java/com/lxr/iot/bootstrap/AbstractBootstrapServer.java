@@ -65,7 +65,6 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
         }
 
         SSLContext serverContext;
-        SSLContext clientContext;
         try {
             //
             KeyStore ks = KeyStore.getInstance("JKS");
@@ -84,15 +83,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
                     "Failed to initialize the server-side SSLContext", e);
         }
 
-//        try {
-//            clientContext = SSLContext.getInstance(PROTOCOL);
-//            clientContext.init(null, SecureSokcetTrustManagerFactory.getTrustManagers(), null);
-//        } catch (Exception e) {
-//            throw new Error(
-//                    "Failed to initialize the client-side SSLContext", e);
-//        }
 
         SERVER_CONTEXT = serverContext;
-//        CLIENT_CONTEXT = clientContext;
     }
 }
