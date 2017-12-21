@@ -1,0 +1,66 @@
+package com.lxr.iot.bootstrap;
+
+import com.lxr.iot.properties.ClientBean;
+import com.lxr.iot.ssl.SecureSocketSslContextFactory;
+import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
+import com.lxr.iot.util.SpringBeanUtils;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.mqtt.MqttDecoder;
+import io.netty.handler.codec.mqtt.MqttEncoder;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.zookeeper.server.quorum.ServerBean;
+import org.jboss.netty.util.internal.SystemPropertyUtil;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import java.security.KeyStore;
+
+/**
+ * 抽象类
+ *
+ * @author lxr
+ * @create 2017-12-21 15:56
+ **/
+public abstract class AbstractBootstrapClient implements  BootstrapClient {
+
+
+    private SSLContext CLIENT_CONTEXT;
+
+    private   String PROTOCOL = "TLS";
+
+    /**
+     *
+     * @param channelPipeline  channelPipeline
+     * @param clientBean  客户端配置参数
+     */
+    protected  void initHandler(ChannelPipeline channelPipeline, ClientBean clientBean){
+        if(clientBean.isSsl()){
+            initSsl();
+            SSLEngine engine =
+                    CLIENT_CONTEXT.createSSLEngine();
+            engine.setUseClientMode(false);
+            channelPipeline.addLast("ssl", new SslHandler(engine));
+        }
+        channelPipeline.addLast("decoder", new MqttDecoder());
+        channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
+        channelPipeline.addLast(new IdleStateHandler(clientBean.getRead(), clientBean.getWrite(), clientBean.getReadAndWrite()));
+        channelPipeline.addLast( SpringBeanUtils.getBean(clientBean.getMqttHander()));
+
+    }
+
+    private void initSsl(){
+        SSLContext clientContext;
+        try {
+            clientContext = SSLContext.getInstance(PROTOCOL);
+            clientContext.init(null, SecureSokcetTrustManagerFactory.getTrustManagers(), null);
+        } catch (Exception e) {
+            throw new Error(
+                    "Failed to initialize the client-side SSLContext", e);
+        }
+
+        CLIENT_CONTEXT = clientContext;
+    }
+}
