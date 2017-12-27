@@ -63,15 +63,12 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
         if (algorithm == null) {
             algorithm = "SunX509";
         }
-
         SSLContext serverContext;
-        SSLContext clientContext;
         try {
             //
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(  SecureSocketSslContextFactory.class.getResourceAsStream(serverBean.getJksFile()),
                     serverBean.getJksStorePassword().toCharArray());
-
             // Set up key manager factory to use our key store
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
             kmf.init(ks,serverBean.getJksCertificatePassword().toCharArray());
@@ -83,16 +80,6 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
             throw new Error(
                     "Failed to initialize the server-side SSLContext", e);
         }
-
-//        try {
-//            clientContext = SSLContext.getInstance(PROTOCOL);
-//            clientContext.init(null, SecureSokcetTrustManagerFactory.getTrustManagers(), null);
-//        } catch (Exception e) {
-//            throw new Error(
-//                    "Failed to initialize the client-side SSLContext", e);
-//        }
-
         SERVER_CONTEXT = serverContext;
-//        CLIENT_CONTEXT = clientContext;
     }
 }

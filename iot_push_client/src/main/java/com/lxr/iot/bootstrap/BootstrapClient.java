@@ -13,5 +13,7 @@ public interface BootstrapClient {
 
     void shutdown();
 
+    void initEventPool();
+
 
 }
