@@ -49,12 +49,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
         initEventPool();
         bootstrap.group(bossGroup, workGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, serverBean.isKeepalive())
                 .option(ChannelOption.SO_REUSEADDR, serverBean.isReuseaddr())
-                .option(ChannelOption.TCP_NODELAY, serverBean.isTcpNodelay())
                 .option(ChannelOption.SO_BACKLOG, serverBean.getBacklog())
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .option(ChannelOption.SO_SNDBUF, serverBean.getSndbuf())
                 .option(ChannelOption.SO_RCVBUF, serverBean.getRevbuf())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
@@ -62,7 +59,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
                     }
                 })
                 .childOption(ChannelOption.SO_KEEPALIVE, serverBean.isKeepalive())
-                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .childOption(ChannelOption.SO_SNDBUF, serverBean.getSndbuf())
+                .childOption(ChannelOption.TCP_NODELAY, serverBean.isTcpNodelay());
         bootstrap.bind(serverBean.getPort()).addListener((ChannelFutureListener) channelFuture -> {
             if (channelFuture.isSuccess())
                 log.info("服务端启动成功【" + IpUtils.getHost() + ":" + serverBean.getPort() + "】");
