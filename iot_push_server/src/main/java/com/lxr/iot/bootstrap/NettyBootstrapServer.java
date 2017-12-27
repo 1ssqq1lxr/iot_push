@@ -55,13 +55,12 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
                 .option(ChannelOption.SO_RCVBUF, serverBean.getRevbuf())
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
-                                initHandler(ch.pipeline(),serverBean);
+                        initHandler(ch.pipeline(),serverBean);
                     }
                 })
+                .childOption(ChannelOption.TCP_NODELAY, serverBean.isTcpNodelay())
                 .childOption(ChannelOption.SO_KEEPALIVE, serverBean.isKeepalive())
-                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .childOption(ChannelOption.SO_SNDBUF, serverBean.getSndbuf())
-                .childOption(ChannelOption.TCP_NODELAY, serverBean.isTcpNodelay());
+                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
         bootstrap.bind(serverBean.getPort()).addListener((ChannelFutureListener) channelFuture -> {
             if (channelFuture.isSuccess())
                 log.info("服务端启动成功【" + IpUtils.getHost() + ":" + serverBean.getPort() + "】");
@@ -97,14 +96,14 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
      * 关闭资源
      */
     public void shutdown() {
-            if(workGroup!=null && bossGroup!=null ){
-                try {
-                    bossGroup.shutdownGracefully().sync();// 优雅关闭
-                    workGroup.shutdownGracefully().sync();
-                } catch (InterruptedException e) {
-                    log.info("服务端关闭资源失败【" + IpUtils.getHost() + ":" + serverBean.getPort() + "】");
-                }
+        if(workGroup!=null && bossGroup!=null ){
+            try {
+                bossGroup.shutdownGracefully().sync();// 优雅关闭
+                workGroup.shutdownGracefully().sync();
+            } catch (InterruptedException e) {
+                log.info("服务端关闭资源失败【" + IpUtils.getHost() + ":" + serverBean.getPort() + "】");
             }
+        }
     }
 
 
