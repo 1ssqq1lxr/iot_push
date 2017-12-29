@@ -1,15 +1,14 @@
-package com.lxr.iot.bootstrap.hander.mqtt;/**
- * Created by wangcy on 2017/12/21.
- */
+package com.lxr.iot.bootstrap.hander.mqtt;
 
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.mqtt.MqttMessage;
 
 /**
- * handler处理
+ * mqtt协议处理器
  *
  * @author lxr
- * @create 2017-12-21 16:29
+ * @create 2017-11-20 13:38
  **/
-public abstract class MqttHander  extends   SimpleChannelInboundHandler<MqttMessage>{
+public  abstract  class MqttHander  extends SimpleChannelInboundHandler<MqttMessage> {
+
 }

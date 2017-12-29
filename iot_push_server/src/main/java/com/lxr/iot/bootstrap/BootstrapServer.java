@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.properties.ServerBean;
+import com.lxr.iot.properties.InitBean;
 
 /**
  * 启动类接口
@@ -14,7 +14,7 @@ public interface BootstrapServer {
 
     void shutdown();
 
-    void setServerBean(ServerBean serverBean);
+    void setServerBean(InitBean serverBean);
 
 
 }

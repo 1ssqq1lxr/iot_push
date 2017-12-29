@@ -1,6 +1,6 @@
 package com.lxr.iot.auto;
 
-import com.lxr.iot.properties.ServerBean;
+import com.lxr.iot.properties.InitBean;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,7 +17,7 @@ import org.springframework.core.env.Environment;
  **/
 @Configuration
 @ConditionalOnClass({InitServer.class})
-@EnableConfigurationProperties({ServerBean.class})
+@EnableConfigurationProperties({InitBean.class})
 public class ServerAutoConfigure {
 
 
@@ -27,7 +27,7 @@ public class ServerAutoConfigure {
 
     @Bean(initMethod = "open", destroyMethod = "close")
     @ConditionalOnMissingBean
-    public InitServer initServer(ServerBean serverBean, Environment env){
+    public InitServer initServer(InitBean serverBean, Environment env){
         if(!ObjectUtils.allNotNull(serverBean.getPort(),serverBean.getServerName())){
             throw  new NullPointerException("not set port");
         }

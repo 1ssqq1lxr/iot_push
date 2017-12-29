@@ -1,7 +1,6 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.properties.ClientBean;
-import com.lxr.iot.ssl.SecureSocketSslContextFactory;
+import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
 import com.lxr.iot.util.SpringBeanUtils;
 import io.netty.channel.ChannelPipeline;
@@ -9,14 +8,9 @@ import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.zookeeper.server.quorum.ServerBean;
-import org.jboss.netty.util.internal.SystemPropertyUtil;
 
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
-import java.security.KeyStore;
 
 /**
  * 抽象类
@@ -36,7 +30,7 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
      * @param channelPipeline  channelPipeline
      * @param clientBean  客户端配置参数
      */
-    protected  void initHandler(ChannelPipeline channelPipeline, ClientBean clientBean){
+    protected  void initHandler(ChannelPipeline channelPipeline, InitBean clientBean){
         if(clientBean.isSsl()){
             initSsl();
             SSLEngine engine =

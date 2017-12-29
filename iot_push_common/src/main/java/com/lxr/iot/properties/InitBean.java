@@ -1,24 +1,23 @@
 package com.lxr.iot.properties;
 
-import com.lxr.iot.bootstrap.hander.mqtt.MqttHander;
+import com.lxr.iot.mqtt.MqttHander;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * 客户端bean
+ * netty服务启动参数
  *
  * @author lxr
- * @create 2017-12-21 16:19
+ * @create 2017-11-18 15:08
  **/
-@Component
-@ConfigurationProperties(prefix ="lxr.iot.client")
+@ConfigurationProperties(prefix ="lxr.iot.server")
 @Data
-public class ClientBean {
+public class InitBean {
 
-    private String serverHost;
+    private int port ;
 
-    private int port;
+    private String serverName ;
 
     private boolean keepalive ;
 
@@ -42,13 +41,18 @@ public class ClientBean {
 
     private boolean ssl ;
 
+    private String jksFile;
+
+    private String jksStorePassword;
+
+    private String jksCertificatePassword;
+
+    private Class<MqttHander> mqttHander ;
 
 
     private int  initalDelay ;
 
     private  int period ;
-
-    private Class<MqttHander> mqttHander ;
 
     private int bossThread;
 

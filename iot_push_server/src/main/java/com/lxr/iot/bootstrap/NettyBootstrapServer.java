@@ -1,10 +1,9 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.ip.IpUtils;
-import com.lxr.iot.properties.ServerBean;
+import com.lxr.iot.properties.InitBean;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -28,13 +27,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @lombok.extern.slf4j.Slf4j
 public class NettyBootstrapServer extends AbstractBootstrapServer {
 
-    private ServerBean serverBean;
+    private InitBean serverBean;
 
-    public ServerBean getServerBean() {
+    public InitBean getServerBean() {
         return serverBean;
     }
 
-    public void setServerBean(ServerBean serverBean) {
+    public void setServerBean(InitBean serverBean) {
         this.serverBean = serverBean;
     }
 

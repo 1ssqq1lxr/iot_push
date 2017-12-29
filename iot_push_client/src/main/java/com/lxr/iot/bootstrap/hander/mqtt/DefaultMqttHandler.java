@@ -1,11 +1,10 @@
-package com.lxr.iot.bootstrap.handler.mqtt;
+package com.lxr.iot.bootstrap.hander.mqtt;
 
 import com.lxr.iot.bootstrap.MqttHandlerIntf;
 import com.lxr.iot.bootstrap.channel.mqtt.PingPongService;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.Data;
@@ -24,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Slf4j
 @Component
-public class DefaultMqttHandler extends SimpleChannelInboundHandler<MqttMessage> {
+public class DefaultMqttHandler extends MqttHander {
 
 
 

@@ -1,9 +1,7 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.properties.ServerBean;
-import com.lxr.iot.ssl.SecureSocketKeyStore;
+import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSocketSslContextFactory;
-import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
 import com.lxr.iot.util.SpringBeanUtils;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.mqtt.MqttDecoder;
@@ -39,7 +37,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
      * @param channelPipeline  channelPipeline
      * @param serverBean  服务配置参数
      */
-    protected  void initHandler(ChannelPipeline channelPipeline,ServerBean serverBean){
+    protected  void initHandler(ChannelPipeline channelPipeline, InitBean serverBean){
         if(serverBean.isSsl()){
             if(!ObjectUtils.allNotNull(serverBean.getJksCertificatePassword(),serverBean.getJksFile(),serverBean.getJksStorePassword())){
                 throw  new NullPointerException("SSL file and password is null");
@@ -58,7 +56,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
     }
 
 
-    private void initSsl(ServerBean serverBean){
+    private void initSsl(InitBean serverBean){
         String algorithm = SystemPropertyUtil.get("ssl.KeyManagerFactory.algorithm");
         if (algorithm == null) {
             algorithm = "SunX509";

@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.handler.mqtt;
+package com.lxr.iot.mqtt;
 
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.mqtt.MqttMessage;

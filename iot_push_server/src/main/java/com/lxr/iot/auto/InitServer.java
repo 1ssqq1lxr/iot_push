@@ -2,7 +2,7 @@ package com.lxr.iot.auto;
 
 import com.lxr.iot.bootstrap.BootstrapServer;
 import com.lxr.iot.bootstrap.NettyBootstrapServer;
-import com.lxr.iot.properties.ServerBean;
+import com.lxr.iot.properties.InitBean;
 
 /**
  * 初始化服务
@@ -12,9 +12,9 @@ import com.lxr.iot.properties.ServerBean;
  **/
 public class InitServer {
 
-    private ServerBean serverBean;
+    private InitBean serverBean;
 
-    public InitServer(ServerBean serverBean) {
+    public InitServer(InitBean serverBean) {
         this.serverBean = serverBean;
     }
 

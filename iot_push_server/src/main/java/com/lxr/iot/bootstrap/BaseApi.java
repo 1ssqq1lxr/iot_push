@@ -43,7 +43,7 @@ public interface BaseApi {
         return  false;
     }
 
-    default  <T> void   doIfAnd(T t, Consumer<T> consumer2,Predicate<T>... predicates){
+    default  <T> void   doIfAnd(T t, Consumer<T> consumer2, Predicate<T>... predicates){
         boolean flag =true;
         if(t!=null){
             for(Predicate<T> p:predicates){

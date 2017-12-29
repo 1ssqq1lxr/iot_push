@@ -2,11 +2,10 @@ package com.lxr.iot.bootstrap.channel.mqtt;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.lxr.iot.bootstrap.BaseApi;
+import com.lxr.iot.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.bootstrap.channel.mqtt.bean.MqttChannel;
 import com.lxr.iot.bootstrap.channel.mqtt.bean.RetainMessage;
-import com.lxr.iot.bootstrap.channel.mqtt.cache.CacheMap;
 import com.lxr.iot.bootstrap.channel.mqtt.publish.PublishApiSevice;
 import com.lxr.iot.pool.Scheduled;
 import io.netty.channel.Channel;
@@ -39,7 +38,6 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
     protected ExecutorService executorService =Executors.newCachedThreadPool();
 
 
-    protected static CacheMap<String,MqttChannel> cacheMap= new CacheMap<>();
 
 
     protected static ConcurrentHashMap<String ,MqttChannel> mqttChannels = new ConcurrentHashMap<>(); // deviceId - mqChannel 登录
@@ -69,17 +67,6 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
     @FunctionalInterface
     interface TopicFilter{
         Collection<MqttChannel> filter(String topic);
-    }
-
-    protected boolean deleteChannel(String topic,MqttChannel mqttChannel){
-        mqttChannelCache.invalidate(topic);
-        return  cacheMap.delete(getTopic(topic),mqttChannel);
-    }
-
-    protected boolean addChannel(String topic,MqttChannel mqttChannel)
-    {
-        mqttChannelCache.invalidate(topic);
-        return  cacheMap.putData(getTopic(topic),mqttChannel);
     }
 
     /**
