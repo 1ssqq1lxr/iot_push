@@ -57,6 +57,20 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
     }
 
     /**
+     * 登录回复
+     *
+     * @param channel            通道
+     * @param mqttConnectMessage connection 信息
+     */
+    @Override
+    public void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
+
+        mqttChannelService.replyLogin(channel, mqttConnectMessage);
+
+    }
+
+
+    /**
      * 发布
      *
      * @param channel            通道
@@ -146,18 +160,6 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
         channel.writeAndFlush(mqttUnsubAckMessage);
     }
 
-    /**
-     * 登录回复
-     *
-     * @param channel            通道
-     * @param mqttConnectMessage connection 信息
-     */
-    @Override
-    public void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
-
-        mqttChannelService.replyLogin(channel, mqttConnectMessage);
-
-    }
 
     /**
      * 消息回复确认(qos1 级别 保证收到消息  但是可能会重复)
