@@ -49,8 +49,11 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
             channel.close();
             return false;
         }
-        mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
-        return true;
+        if(mqttChannelService.getMqttChannel(deviceId)==null){
+            mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
+            return true;
+        }
+        return false;
     }
 
     /**
