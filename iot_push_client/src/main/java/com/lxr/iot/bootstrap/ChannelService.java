@@ -2,8 +2,8 @@ package com.lxr.iot.bootstrap;/**
  * Created by wangcy on 2017/11/23.
  */
 
-import com.lxr.iot.bootstrap.channel.mqtt.bean.MqttChannel;
-import com.lxr.iot.bootstrap.channel.mqtt.bean.WillMeaasge;
+import com.lxr.iot.bean.MqttChannel;
+import com.lxr.iot.bean.WillMeaasge;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.MqttConnectMessage;
 import io.netty.handler.codec.mqtt.MqttPublishMessage;
