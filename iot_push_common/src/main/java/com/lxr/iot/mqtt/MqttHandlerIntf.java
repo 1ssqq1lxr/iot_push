@@ -1,7 +1,8 @@
-package com.lxr.iot.bootstrap;
+package com.lxr.iot.mqtt;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * 自定义 对外暴露 消息处理api
@@ -36,5 +37,5 @@ public interface MqttHandlerIntf {
 
     void pubcomp(Channel channel, MqttMessage mqttMessage);
 
-
+    void doTimeOut(Channel channel, IdleStateEvent evt);
 }

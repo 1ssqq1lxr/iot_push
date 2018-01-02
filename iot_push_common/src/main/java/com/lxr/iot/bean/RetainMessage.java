@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt.bean;
+package com.lxr.iot.bean;
 
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.Builder;

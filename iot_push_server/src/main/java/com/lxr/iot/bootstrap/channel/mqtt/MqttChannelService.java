@@ -1,12 +1,11 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.bootstrap.channel.mqtt.bean.*;
-import com.lxr.iot.bootstrap.channel.mqtt.enums.SessionStatus;
-import com.lxr.iot.bootstrap.channel.mqtt.enums.SubStatus;
+import com.lxr.iot.bean.*;
 import com.lxr.iot.bootstrap.channel.mqtt.publish.ByteBufUtil;
+import com.lxr.iot.enums.SessionStatus;
+import com.lxr.iot.enums.SubStatus;
 import com.lxr.iot.exception.ConnectionException;
 import com.lxr.iot.pool.Scheduled;
-import com.lxr.iot.pool.StandardThreadExecutor;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;

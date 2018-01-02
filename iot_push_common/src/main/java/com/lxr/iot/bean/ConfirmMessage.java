@@ -1,28 +1,33 @@
-package com.lxr.iot.bootstrap.channel.mqtt.bean;
+package com.lxr.iot.bean;
 
+import com.lxr.iot.enums.QosStatus;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.Builder;
 import lombok.Data;
 
 /**
- * Session会话数据保存
+ * 确认消息
  *
  * @author lxr
- * @create 2017-11-27 19:28
+ * @create 2017-11-28 11:59
  **/
 @Builder
 @Data
-
-public class SessionMessage {
+public class ConfirmMessage {
 
     private byte[]  byteBuf;
 
-    private MqttQoS qoS;
+    private MqttQoS qos;
 
-    private  String topic;
+    private String topic;
 
+    private QosStatus qosStatus;
 
+    
     public String getString(){
         return new String(byteBuf);
     }
+
+
+
 }

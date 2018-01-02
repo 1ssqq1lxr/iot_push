@@ -1,9 +1,9 @@
 package com.lxr.iot.bootstrap.channel.mqtt.publish;
 
-import com.lxr.iot.bootstrap.channel.mqtt.bean.ConfirmMessage;
-import com.lxr.iot.bootstrap.channel.mqtt.bean.MqttChannel;
-import com.lxr.iot.bootstrap.channel.mqtt.bean.WillMeaasge;
-import com.lxr.iot.bootstrap.channel.mqtt.enums.QosStatus;
+import com.lxr.iot.bean.ConfirmMessage;
+import com.lxr.iot.bean.MqttChannel;
+import com.lxr.iot.bean.WillMeaasge;
+import com.lxr.iot.enums.QosStatus;
 import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
@@ -12,10 +12,7 @@ import io.netty.handler.codec.mqtt.*;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 发送消息以及确认
@@ -38,7 +35,7 @@ public class PublishApiSevice {
      * 写入遗嘱消息
      * @param willMeaasge
      */
-    protected void writeWillMsg(MqttChannel mqttChannel,WillMeaasge willMeaasge) {
+    protected void writeWillMsg(MqttChannel mqttChannel, WillMeaasge willMeaasge) {
 //        dup保证消息可靠传输，默认为0，只占用一个字节，表示第一次发送。不能用于检测消息重复发送等
         switch (willMeaasge.getQos()){
             case 0: // qos0

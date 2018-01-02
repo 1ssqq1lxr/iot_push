@@ -1,9 +1,9 @@
-package com.lxr.iot.bootstrap.channel.mqtt.bean;/**
+package com.lxr.iot.bean;/**
  * Created by wangcy on 2017/11/21.
  */
 
-import com.lxr.iot.bootstrap.channel.mqtt.enums.SessionStatus;
-import com.lxr.iot.bootstrap.channel.mqtt.enums.SubStatus;
+import com.lxr.iot.enums.SessionStatus;
+import com.lxr.iot.enums.SubStatus;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.Builder;

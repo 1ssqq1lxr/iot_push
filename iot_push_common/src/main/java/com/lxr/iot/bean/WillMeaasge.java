@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt.bean;
+package com.lxr.iot.bean;
 
 import lombok.Builder;
 import lombok.Data;

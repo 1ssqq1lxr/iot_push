@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt.enums;/**
+package com.lxr.iot.enums;/**
  * Created by wangcy on 2017/11/23.
  */
 

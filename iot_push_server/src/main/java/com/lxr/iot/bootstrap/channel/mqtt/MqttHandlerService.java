@@ -2,10 +2,11 @@ package com.lxr.iot.bootstrap.channel.mqtt;
 
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
-import com.lxr.iot.bootstrap.MqttHandlerIntf;
-import com.lxr.iot.bootstrap.channel.mqtt.enums.QosStatus;
+import com.lxr.iot.enums.QosStatus;
+import com.lxr.iot.mqtt.MqttHandlerIntf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -99,7 +100,7 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
      */
     @Override
     public void close(Channel channel) {
-        mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel),false);
+        mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel), false);
     }
 
     /**
@@ -125,19 +126,20 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
     @Override
     public void unsubscribe(Channel channel, MqttUnsubscribeMessage mqttMessage) {
         List<String> topics1 = mqttMessage.payload().topics();
-        mqttChannelService.unsubscribe(mqttChannelService.getDeviceId(channel),topics1);
-        unSubBack(channel,mqttMessage.variableHeader().messageId());
+        mqttChannelService.unsubscribe(mqttChannelService.getDeviceId(channel), topics1);
+        unSubBack(channel, mqttMessage.variableHeader().messageId());
     }
 
     /**
      * 回复取消订阅
+     *
      * @param channel
      * @param messageId
      */
     private void unSubBack(Channel channel, int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBACK, false, MqttQoS.AT_MOST_ONCE, false, 0x02);
         MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
-        MqttUnsubAckMessage mqttUnsubAckMessage  = new MqttUnsubAckMessage(mqttFixedHeader,variableHeader);
+        MqttUnsubAckMessage mqttUnsubAckMessage = new MqttUnsubAckMessage(mqttFixedHeader, variableHeader);
         channel.writeAndFlush(mqttUnsubAckMessage);
     }
 
@@ -150,7 +152,7 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
     @Override
     public void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
 
-        mqttChannelService.replyLogin(channel,mqttConnectMessage);
+        mqttChannelService.replyLogin(channel, mqttConnectMessage);
 
     }
 
@@ -162,9 +164,9 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
      */
     @Override
     public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
-        AttributeKey<ScheduledFuture> objectAttributeKey = AttributeKey.valueOf("qos1"+ mqttMessage.variableHeader().messageId());
+        AttributeKey<ScheduledFuture> objectAttributeKey = AttributeKey.valueOf("qos1" + mqttMessage.variableHeader().messageId());
         ScheduledFuture scheduledFuture = channel.attr(objectAttributeKey).get();
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()){
+        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
             int messageId = mqttMessage.variableHeader().messageId();
             log.info("MqttHandlerService========= puback【message:" + messageId + "】确认成功");
             mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeConfigMsg(messageId); // 移除确认消息
@@ -173,51 +175,53 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
     }
 
 
-
     /**
      * disconnect 主动断线
+     *
      * @param channel
      * @param mqttMessage
      */
     @Override
     public void disconnect(Channel channel, MqttMessage mqttMessage) {
-        mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel),true);
+        mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel), true);
     }
 
 
     /**
      * qos2 发布收到
+     *
      * @param channel
      * @param mqttMessage
      */
     @Override
     public void pubrec(Channel channel, MqttMessage mqttMessage) {
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader=(MqttMessageIdVariableHeader)mqttMessage.variableHeader();
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2"+ messageId);
+        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if(scheduledFuture!=null && !scheduledFuture.isCancelled()){
+        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
             log.info("MqttHandlerService=========qos2 pubRec【message:" + messageId + "】确认成功");
-            scheduledFuture.cancel(true) ; // 取消
-            mqttChannelService.doPubrec(channel,messageId);
+            scheduledFuture.cancel(true); // 取消
+            mqttChannelService.doPubrec(channel, messageId);
             mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getConfirmMsg(messageId).setQosStatus(QosStatus.RECD); // 复制为空
         }
     }
 
     /**
      * qos2 发布释放
+     *
      * @param channel
      * @param mqttMessage
      */
     @Override
     public void pubrel(Channel channel, MqttMessage mqttMessage) {
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader=(MqttMessageIdVariableHeader)mqttMessage.variableHeader();
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
-        mqttChannelService.doPubrel(channel,messageId);
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("rec_qos2"+messageId);
+        mqttChannelService.doPubrel(channel, messageId);
+        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("rec_qos2" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if(scheduledFuture!=null && !scheduledFuture.isCancelled()){
-            scheduledFuture.cancel(true) ; // 取消
+        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true); // 取消
             log.info("MqttHandlerService=========qos2 puRel【message:" + messageId + "】确认成功");
             mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeRecevice(messageId); // 复制为空
         }
@@ -225,20 +229,34 @@ public class  MqttHandlerService implements MqttHandlerIntf,BaseApi {
 
     /**
      * qos2 发布完成
+     *
      * @param channel
      * @param mqttMessage
      */
     @Override
     public void pubcomp(Channel channel, MqttMessage mqttMessage) {
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader=(MqttMessageIdVariableHeader)mqttMessage.variableHeader();
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2"+ messageId);
+        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if(scheduledFuture!=null && !scheduledFuture.isCancelled()){
+        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
             log.info("MqttHandlerService=========qos2 puRComp【message:" + messageId + "】确认成功");
-            scheduledFuture.cancel(true) ; // 取消
+            scheduledFuture.cancel(true); // 取消
             mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeConfigMsg(messageId); // 复制为空
         }
     }
-}
 
+    @Override
+    public void doTimeOut(Channel channel, IdleStateEvent evt) {
+        log.info("【PingPongService：doTimeOut 心跳超时】" + channel.remoteAddress() + "【channel 关闭】");
+        switch (evt.state()) {
+            case READER_IDLE:
+                close(channel);
+            case WRITER_IDLE:
+                close(channel);
+            case ALL_IDLE:
+                close(channel);
+        }
+    }
+
+}
