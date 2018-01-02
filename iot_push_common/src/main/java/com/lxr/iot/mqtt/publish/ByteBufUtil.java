@@ -1,7 +1,6 @@
-package com.lxr.iot.bootstrap.channel.mqtt.publish;
+package com.lxr.iot.mqtt.publish;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 /**
  * 跨线程情况下 byteBuf 需要转换成byte[]
