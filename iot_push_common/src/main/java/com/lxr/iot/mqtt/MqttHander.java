@@ -7,6 +7,8 @@ import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 /**
  * mqtt协议处理器
  *
@@ -25,45 +27,13 @@ public  abstract  class MqttHander extends SimpleChannelInboundHandler<MqttMessa
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) throws Exception {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
-        switch (mqttFixedHeader.messageType()){
-            case CONNECT:
-                loginCheck(channelHandlerContext.channel(), (MqttConnectMessage) mqttMessage) ;
-                break;
-            case PUBLISH:
-                mqttHandlerApi.publish(channelHandlerContext.channel(), (MqttPublishMessage) mqttMessage);
-                break;
-            case SUBSCRIBE:
-                mqttHandlerApi.subscribe(channelHandlerContext.channel(), (MqttSubscribeMessage) mqttMessage);
-                break;
-            case PINGREQ:
-                mqttHandlerApi.pong(channelHandlerContext.channel());
-                break;
-            case DISCONNECT:
-                mqttHandlerApi.disconnect(channelHandlerContext.channel(),mqttMessage);
-                break;
-            case UNSUBSCRIBE:
-                mqttHandlerApi.unsubscribe(channelHandlerContext.channel(),(MqttUnsubscribeMessage)mqttMessage);
-                break;
-            case PUBACK: // qos 1回复确认
-                mqttHandlerApi.puback(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
-                break;
-            case PUBREC: // 待实现
-                mqttHandlerApi.pubrec(channelHandlerContext.channel(),mqttMessage);
-                break;
-            case PUBREL: // 待实现
-                mqttHandlerApi.pubrel(channelHandlerContext.channel(),mqttMessage);
-                break;
-            case PUBCOMP: // 待实现
-                mqttHandlerApi.pubcomp(channelHandlerContext.channel(),mqttMessage);
-                break;
-            default:
-                break;
-        }
-
+        Optional.ofNullable(mqttFixedHeader)
+                .ifPresent(mqttFixedHeader1 -> doMessage(channelHandlerContext,mqttHandlerApi,mqttMessage));
     }
 
+    public  abstract void doMessage(ChannelHandlerContext channelHandlerContext, MqttHandlerIntf mqttHandlerApi, MqttMessage mqttMessage);
 
-    private void loginCheck(Channel channel, MqttConnectMessage mqttConnectMessage){
+    public void loginCheck(Channel channel, MqttConnectMessage mqttConnectMessage){
         if(mqttHandlerApi.login(channel, mqttConnectMessage)){
             mqttHandlerApi.replyLogin(channel,mqttConnectMessage);
         }
