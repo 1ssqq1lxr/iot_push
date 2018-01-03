@@ -12,24 +12,9 @@ import io.netty.handler.timeout.IdleStateEvent;
  **/
 public interface MqttHandlerIntf {
 
-    boolean login(Channel channel, MqttConnectMessage mqttConnectMessage);
-
-    void  publish(Channel channel, MqttPublishMessage mqttPublishMessage);
-
-    void subscribe(Channel channel, MqttSubscribeMessage mqttSubscribeMessage);
-
     void close(Channel channel);
 
-    void pong(Channel channel);
-
-
-    void unsubscribe(Channel channel, MqttUnsubscribeMessage mqttMessage);
-
-    void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage);
-
     void puback(Channel channel, MqttPubAckMessage mqttMessage);
-
-    void disconnect(Channel channel, MqttMessage mqttMessage);
 
     void pubrec(Channel channel, MqttMessage mqttMessage);
 

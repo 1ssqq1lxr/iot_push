@@ -28,19 +28,11 @@ public  abstract  class MqttHander extends SimpleChannelInboundHandler<MqttMessa
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) throws Exception {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         Optional.ofNullable(mqttFixedHeader)
-                .ifPresent(mqttFixedHeader1 -> doMessage(channelHandlerContext,mqttHandlerApi,mqttMessage));
+                .ifPresent(mqttFixedHeader1 -> doMessage(channelHandlerContext,mqttMessage));
     }
 
-    public  abstract void doMessage(ChannelHandlerContext channelHandlerContext, MqttHandlerIntf mqttHandlerApi, MqttMessage mqttMessage);
+    public  abstract void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage);
 
-    public void loginCheck(Channel channel, MqttConnectMessage mqttConnectMessage){
-        if(mqttHandlerApi.login(channel, mqttConnectMessage)){
-            mqttHandlerApi.replyLogin(channel,mqttConnectMessage);
-        }
-        else{
-            channel.close();
-        }
-    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {

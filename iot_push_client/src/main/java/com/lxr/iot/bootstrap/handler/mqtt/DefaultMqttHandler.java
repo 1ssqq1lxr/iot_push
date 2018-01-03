@@ -32,7 +32,7 @@ public class DefaultMqttHandler extends MqttHander {
 
 
     @Override
-    public void doMessage(ChannelHandlerContext channelHandlerContext, MqttHandlerIntf mqttHandlerApi, MqttMessage mqttMessage) {
+    public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
 //            case CONNECT:
