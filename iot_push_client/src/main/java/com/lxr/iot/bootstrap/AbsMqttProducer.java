@@ -17,9 +17,7 @@ import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,12 +27,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @create 2018-01-04 17:23
  **/
 @Slf4j
-public abstract class AbsMqttProducer implements  Producer {
+public abstract class AbsMqttProducer extends PublishApiSevice implements  Producer {
 
+    private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
 
     protected   Channel channel;
 
     protected static  MqttListener mqttListener;
+
+    public AbsMqttProducer() {
+        super((Runnable runnable) -> scheduledExecutorService.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.SECONDS));
+    }
 
     public void setMqttListener(MqttListener mqttListener) {
         this.mqttListener = mqttListener;
@@ -76,10 +79,7 @@ public abstract class AbsMqttProducer implements  Producer {
     @Slf4j
     public   class NettyBootstrapClient extends AbstractBootstrapClient {
 
-
         private NioEventLoopGroup bossGroup;
-
-
 
         Bootstrap bootstrap=null ;// 启动辅助类
 

@@ -1,4 +1,4 @@
-package com.lxr.iot.mqtt.publish;
+package com.lxr.iot.bootstrap.channel.mqtt;
 
 import com.lxr.iot.bean.ConfirmMessage;
 import com.lxr.iot.bean.MqttChannel;

@@ -1,18 +1,15 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
-import com.lxr.iot.bean.MqttChannel;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.channel.mqtt.MqttListener;
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.mqtt.MqttHandlerIntf;
-import com.lxr.iot.mqtt.publish.ByteBufUtil;
+import com.lxr.iot.mqtt.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * 默认 mqtthandler处理

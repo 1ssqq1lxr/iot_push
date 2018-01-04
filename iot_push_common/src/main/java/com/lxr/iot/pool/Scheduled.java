@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledFuture;
  * @author lxr
  * @create 2017-12-14 10:47
  **/
+@FunctionalInterface
 public interface Scheduled {
 
     ScheduledFuture<?> submit(Runnable runnable);

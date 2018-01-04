@@ -1,5 +1,6 @@
-package com.lxr.iot.pool;
+package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.InitBean;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @create 2017-12-14 10:39
  **/
 @Service
-public class ScheduledPool implements Scheduled{
+public class ScheduledPool implements Scheduled {
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
 
