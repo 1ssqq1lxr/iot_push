@@ -21,10 +21,9 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
     public void pub(MqttMessage mqttMessage){
-
     }
 
-    public void sub(String... topic){
+    public void sub(SubMessage... subMessages){
 
     }
 
