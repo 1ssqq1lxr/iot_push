@@ -199,7 +199,10 @@ public class MqttChannelService extends AbstractChannelService{
                     }
                     mqttChannels.put(deviceId,build);
                     return true;
-                }).orElse(true);
+                }).orElseGet(() -> {
+                    mqttChannels.put(deviceId,build);
+                    return  true;
+                });
     }
 
 
