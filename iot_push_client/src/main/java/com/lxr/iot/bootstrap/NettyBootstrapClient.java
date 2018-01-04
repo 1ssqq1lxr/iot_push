@@ -1,16 +1,18 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.ip.IpUtils;
-import com.lxr.iot.properties.InitBean;
+import com.lxr.iot.properties.ConnectOptions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Objects;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,11 +32,11 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
 
     Bootstrap bootstrap=null ;// 启动辅助类
 
-    private final  InitBean initBean;
+    private ConnectOptions connectOptions;
 
 
-    public NettyBootstrapClient(InitBean initBean) {
-        this.initBean = initBean;
+    public NettyBootstrapClient(ConnectOptions connectOptions) {
+        this.connectOptions = connectOptions;
     }
 
     @Override
@@ -42,21 +44,21 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
         initEventPool();
         bootstrap.group(bossGroup)
                 .channel(NioSocketChannel.class)
-                .option(ChannelOption.TCP_NODELAY, initBean.isTcpNodelay())
-                .option(ChannelOption.SO_KEEPALIVE, initBean.isKeepalive())
+                .option(ChannelOption.TCP_NODELAY, connectOptions.isTcpNodelay())
+                .option(ChannelOption.SO_KEEPALIVE, connectOptions.isKeepalive())
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .option(ChannelOption.SO_SNDBUF, initBean.getSndbuf())
-                .option(ChannelOption.SO_RCVBUF, initBean.getRevbuf())
+                .option(ChannelOption.SO_SNDBUF, connectOptions.getSndbuf())
+                .option(ChannelOption.SO_RCVBUF, connectOptions.getRevbuf())
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                                    initHandler(ch.pipeline(),initBean);
+                                    initHandler(ch.pipeline(),connectOptions);
                     }
                 });
         ChannelFuture connect = null;
         try {
-            return bootstrap.connect(initBean.getServerIp(), initBean.getPort()).sync().channel();
+            return bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort()).sync().channel();
         } catch (InterruptedException e) {
             log.info("connect to channel fail ");
         }
@@ -69,7 +71,7 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
             try {
                 bossGroup.shutdownGracefully().sync();// 优雅关闭
             } catch (InterruptedException e) {
-                log.info("客户端关闭资源失败【" + IpUtils.getHost() + ":" + initBean.getPort() + "】");
+                log.info("客户端关闭资源失败【" + IpUtils.getHost() + ":" + connectOptions.getPort() + "】");
             }
         }
     }

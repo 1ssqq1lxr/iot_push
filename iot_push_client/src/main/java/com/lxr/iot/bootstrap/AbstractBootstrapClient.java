@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
 import com.lxr.iot.util.SpringBeanUtils;
@@ -27,11 +28,10 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
     private   String PROTOCOL = "TLS";
 
     /**
-     *
-     * @param channelPipeline  channelPipeline
+     *  @param channelPipeline  channelPipeline
      * @param clientBean  客户端配置参数
      */
-    protected  void initHandler(ChannelPipeline channelPipeline, InitBean clientBean){
+    protected  void initHandler(ChannelPipeline channelPipeline, ConnectOptions clientBean){
         if(clientBean.isSsl()){
             initSsl();
             SSLEngine engine =
@@ -41,7 +41,7 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
         }
         channelPipeline.addLast("decoder", new MqttDecoder());
         channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
-        channelPipeline.addLast(new IdleStateHandler(clientBean.getRead(), clientBean.getWrite(), clientBean.getReadAndWrite()));
+        channelPipeline.addLast(new IdleStateHandler(clientBean.getMqtt().getKeepAliveTimeSeconds(), clientBean.getMqtt().getKeepAliveTimeSeconds(), clientBean.getMqtt().getKeepAliveTimeSeconds()));
         channelPipeline.addLast( SpringBeanUtils.getBean(clientBean.getMqttHander()));
 
     }

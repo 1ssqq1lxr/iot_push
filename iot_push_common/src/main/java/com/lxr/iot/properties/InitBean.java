@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 public class InitBean {
 
 
+    private int port ;
+
     private String serverName ;
 
     private boolean keepalive ;

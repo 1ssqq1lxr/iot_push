@@ -1,11 +1,13 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
+import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.mqtt.MqttHandlerIntf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +25,9 @@ public class DefaultMqttHandler extends MqttHander {
 
     private final MqttHandlerIntf mqttHandlerApi;
 
+    @Autowired
+    private Producer producer;
+
 
     public DefaultMqttHandler(MqttHandlerIntf mqttHandlerApi, MqttHandlerIntf mqttHandlerApi1) {
         super(mqttHandlerApi);
@@ -35,6 +40,9 @@ public class DefaultMqttHandler extends MqttHander {
     public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
+            case CONNACK:
+                producer.connectBack((MqttConnAckMessage) mqttMessage);
+                break;
 //            case CONNECT:
 //                loginCheck(channelHandlerContext.channel(), (MqttConnectMessage) mqttMessage) ;
 //                break;

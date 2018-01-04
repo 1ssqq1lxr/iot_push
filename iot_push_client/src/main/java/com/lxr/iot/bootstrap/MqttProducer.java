@@ -1,7 +1,10 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bean.ConnectOptions;
-import io.netty.channel.Channel;
+import com.lxr.iot.mqtt.ClientMqttHandler;
+import com.lxr.iot.properties.ConnectOptions;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * mqtt api操作类
@@ -9,19 +12,19 @@ import io.netty.channel.Channel;
  * @author lxr
  * @create 2018-01-04 15:10
  **/
-public class MqttProducer {
+@Slf4j
+public class MqttProducer  extends  AbsMqttProducer{
 
-    private final Channel channel;
 
-    public MqttProducer(Channel channel) {
-        this.channel = channel;
-    }
+    @Autowired
+    private ClientMqttHandler clientMqttHandler;
 
 
     public  MqttProducer connect(ConnectOptions connectOptions){
-
-        return this;
+            connectTo(connectOptions);
+            return this;
     }
+
 
 
 }
