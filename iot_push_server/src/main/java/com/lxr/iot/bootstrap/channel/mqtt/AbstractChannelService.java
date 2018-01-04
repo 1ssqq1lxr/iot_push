@@ -57,8 +57,7 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     protected  Collection<MqttChannel> getChannels(String topic,TopicFilter topicFilter){
             try {
-                Collection<MqttChannel> mqttChannels = mqttChannelCache.get(topic, () -> topicFilter.filter(topic));
-                return mqttChannels;
+                return  mqttChannelCache.get(topic, () -> topicFilter.filter(topic));
             } catch (Exception e) {
                 log.info(String.format("guava cache key topic【%s】 channel   value== null ",topic));
             }

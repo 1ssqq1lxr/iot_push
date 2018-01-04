@@ -27,6 +27,7 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
     private NioEventLoopGroup bossGroup;
 
 
+
     Bootstrap bootstrap=null ;// 启动辅助类
 
     private final  InitBean initBean;

@@ -160,10 +160,10 @@ public class MqttChannelService extends AbstractChannelService{
     @Override
     public void doPubrel(Channel channel, int messageId) {
         MqttChannel mqttChannel = getMqttChannel(getDeviceId(channel));
-        if(mqttChannel.isLogin()){
-            mqttChannel.removeRecevice(messageId);
+        doIfElse(mqttChannel,mqttChannel1 ->mqttChannel1.isLogin(),mqttChannel1 -> {
+            mqttChannel1.removeRecevice(messageId);
             sendToPubComp(channel,messageId);
-        }
+        });
     }
 
 
@@ -185,21 +185,21 @@ public class MqttChannelService extends AbstractChannelService{
      */
     @Override
     public boolean connectSuccess(String deviceId, MqttChannel build) {
-        MqttChannel mqttChannel1 = mqttChannels.get(deviceId);
-        if(mqttChannel1!=null ){
-            switch (mqttChannel1.getSessionStatus()){
-                case OPEN:
-                    return false;
-                case CLOSE:
-                    switch (mqttChannel1.getSubStatus()){
-                        case YES: // 清除订阅  topic
-                            deleteSubTopic(mqttChannel1);
-                        case NO:
+        return  Optional.ofNullable(mqttChannels.get(deviceId))
+                .map(mqttChannel -> {
+                    switch (mqttChannel.getSessionStatus()){
+                        case OPEN:
+                            return false;
+                        case CLOSE:
+                            switch (mqttChannel.getSubStatus()){
+                                case YES: // 清除订阅  topic
+                                    deleteSubTopic(mqttChannel);
+                                case NO:
+                            }
                     }
-            }
-        }
-        mqttChannels.put(deviceId,build);
-        return true;
+                    mqttChannels.put(deviceId,build);
+                    return true;
+                }).orElse(true);
     }
 
 
@@ -480,10 +480,7 @@ public class MqttChannelService extends AbstractChannelService{
             }
         });
 
-
     }
-
-
 
 
 
