@@ -26,7 +26,6 @@ import java.security.KeyStore;
 public abstract class AbstractBootstrapServer implements BootstrapServer {
 
 
-    abstract void start();
 
     private   String PROTOCOL = "TLS";
 

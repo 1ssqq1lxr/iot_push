@@ -26,8 +26,6 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
 
     private   String PROTOCOL = "TLS";
 
-    abstract Channel start();
-
     /**
      *
      * @param channelPipeline  channelPipeline
