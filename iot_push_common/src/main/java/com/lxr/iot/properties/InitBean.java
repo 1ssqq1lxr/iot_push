@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component;
 @Data
 public class InitBean {
 
-    private String serverIp;
-
-    private int port ;
 
     private String serverName ;
 

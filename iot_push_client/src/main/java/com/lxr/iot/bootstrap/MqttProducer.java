@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.bean.ConnectOptions;
 import io.netty.channel.Channel;
 
 /**
@@ -14,6 +15,12 @@ public class MqttProducer {
 
     public MqttProducer(Channel channel) {
         this.channel = channel;
+    }
+
+
+    public  MqttProducer connect(ConnectOptions connectOptions){
+
+        return this;
     }
 
 
