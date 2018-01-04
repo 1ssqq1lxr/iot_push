@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
  * @author lxr
  * @create 2018-01-02 20:48
  **/
-@Service
 @Slf4j
 public class MqttHandlerService extends ClientMqttHandler {
 

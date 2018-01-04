@@ -54,10 +54,5 @@ public  abstract  class MqttHander extends SimpleChannelInboundHandler<MqttMessa
         super.userEventTriggered(ctx, evt);
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        mqttHandlerApi.close(ctx.channel());
-        log.error("【DefaultMqttHandler：exceptionCaught】",cause);
-    }
 
 }

@@ -7,7 +7,7 @@ package com.lxr.iot.bootstrap.channel.mqtt;
  **/
 public interface MqttListener{
 
-    abstract  void callBack(String topic,String msg);
+    void callBack(String topic,String msg);
 
-    abstract  void callExeption(Exception e);
+    void callThrowable(Throwable e);
 }
