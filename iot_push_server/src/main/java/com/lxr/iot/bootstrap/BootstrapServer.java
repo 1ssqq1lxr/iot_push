@@ -10,8 +10,6 @@ import com.lxr.iot.properties.InitBean;
  **/
 public interface BootstrapServer {
 
-    void start();
-
     void shutdown();
 
     void setServerBean(InitBean serverBean);

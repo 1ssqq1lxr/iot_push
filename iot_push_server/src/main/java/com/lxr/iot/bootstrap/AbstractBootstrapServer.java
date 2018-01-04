@@ -3,6 +3,7 @@ package com.lxr.iot.bootstrap;
 import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSocketSslContextFactory;
 import com.lxr.iot.util.SpringBeanUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
@@ -24,6 +25,8 @@ import java.security.KeyStore;
  **/
 public abstract class AbstractBootstrapServer implements BootstrapServer {
 
+
+    abstract void start();
 
     private   String PROTOCOL = "TLS";
 

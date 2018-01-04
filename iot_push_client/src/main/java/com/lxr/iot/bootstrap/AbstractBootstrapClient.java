@@ -3,6 +3,7 @@ package com.lxr.iot.bootstrap;
 import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
 import com.lxr.iot.util.SpringBeanUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
@@ -24,6 +25,8 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
     private SSLContext CLIENT_CONTEXT;
 
     private   String PROTOCOL = "TLS";
+
+    abstract Channel start();
 
     /**
      *

@@ -4,10 +4,7 @@ import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.InitBean;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -34,12 +31,13 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
 
     private final  InitBean initBean;
 
+
     public NettyBootstrapClient(InitBean initBean) {
         this.initBean = initBean;
     }
 
     @Override
-    public void start() {
+    public Channel start() {
         initEventPool();
         bootstrap.group(bossGroup)
                 .channel(NioSocketChannel.class)
@@ -55,15 +53,13 @@ public class NettyBootstrapClient extends AbstractBootstrapClient {
                                     initHandler(ch.pipeline(),initBean);
                     }
                 });
-        ChannelFuture connect = bootstrap.connect(initBean.getServerIp(), initBean.getPort());
-        connect.addListener((ChannelFutureListener) future -> {
-            if(future.isSuccess()){
-                log.info("客户端连接成功【" + IpUtils.getHost() + ":" + initBean.getPort() + "】");
-            }
-            else {
-                log.info("客户端连接失败【" + IpUtils.getHost() + ":" + initBean.getPort() + "】");
-            }
-        });
+        ChannelFuture connect = null;
+        try {
+            return bootstrap.connect(initBean.getServerIp(), initBean.getPort()).sync().channel();
+        } catch (InterruptedException e) {
+            log.info("connect to channel fail ");
+        }
+        return null;
     }
 
     @Override

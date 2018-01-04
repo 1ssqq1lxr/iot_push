@@ -9,7 +9,6 @@ package com.lxr.iot.bootstrap;
  **/
 public interface BootstrapClient {
 
-    void start();
 
     void shutdown();
 

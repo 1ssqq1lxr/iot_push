@@ -34,12 +34,5 @@
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency>
-            <groupId>net.sourceforge.groboutils</groupId>
-            <artifactId>groboutils-core</artifactId>
-            <version>5</version>
-            <classifier>core</classifier>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>

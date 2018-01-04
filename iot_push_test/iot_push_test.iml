@@ -84,6 +84,5 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.7.RELEASE" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.groboutils:groboutils-core:core:5" level="project" />
   </component>
 </module>
