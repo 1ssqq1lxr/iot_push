@@ -1,9 +1,7 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.mqtt.ClientMqttHandler;
 import com.lxr.iot.properties.ConnectOptions;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -16,15 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MqttProducer  extends  AbsMqttProducer{
 
 
-    @Autowired
-    private ClientMqttHandler clientMqttHandler;
-
 
     public  MqttProducer connect(ConnectOptions connectOptions){
             connectTo(connectOptions);
             return this;
     }
 
+    public void pub(MqttMessage mqttMessage){
 
+    }
+
+    public void sub(String... topic){
+
+    }
 
 }
