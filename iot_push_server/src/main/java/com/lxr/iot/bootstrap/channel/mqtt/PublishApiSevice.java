@@ -89,7 +89,6 @@ public class PublishApiSevice {
                 sendQos1Msg(channel,topic,true,byteBuf,messageId,false);
             }));
         }
-
     }
 
 

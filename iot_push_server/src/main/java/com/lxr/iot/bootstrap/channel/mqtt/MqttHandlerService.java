@@ -118,6 +118,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     @Override
     public void close(Channel channel) {
         mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel), false);
+        channel.close();
     }
 
     /**

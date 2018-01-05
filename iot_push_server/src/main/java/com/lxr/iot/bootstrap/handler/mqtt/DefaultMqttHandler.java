@@ -85,4 +85,9 @@ public class DefaultMqttHandler extends MqttHander {
             channel.close();
         }
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        mqttHandlerApi.close(ctx.channel());
+    }
 }

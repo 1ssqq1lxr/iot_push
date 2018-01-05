@@ -4,17 +4,22 @@ import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
+import io.netty.handler.codec.mqtt.MqttConnectMessage;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,21 +37,26 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
     private ConfigurableApplicationContext applicationContext;
 
 
-    @ConditionalOnMissingBean
+    @Bean
+    @ConditionalOnMissingBean()
     public Producer initServer(ConnectOptions connectOptions, Environment env){
         MqttProducer mqttProducer = new MqttProducer();
-        MqttListener bean = applicationContext.getBean(MqttListener.class);
+        Map<String, Object> beansWithAnnotation = this.applicationContext.getBeansWithAnnotation(MqttMessageListener.class);
         mqttProducer.connect(connectOptions);
-        Optional.of(bean).ifPresent(mqttListener -> {
-            MqttMessageListener mqttMessageListener;
-            if((mqttMessageListener=mqttListener.getClass().getAnnotation(MqttMessageListener.class))!=null){
+        Optional.of(beansWithAnnotation).ifPresent(mqttListener -> {
+            beansWithAnnotation.forEach((name, bean) -> {
+                Class<?> clazz = AopUtils.getTargetClass(bean);
+                MqttMessageListener mqttMessageListener =(MqttMessageListener) bean;
+                if (!MqttListener.class.isAssignableFrom(bean.getClass())) {
+                    throw new IllegalStateException(clazz + " is not instance of " + MqttListener.class.getName());
+                }
                 SubMessage build = SubMessage.builder()
-                        .qos(mqttMessageListener.qos().value())
+                        .qos(mqttMessageListener.qos())
                         .topic(mqttMessageListener.topic())
                         .build();
                 mqttProducer.sub(build);
 
-            }
+            });
         });
         return mqttProducer;
     }

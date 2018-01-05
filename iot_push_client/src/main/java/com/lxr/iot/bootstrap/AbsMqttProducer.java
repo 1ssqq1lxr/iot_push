@@ -5,6 +5,7 @@ import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.ConnectOptions;
+import com.lxr.iot.util.MessageId;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -13,8 +14,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.mqtt.MqttConnAckMessage;
-import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
+import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
@@ -49,9 +49,15 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     public  void  connectTo(ConnectOptions connectOptions){
+        ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
         nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
         try {
+            MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_MOST_ONCE,false,0);
+            MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(mqtt.getName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTimeSeconds());
+            MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(mqtt.getClientIdentifier(),mqtt.getWillTopic(),mqtt.getWillMessage(),mqtt.getUserName(),mqtt.getPassword());
+            MqttConnectMessage mqttSubscribeMessage = new MqttConnectMessage(mqttFixedHeader,mqttSubscribePayload,mqttConnectPayload);
+            channel.writeAndFlush(mqttSubscribeMessage);
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             log.error("等待链接超时",e);
@@ -83,7 +89,6 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     }
 
-    @Slf4j
     public  class NettyBootstrapClient extends AbstractBootstrapClient {
 
         private NioEventLoopGroup bossGroup;

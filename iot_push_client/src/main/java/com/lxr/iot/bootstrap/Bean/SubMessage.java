@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap.Bean;
 
+import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,6 +16,6 @@ public class SubMessage {
 
     private String topic;
 
-    private  int  qos;
+    private MqttQoS qos;
 
 }

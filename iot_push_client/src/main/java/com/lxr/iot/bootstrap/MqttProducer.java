@@ -3,8 +3,13 @@ package com.lxr.iot.bootstrap;
 import com.lxr.iot.bootstrap.Bean.MqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
-import io.netty.handler.codec.mqtt.MqttQoS;
+import com.lxr.iot.util.MessageId;
+import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -25,15 +30,37 @@ public class MqttProducer  extends  AbsMqttProducer{
     public void pub(String topic,MqttMessage mqttMessage){
         switch (MqttQoS.valueOf(mqttMessage.getQos())){
             case AT_MOST_ONCE:
-                sendQos1(topic,channel,mqttMessage);
+                sendQos0(topic,channel,mqttMessage);
+                break;
             case AT_LEAST_ONCE:
+                sendQos1(channel,topic,mqttMessage,false,true);
+                break;
             case EXACTLY_ONCE:
         }
     }
 
 
     public void sub(SubMessage... subMessages){
-
+        MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(getTopics(subMessages));
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0);
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(MessageId.messageId());
+        MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
+        channel.writeAndFlush(mqttSubscribeMessage);
     }
+
+    private List<MqttTopicSubscription> getTopics(SubMessage[] subMessages) {
+       return  Optional.ofNullable(subMessages)
+                .map(subMessages1 -> {
+                    List<MqttTopicSubscription> mqttTopicSubscriptions = new LinkedList<>();
+                    for(SubMessage sb :subMessages1){
+                        MqttTopicSubscription mqttTopicSubscription  = new MqttTopicSubscription(sb.getTopic(),sb.getQos());
+                        mqttTopicSubscriptions.add(mqttTopicSubscription);
+                    }
+                    return mqttTopicSubscriptions;
+                }).orElseGet(null);
+    }
+
+
+
 
 }

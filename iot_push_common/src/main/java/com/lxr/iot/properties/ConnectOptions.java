@@ -20,8 +20,6 @@ public class ConnectOptions {
 
     private int port ;
 
-    private String serverName ;
-
     private boolean keepalive ;
 
     private boolean reuseaddr ;

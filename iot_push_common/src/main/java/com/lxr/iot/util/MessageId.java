@@ -1,5 +1,7 @@
 package com.lxr.iot.util;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
