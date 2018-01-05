@@ -50,8 +50,8 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
             engine.setUseClientMode(false);
             channelPipeline.addLast("ssl", new SslHandler(engine));
         }
-        channelPipeline.addLast("decoder", new MqttDecoder());
         channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
+        channelPipeline.addLast("decoder", new MqttDecoder());
         channelPipeline.addLast(new IdleStateHandler(serverBean.getRead(), serverBean.getWrite(), serverBean.getReadAndWrite()));
         channelPipeline.addLast(  SpringBeanUtils.getBean(serverBean.getMqttHander()));
 

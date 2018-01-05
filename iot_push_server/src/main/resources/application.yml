@@ -1,3 +1,4 @@
+
 lxr:
   iot:
     server:
@@ -20,3 +21,6 @@ lxr:
        jksStorePassword: mu$tch8ng3 # 读取jks密码
        jksCertificatePassword: inc0rrect # 读取私钥密码
        workThread:  1
+logging:
+  level:
+      io.netty: debug
