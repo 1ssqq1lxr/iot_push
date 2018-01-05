@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * @author lxr
  * @create 2018-01-04 19:42
  **/
+@Builder
 @Data
 public class SubMessage {
 

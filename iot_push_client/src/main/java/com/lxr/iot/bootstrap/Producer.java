@@ -15,4 +15,10 @@ public interface Producer {
 
     void connectBack(MqttConnAckMessage mqttConnAckMessage);
 
+    void  close();
+
+    void pub(String topic,MqttMessage mqttMessage);
+
+    void sub(SubMessage... subMessages);
+
 }

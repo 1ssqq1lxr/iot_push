@@ -2,25 +2,22 @@ package com.lxr.iot.auto;
 
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
+import com.lxr.iot.bootstrap.SubMessage;
+import com.lxr.iot.bootstrap.channel.mqtt.MqttListener;
+import com.lxr.iot.bootstrap.channel.mqtt.MqttMessageListener;
 import com.lxr.iot.properties.ConnectOptions;
-import com.lxr.iot.properties.InitBean;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.StandardEnvironment;
 
-import javax.annotation.Resource;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Optional;
 
 /**
  * 自动配置类
@@ -31,32 +28,41 @@ import java.util.concurrent.atomic.AtomicLong;
 @Configuration
 @ConditionalOnClass({MqttProducer.class})
 @EnableConfigurationProperties({ConnectOptions.class})
-public class MqttProducerConfigure   implements ApplicationContextAware, InitializingBean {
+public class MqttProducerConfigure   implements ApplicationContextAware,DisposableBean {
 
 
     private ConfigurableApplicationContext applicationContext;
 
-    private AtomicLong counter = new AtomicLong(0);
 
-    @Resource
-    private StandardEnvironment environment;
-
-    @Bean(initMethod = "open", destroyMethod = "close")
     @ConditionalOnMissingBean
     public Producer initServer(ConnectOptions connectOptions, Environment env){
         MqttProducer mqttProducer = new MqttProducer();
+        MqttListener bean = applicationContext.getBean(MqttListener.class);
+        mqttProducer.connect(connectOptions);
+        Optional.of(bean).ifPresent(mqttListener -> {
+            MqttMessageListener mqttMessageListener;
+            if((mqttMessageListener=mqttListener.getClass().getAnnotation(MqttMessageListener.class))!=null){
+                SubMessage build = SubMessage.builder()
+                        .qos(mqttMessageListener.qos().value())
+                        .topic(mqttMessageListener.topic())
+                        .build();
+                mqttProducer.sub(build);
+
+            }
+        });
         return mqttProducer;
-    }
-
-
-    @Override
-    @ConditionalOnBean(Producer.class)
-    public void afterPropertiesSet() throws Exception {
-
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = (ConfigurableApplicationContext) applicationContext;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        Producer bean = applicationContext.getBean(Producer.class);
+        if(bean!=null){
+            bean.close();
+        }
     }
 }

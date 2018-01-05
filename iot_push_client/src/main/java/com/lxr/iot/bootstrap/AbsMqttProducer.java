@@ -35,6 +35,8 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     protected static  MqttListener mqttListener;
 
+    private  NettyBootstrapClient nettyBootstrapClient ;
+
     public AbsMqttProducer() {
         super((Runnable runnable) -> scheduledExecutorService.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.SECONDS));
     }
@@ -47,13 +49,18 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     public  void  connectTo(ConnectOptions connectOptions){
-        NettyBootstrapClient nettyBootstrapClient = new NettyBootstrapClient(connectOptions);
+        nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             log.error("等待链接超时",e);
         }
+    }
+
+    @Override
+    public void close() {
+        nettyBootstrapClient.shutdown();
     }
 
     public  void connectBack(MqttConnAckMessage mqttConnAckMessage){
@@ -77,7 +84,7 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
     }
 
     @Slf4j
-    public   class NettyBootstrapClient extends AbstractBootstrapClient {
+    public  class NettyBootstrapClient extends AbstractBootstrapClient {
 
         private NioEventLoopGroup bossGroup;
 
