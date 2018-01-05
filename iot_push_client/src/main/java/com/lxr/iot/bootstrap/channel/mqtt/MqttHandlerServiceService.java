@@ -45,12 +45,12 @@ public class MqttHandlerServiceService extends ClientMqttHandlerService {
     }
 
     @Override
-    protected void suback(Channel channel, MqttSubAckMessage mqttMessage) {
+    public void suback(Channel channel, MqttSubAckMessage mqttMessage) {
 
     }
 
     @Override
-    protected void pingresp(Channel channel) {
+    public void pingresp(Channel channel) {
 
     }
 }
