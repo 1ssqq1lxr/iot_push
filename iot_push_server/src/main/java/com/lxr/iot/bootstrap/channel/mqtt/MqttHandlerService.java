@@ -3,8 +3,7 @@ package com.lxr.iot.bootstrap.channel.mqtt;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.enums.QosStatus;
-import com.lxr.iot.mqtt.MqttHandlerIntf;
-import com.lxr.iot.mqtt.ServerMqttHandler;
+import com.lxr.iot.mqtt.ServerMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  **/
 @Component
 @Slf4j
-public class  MqttHandlerService extends ServerMqttHandler implements  BaseApi {
+public class  MqttHandlerService extends ServerMqttHandlerService implements  BaseApi {
 
 
     @Autowired

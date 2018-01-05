@@ -2,8 +2,8 @@ package com.lxr.iot.bootstrap.handler.mqtt;
 
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import com.lxr.iot.mqtt.MqttHander;
-import com.lxr.iot.mqtt.MqttHandlerIntf;
 import com.lxr.iot.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -23,14 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultMqttHandler extends MqttHander {
 
 
-    private  MqttHandlerIntf mqttHandlerApi;
+    private ClientMqttHandlerService mqttHandlerApi;
 
     private Producer producer;
 
     private final MqttListener mqttListener;
 
 
-    public DefaultMqttHandler(MqttHandlerIntf mqttHandlerApi, Producer producer, MqttListener mqttListener) {
+    public DefaultMqttHandler(ClientMqttHandlerService mqttHandlerApi, Producer producer, MqttListener mqttListener) {
         super(mqttHandlerApi);
         this.producer = producer;
         this.mqttListener = mqttListener;
@@ -51,14 +51,19 @@ public class DefaultMqttHandler extends MqttHander {
             case PUBACK: // qos 1回复确认
                 mqttHandlerApi.puback(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
                 break;
-            case PUBREC: // 待实现
+            case PUBREC: //
                 mqttHandlerApi.pubrec(channelHandlerContext.channel(),mqttMessage);
                 break;
-            case PUBREL: // 待实现
+            case PUBREL: //
                 mqttHandlerApi.pubrel(channelHandlerContext.channel(),mqttMessage);
                 break;
-            case PUBCOMP: // 待实现
+            case PUBCOMP: //
                 mqttHandlerApi.pubcomp(channelHandlerContext.channel(),mqttMessage);
+                break;
+            case SUBACK:
+                mqttHandlerApi.suback(channelHandlerContext.channel(),(MqttSubAckMessage)mqttMessage);
+            case PINGRESP:
+                mqttHandlerApi.pingresp(channelHandlerContext.channel());
                 break;
             default:
                 break;

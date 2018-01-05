@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerService;
+import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.ip.IpUtils;
@@ -111,7 +111,7 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            initHandler(ch.pipeline(),connectOptions,new DefaultMqttHandler(new MqttHandlerService(), AbsMqttProducer.this, mqttListener
+                            initHandler(ch.pipeline(),connectOptions,new DefaultMqttHandler(new MqttHandlerServiceService(), AbsMqttProducer.this, mqttListener
                             ));
                         }
                     });

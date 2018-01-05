@@ -1,13 +1,10 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.mqtt.ClientMqttHandler;
-import com.lxr.iot.mqtt.MqttHandlerIntf;
+import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * 客户端channelService
@@ -16,16 +13,15 @@ import org.springframework.stereotype.Service;
  * @create 2018-01-02 20:48
  **/
 @Slf4j
-public class MqttHandlerService extends ClientMqttHandler {
+public class MqttHandlerServiceService extends ClientMqttHandlerService {
 
     @Override
     public void close(Channel channel) {
-
+        channel.close();
     }
 
     @Override
     public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
-
     }
 
     @Override
@@ -48,4 +44,13 @@ public class MqttHandlerService extends ClientMqttHandler {
 
     }
 
+    @Override
+    protected void suback(Channel channel, MqttSubAckMessage mqttMessage) {
+
+    }
+
+    @Override
+    protected void pingresp(Channel channel) {
+
+    }
 }

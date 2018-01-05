@@ -9,7 +9,7 @@ import io.netty.handler.codec.mqtt.*;
  * @author lxr
  * @create 2018-01-03 16:11
  **/
-public abstract class ServerMqttHandler  implements MqttHandlerIntf {
+public abstract class ServerMqttHandlerService implements MqttHandlerIntf {
 
 
     public abstract boolean login(Channel channel, MqttConnectMessage mqttConnectMessage);
