@@ -37,7 +37,7 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
             initSsl();
             SSLEngine engine =
                     CLIENT_CONTEXT.createSSLEngine();
-            engine.setUseClientMode(false);
+//            engine.setUseClientMode(false);
             channelPipeline.addLast("ssl", new SslHandler(engine));
         }
         channelPipeline.addLast("decoder", new MqttDecoder());

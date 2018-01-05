@@ -68,8 +68,6 @@ public class ConnectOptions {
 
         private  String password;
 
-        private  String name;
-
         private  boolean hasUserName;
 
         private  boolean hasPassword;
