@@ -4,8 +4,10 @@ import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import com.lxr.iot.mqtt.MqttHander;
+import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.*;
@@ -27,14 +29,32 @@ public class DefaultMqttHandler extends MqttHander {
 
     private Producer producer;
 
-    private final MqttListener mqttListener;
+    private  MqttListener mqttListener;
+    
+    private ConnectOptions connectOptions;
 
-
-    public DefaultMqttHandler(ClientMqttHandlerService mqttHandlerApi, Producer producer, MqttListener mqttListener) {
+    public DefaultMqttHandler(ConnectOptions connectOptions, ClientMqttHandlerService mqttHandlerApi, Producer producer, MqttListener mqttListener) {
         super(mqttHandlerApi);
         this.producer = producer;
         this.mqttListener = mqttListener;
         this.mqttHandlerApi=mqttHandlerApi;
+        this.connectOptions=connectOptions;
+    }
+
+
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        Channel channel = ctx.channel();
+        channel.writeAndFlush("123");
+//        Channel channel = ctx.channel();
+//        ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
+//        log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().localAddress().toString()+"启动成功");
+//        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_LEAST_ONCE,false,10);
+//        MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(MqttVersion.MQTT_3_1_1.protocolName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTimeSeconds());
+//        MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(mqtt.getClientIdentifier(),mqtt.getWillTopic(),mqtt.getWillMessage(),mqtt.getUserName(),mqtt.getPassword());
+//        MqttConnectMessage mqttSubscribeMessage = new MqttConnectMessage(mqttFixedHeader,mqttSubscribePayload,mqttConnectPayload);
+//        channel.writeAndFlush(mqttSubscribeMessage);
     }
 
 
