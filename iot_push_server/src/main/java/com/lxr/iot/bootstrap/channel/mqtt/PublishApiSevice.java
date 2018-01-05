@@ -1,8 +1,8 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.bean.ConfirmMessage;
-import com.lxr.iot.bean.MqttChannel;
-import com.lxr.iot.bean.WillMeaasge;
+import com.lxr.iot.bootstrap.bean.ConfirmMessage;
+import com.lxr.iot.bootstrap.bean.MqttChannel;
+import com.lxr.iot.bootstrap.bean.WillMeaasge;
 import com.lxr.iot.enums.QosStatus;
 import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.util.MessageId;

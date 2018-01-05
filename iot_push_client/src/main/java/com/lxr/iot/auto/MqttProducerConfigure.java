@@ -2,9 +2,7 @@ package com.lxr.iot.auto;
 
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
-import com.lxr.iot.bootstrap.SubMessage;
-import com.lxr.iot.bootstrap.channel.mqtt.MqttListener;
-import com.lxr.iot.bootstrap.channel.mqtt.MqttMessageListener;
+import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;

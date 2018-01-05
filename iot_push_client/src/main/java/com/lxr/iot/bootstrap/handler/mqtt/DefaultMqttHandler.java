@@ -1,10 +1,10 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
 import com.lxr.iot.bootstrap.Producer;
-import com.lxr.iot.bootstrap.channel.mqtt.MqttListener;
+import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.mqtt.MqttHandlerIntf;
-import com.lxr.iot.mqtt.ByteBufUtil;
+import com.lxr.iot.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

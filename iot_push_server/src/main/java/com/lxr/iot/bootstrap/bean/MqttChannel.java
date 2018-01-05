@@ -1,4 +1,4 @@
-package com.lxr.iot.bean;/**
+package com.lxr.iot.bootstrap.bean;/**
  * Created by wangcy on 2017/11/21.
  */
 

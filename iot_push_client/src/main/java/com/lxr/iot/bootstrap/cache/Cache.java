@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.cache;
 
-import com.lxr.iot.bootstrap.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.MqttMessage;
 
 import java.util.concurrent.ConcurrentHashMap;
 

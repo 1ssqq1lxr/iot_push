@@ -1,7 +1,7 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerService;
-import com.lxr.iot.bootstrap.channel.mqtt.MqttListener;
+import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.ConnectOptions;

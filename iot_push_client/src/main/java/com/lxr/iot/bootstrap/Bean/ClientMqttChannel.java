@@ -1,5 +1,6 @@
-package com.lxr.iot.bean;
+package com.lxr.iot.bootstrap.Bean;
 
+import com.lxr.iot.bootstrap.bean.ConfirmMessage;
 import io.netty.channel.Channel;
 import lombok.Getter;
 import lombok.Setter;

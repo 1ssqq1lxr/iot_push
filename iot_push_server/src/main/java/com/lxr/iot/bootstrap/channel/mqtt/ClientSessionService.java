@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.bean.SessionMessage;
+import com.lxr.iot.bootstrap.bean.SessionMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;

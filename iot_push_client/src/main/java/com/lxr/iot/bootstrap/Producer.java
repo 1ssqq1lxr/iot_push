@@ -1,5 +1,7 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 

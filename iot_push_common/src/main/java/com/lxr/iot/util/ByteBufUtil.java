@@ -1,4 +1,4 @@
-package com.lxr.iot.mqtt;
+package com.lxr.iot.util;
 
 import io.netty.buffer.ByteBuf;
 

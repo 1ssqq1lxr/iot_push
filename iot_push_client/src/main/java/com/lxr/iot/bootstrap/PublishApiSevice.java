@@ -20,7 +20,7 @@ public class PublishApiSevice {
         this.scheduled =scheduled;
     }
 
-    protected void  sendQos1(String topic, Channel channel, MqttMessage mqttMessage){
+    protected void  sendQos1(String topic, Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
         log.info("成功发送消息:"+new String(mqttMessage.getPayload()));
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,false, MqttQoS.AT_MOST_ONCE,false,0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic,0 );

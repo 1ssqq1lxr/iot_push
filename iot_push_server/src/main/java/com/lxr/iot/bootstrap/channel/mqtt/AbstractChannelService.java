@@ -2,8 +2,8 @@ package com.lxr.iot.bootstrap.channel.mqtt;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.lxr.iot.bean.MqttChannel;
-import com.lxr.iot.bean.RetainMessage;
+import com.lxr.iot.bootstrap.bean.MqttChannel;
+import com.lxr.iot.bootstrap.bean.RetainMessage;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.bootstrap.channel.mqtt.cache.CacheMap;

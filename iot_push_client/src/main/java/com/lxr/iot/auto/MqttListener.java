@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt;
+package com.lxr.iot.auto;
 
 /**
  * call back

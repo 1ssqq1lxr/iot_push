@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.bean.WillMeaasge;
+import com.lxr.iot.bootstrap.bean.WillMeaasge;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import lombok.Getter;
