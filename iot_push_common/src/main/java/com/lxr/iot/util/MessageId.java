@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MessageId {
 
     private static AtomicInteger index = new AtomicInteger(1);
-
     /**
      * 获取messageId
      * @return id

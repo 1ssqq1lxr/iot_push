@@ -21,6 +21,17 @@ import org.springframework.core.env.Environment;
 public class ServerAutoConfigure {
 
 
+    private static  final  int _BLACKLOG =   1024;
+
+    private static final  int  CPU =Runtime.getRuntime().availableProcessors();
+
+    private static final  int  SEDU_DAY =10;
+
+    private static final  int TIMEOUT =120;
+
+    private static final  int BUF_SIZE=10*1024*1024;
+
+
     public ServerAutoConfigure(){
 
     }
@@ -32,34 +43,31 @@ public class ServerAutoConfigure {
             throw  new NullPointerException("not set port");
         }
         if(serverBean.getBacklog()<1){
-            serverBean.setBacklog(1024);
+            serverBean.setBacklog(_BLACKLOG);
         }
         if(serverBean.getBossThread()<1){
-            serverBean.setBossThread(Runtime.getRuntime().availableProcessors());
+            serverBean.setBossThread(CPU);
         }
         if(serverBean.getInitalDelay()<0){
-            serverBean.setInitalDelay(10);
+            serverBean.setInitalDelay(SEDU_DAY);
         }
         if(serverBean.getPeriod()<1){
-            serverBean.setPeriod(10);
+            serverBean.setPeriod(SEDU_DAY);
         }
         if(serverBean.getRead()<1){
-            serverBean.setRead(120);
+            serverBean.setRead(TIMEOUT);
         }
         if(serverBean.getWrite()<1){
-            serverBean.setWrite(120);
+            serverBean.setWrite(TIMEOUT);
         }
         if(serverBean.getReadAndWrite()<1){
-            serverBean.setReadAndWrite(120);
+            serverBean.setReadAndWrite(TIMEOUT);
         }
         if(serverBean.getRevbuf()<1){
-            serverBean.setRevbuf(10*1024*1024);
-        }
-        if(serverBean.getSndbuf()<1){
-            serverBean.setSndbuf(10*1024*1024);
+            serverBean.setRevbuf(BUF_SIZE);
         }
         if(serverBean.getWorkThread()<1){
-            serverBean.setWorkThread(Runtime.getRuntime().availableProcessors()*2);
+            serverBean.setWorkThread(CPU*2);
         }
         return new InitServer(serverBean);
     }
