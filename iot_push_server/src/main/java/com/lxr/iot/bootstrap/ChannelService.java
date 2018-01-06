@@ -39,9 +39,6 @@ public interface ChannelService {
 
     void unsubscribe(String deviceId, List<String> topics1);
 
-    void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage);
-
-
     void  doPubrel(Channel channel, int mqttMessage);
 
     void  doPubrec(Channel channel, int mqttMessage);

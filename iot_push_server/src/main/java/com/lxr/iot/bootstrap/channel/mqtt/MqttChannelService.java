@@ -71,8 +71,7 @@ public class MqttChannelService extends AbstractChannelService{
      * @param channel
      * @param mqttConnectMessage
      */
-    @Override
-    public void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
+    private void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
         //  当will flag == 1  标识遗嘱生效  此时  负载中  will messgae 跟will topic 不可以为空
         //当will flag == 0  标识遗嘱不生效  此时  负载中  will messgae 跟will topic 必须为空  且 可变头中 will retain ==0  will QOS = 0
         MqttFixedHeader mqttFixedHeader1 = mqttConnectMessage.fixedHeader();
@@ -240,6 +239,7 @@ public class MqttChannelService extends AbstractChannelService{
     public void loginSuccess(Channel channel, String deviceId, MqttConnectMessage mqttConnectMessage) {
         channel.attr(_login).set(true);
         channel.attr(_deviceId).set(deviceId);
+        replyLogin(channel, mqttConnectMessage);
     }
 
 

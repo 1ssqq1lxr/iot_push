@@ -47,14 +47,12 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 //        校验规则
         String deviceId = mqttConnectMessage.payload().clientIdentifier();
         if (StringUtils.isBlank(deviceId)) {
-            channel.close();
             return false;
         }
         return  Optional.ofNullable(mqttChannelService.getMqttChannel(deviceId))
                 .map(mqttChannel -> {
                     switch (mqttChannel.getSessionStatus()){
                         case OPEN:
-                            channel.close();
                             return false;
                     }
                     mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
@@ -65,20 +63,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
                 });
 
     }
-
-    /**
-     * 登录回复
-     *
-     * @param channel            通道
-     * @param mqttConnectMessage connection 信息
-     */
-    @Override
-    public void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
-
-        mqttChannelService.replyLogin(channel, mqttConnectMessage);
-
-    }
-
 
     /**
      * 发布

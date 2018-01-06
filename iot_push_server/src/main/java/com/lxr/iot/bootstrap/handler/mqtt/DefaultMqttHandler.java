@@ -39,58 +39,53 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
+        Channel channel = channelHandlerContext.channel();
         ServerMqttHandlerService serverMqttHandlerService;
         if(mqttHandlerApi instanceof ServerMqttHandlerService){
             serverMqttHandlerService =(ServerMqttHandlerService)mqttHandlerApi;
         }
         else{
-            throw new NoFindHandlerException("handler 不匹配");
+            throw new NoFindHandlerException("server handler 不匹配");
         }
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         if(mqttFixedHeader.messageType().equals(MqttMessageType.CONNECT)){
-            loginCheck(serverMqttHandlerService,channelHandlerContext.channel(), (MqttConnectMessage) mqttMessage) ;
+            if(!serverMqttHandlerService.login(channel, (MqttConnectMessage) mqttMessage)){
+                channel.close();
+            }
             return ;
         }
-        if(channelService.getMqttChannel(channelService.getDeviceId(channelHandlerContext.channel())).isLogin()){
+        if(channelService.getMqttChannel(channelService.getDeviceId(channel)).isLogin()){
             switch (mqttFixedHeader.messageType()){
                 case PUBLISH:
-                    serverMqttHandlerService.publish(channelHandlerContext.channel(), (MqttPublishMessage) mqttMessage);
+                    serverMqttHandlerService.publish(channel, (MqttPublishMessage) mqttMessage);
                     break;
                 case SUBSCRIBE:
-                    serverMqttHandlerService.subscribe(channelHandlerContext.channel(), (MqttSubscribeMessage) mqttMessage);
+                    serverMqttHandlerService.subscribe(channel, (MqttSubscribeMessage) mqttMessage);
                     break;
                 case PINGREQ:
-                    serverMqttHandlerService.pong(channelHandlerContext.channel());
+                    serverMqttHandlerService.pong(channel);
                     break;
                 case DISCONNECT:
-                    serverMqttHandlerService.disconnect(channelHandlerContext.channel(),mqttMessage);
+                    serverMqttHandlerService.disconnect(channel,mqttMessage);
                     break;
                 case UNSUBSCRIBE:
-                    serverMqttHandlerService.unsubscribe(channelHandlerContext.channel(),(MqttUnsubscribeMessage)mqttMessage);
+                    serverMqttHandlerService.unsubscribe(channel,(MqttUnsubscribeMessage)mqttMessage);
                     break;
                 case PUBACK: // qos 1回复确认
-                    mqttHandlerApi.puback(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
+                    mqttHandlerApi.puback(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 case PUBREC: // 待实现
-                    mqttHandlerApi.pubrec(channelHandlerContext.channel(),mqttMessage);
+                    mqttHandlerApi.pubrec(channel,mqttMessage);
                     break;
                 case PUBREL: // 待实现
-                    mqttHandlerApi.pubrel(channelHandlerContext.channel(),mqttMessage);
+                    mqttHandlerApi.pubrel(channel,mqttMessage);
                     break;
                 case PUBCOMP: // 待实现
-                    mqttHandlerApi.pubcomp(channelHandlerContext.channel(),mqttMessage);
+                    mqttHandlerApi.pubcomp(channel,mqttMessage);
                     break;
                 default:
                     break;
             }
-        }
-    }
-    public void loginCheck(ServerMqttHandlerService serverMqttHandlerService, Channel channel, MqttConnectMessage mqttConnectMessage){
-        if(serverMqttHandlerService.login(channel, mqttConnectMessage)){
-            serverMqttHandlerService.replyLogin(channel,mqttConnectMessage);
-        }
-        else{
-            channel.close();
         }
     }
 
