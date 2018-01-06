@@ -48,13 +48,13 @@ public class DefaultMqttHandler extends MqttHander {
         Channel channel = ctx.channel();
         channel.writeAndFlush("123");
 //        Channel channel = ctx.channel();
-//        ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
-//        log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().localAddress().toString()+"启动成功");
-//        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_LEAST_ONCE,false,10);
-//        MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(MqttVersion.MQTT_3_1_1.protocolName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTimeSeconds());
-//        MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(mqtt.getClientIdentifier(),mqtt.getWillTopic(),mqtt.getWillMessage(),mqtt.getUserName(),mqtt.getPassword());
-//        MqttConnectMessage mqttSubscribeMessage = new MqttConnectMessage(mqttFixedHeader,mqttSubscribePayload,mqttConnectPayload);
-//        channel.writeAndFlush(mqttSubscribeMessage);
+        ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
+        log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().localAddress().toString()+"启动成功");
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_LEAST_ONCE,false,10);
+        MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(MqttVersion.MQTT_3_1_1.protocolName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTimeSeconds());
+        MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(mqtt.getClientIdentifier(),mqtt.getWillTopic(),mqtt.getWillMessage(),mqtt.getUserName(),mqtt.getPassword());
+        MqttConnectMessage mqttSubscribeMessage = new MqttConnectMessage(mqttFixedHeader,mqttSubscribePayload,mqttConnectPayload);
+        channel.writeAndFlush(mqttSubscribeMessage);
     }
 
 

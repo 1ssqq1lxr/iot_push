@@ -41,11 +41,13 @@ public class MqttProducer  extends  AbsMqttProducer{
 
 
     public void sub(SubMessage... subMessages){
-        MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(getTopics(subMessages));
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0);
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(MessageId.messageId());
-        MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
-        channel.writeAndFlush(mqttSubscribeMessage);
+        Optional.ofNullable(getTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
+            MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(mqttTopicSubscriptions);
+            MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0);
+            MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(MessageId.messageId());
+            MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
+            channel.writeAndFlush(mqttSubscribeMessage);
+        });
     }
 
     private List<MqttTopicSubscription> getTopics(SubMessage[] subMessages) {

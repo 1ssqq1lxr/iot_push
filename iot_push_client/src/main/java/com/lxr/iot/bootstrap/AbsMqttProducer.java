@@ -84,7 +84,7 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     }
 
-    public  class NettyBootstrapClient extends AbstractBootstrapClient {
+    class NettyBootstrapClient extends AbstractBootstrapClient {
 
         private NioEventLoopGroup bossGroup;
 
