@@ -1,5 +1,6 @@
 package com.lxr.iot.auto;
 
+import com.lxr.iot.enums.ProtocolEnum;
 import com.lxr.iot.properties.InitBean;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -68,6 +69,9 @@ public class ServerAutoConfigure {
         }
         if(serverBean.getWorkThread()<1){
             serverBean.setWorkThread(CPU*2);
+        }
+        if(serverBean.getProtocolEnum()==null){
+            serverBean.setProtocolEnum(ProtocolEnum.MQTT);
         }
         return new InitServer(serverBean);
     }

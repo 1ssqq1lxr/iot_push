@@ -1,5 +1,6 @@
 package com.lxr.iot.properties;
 
+import com.lxr.iot.enums.ProtocolEnum;
 import com.lxr.iot.mqtt.MqttHander;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class InitBean {
 
+    private ProtocolEnum protocolEnum;
 
     private int port ;
 
