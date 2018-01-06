@@ -7,6 +7,7 @@ import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +28,56 @@ public class MqttProducer  extends  AbsMqttProducer{
         return this;
     }
 
-    public void pub(String topic,MqttMessage mqttMessage){
-        switch (MqttQoS.valueOf(mqttMessage.getQos())){
-            case AT_MOST_ONCE:
-                sendQos0(topic,channel,mqttMessage);
-                break;
-            case AT_LEAST_ONCE:
-                sendQos1(channel,topic,mqttMessage,false,true);
-                break;
-            case EXACTLY_ONCE:
-        }
+    @Override
+    public void pub(String topic,String message,int qos){
+        pub(topic,message,false,qos);
     }
 
+    @Override
+    public void pub(String topic, String message, boolean retained) {
+        pub(topic,message,retained,0);
+    }
+    @Override
+    public void pub(String topic,String message){
+            pub(topic,message,false,0);
+    }
+
+
+    @Override
+    public void pub(String topic, String message, boolean retained, int qos) {
+        MqttMessage   mqttMessage=  buildMqttMessage(topic,message,retained,qos,false,true);
+        Optional.ofNullable(mqttMessage).ifPresent(mqttMessage1 -> {
+            switch (MqttQoS.valueOf(mqttMessage1.getQos())){
+                case AT_MOST_ONCE:
+                    sendQos0(channel,mqttMessage1);
+                    break;
+                case AT_LEAST_ONCE:
+                    sendQos1(channel,mqttMessage1);
+                    break;
+                case EXACTLY_ONCE:
+            }
+        });
+
+    }
+
+    private MqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos,boolean dup,boolean time) {
+        int messageId=0;
+        if(qos!=0){
+            messageId=MessageId.messageId();
+        }
+        try {
+            return MqttMessage.builder().messageId(messageId)
+                    .time(time)
+                    .Topic(topic)
+                    .dup(dup)
+                    .retained(retained)
+                    .qos(qos)
+                    .payload(message.getBytes("Utf-8")).build();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void sub(SubMessage... subMessages){
         Optional.ofNullable(getTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {

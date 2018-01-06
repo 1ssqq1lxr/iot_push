@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap.Bean;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,9 +10,10 @@ import lombok.Data;
  * @create 2018-01-04 19:36
  **/
 @Data
+@Builder
 public class MqttMessage {
 
-    private boolean mutable;
+    private String Topic;
 
     private byte[] payload;
 
@@ -22,4 +24,6 @@ public class MqttMessage {
     private boolean dup;
 
     private int messageId;
+
+    private boolean time;
 }
