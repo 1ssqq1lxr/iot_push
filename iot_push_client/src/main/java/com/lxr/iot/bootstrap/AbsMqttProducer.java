@@ -50,7 +50,7 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     public  void  connectTo(ConnectOptions connectOptions){
         ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
-        nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
+        this.nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
