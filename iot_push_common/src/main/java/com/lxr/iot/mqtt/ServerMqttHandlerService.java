@@ -23,7 +23,6 @@ public abstract class ServerMqttHandlerService implements MqttHandlerIntf {
 
     public abstract  void unsubscribe(Channel channel, MqttUnsubscribeMessage mqttMessage);
 
-    public abstract  void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage);
 
     public abstract void disconnect(Channel channel, MqttMessage mqttMessage);
 }

@@ -1,10 +1,16 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.bootstrap.coder.ByteBufToWebSocketFrameEncoder;
+import com.lxr.iot.bootstrap.coder.WebSocketFrameToByteBufDecoder;
 import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSocketSslContextFactory;
 import com.lxr.iot.util.SpringBeanUtils;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.ssl.SslHandler;
@@ -16,6 +22,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import java.security.KeyStore;
+import java.util.Optional;
 
 /**
  * 抽象类 负责加载edec handler
@@ -31,6 +38,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
 
     private   SSLContext SERVER_CONTEXT;
 
+    private static final String MQTT_CSV_LIST = "mqtt, mqttv3.1, mqttv3.1.1";
 
 //    private   SSLContext CLIENT_CONTEXT;
 
@@ -55,6 +63,42 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
         channelPipeline.addLast(new IdleStateHandler(serverBean.getRead(), serverBean.getWrite(), serverBean.getReadAndWrite()));
         channelPipeline.addLast(  SpringBeanUtils.getBean(serverBean.getMqttHander()));
 
+    }
+
+    /**
+     * mqtt.js client
+     */
+    private class WebSocketChannelInitializer extends ChannelInitializer<SocketChannel> {
+        @Override
+        protected void initChannel(SocketChannel ch) throws Exception {
+            ChannelPipeline pipeline = ch.pipeline();
+            pipeline.addLast("httpCode", new HttpServerCodec());
+            pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+            pipeline.addLast("webSocketHandler",
+                    new WebSocketServerProtocolHandler("/", MQTT_CSV_LIST));
+            pipeline.addLast("wsDecoder", new WebSocketFrameToByteBufDecoder());
+            pipeline.addLast("wsEncoder", new ByteBufToWebSocketFrameEncoder());
+            pipeline.addLast("decoder", new MqttDecoder());
+            pipeline.addLast("encoder", MqttEncoder.INSTANCE);
+        }
+    }
+
+    /**
+     * paho-mqtt.js client
+     */
+    private class PahChannelInitializer extends ChannelInitializer<SocketChannel> {
+        @Override
+        protected void initChannel(SocketChannel ch) throws Exception {
+            ChannelPipeline pipeline = ch.pipeline();
+            pipeline.addLast("httpCode", new HttpServerCodec());
+            pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+            pipeline.addLast("webSocketHandler",
+                    new WebSocketServerProtocolHandler("/mqtt", MQTT_CSV_LIST));
+            pipeline.addLast("wsDecoder", new WebSocketFrameToByteBufDecoder());
+            pipeline.addLast("wsEncoder", new ByteBufToWebSocketFrameEncoder());
+            pipeline.addLast("decoder", new MqttDecoder());
+            pipeline.addLast("encoder", MqttEncoder.INSTANCE);
+        }
     }
 
 
