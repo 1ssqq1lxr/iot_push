@@ -409,7 +409,7 @@ public class MqttChannelService extends AbstractChannelService{
      * 清除channel 订阅主题
      * @param mqttChannel
      */
-    private void  deleteSubTopic(MqttChannel mqttChannel){
+    public void  deleteSubTopic(MqttChannel mqttChannel){
         Set<String> topics = mqttChannel.getTopic();
         topics.parallelStream().forEach(topic -> {
             cacheMap.delete(getTopic(topic),mqttChannel);

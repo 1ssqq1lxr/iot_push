@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 public class MqttClientProducerTest {
 
     private static int qos = 2; //只有一次
-    private static String broker = "ssl://127.0.0.1:1884";
+    private static String broker = "tcp://127.0.0.1:1884";
     private static String userName = "tuyou";
     private static String passWord = "tuyou";
 
@@ -31,8 +31,8 @@ public class MqttClientProducerTest {
         connOpts.setPassword(password.toCharArray());
         connOpts.setConnectionTimeout(10);
         connOpts.setKeepAliveInterval(20);
-        SSLSocketFactory socketFactory = SecureSocketSslContextFactory.getClientContext().getSocketFactory();
-        connOpts.setSocketFactory(socketFactory);
+//        SSLSocketFactory socketFactory = SecureSocketSslContextFactory.getClientContext().getSocketFactory();
+//        connOpts.setSocketFactory(socketFactory);
 //        connOpts.setWill("test1","haha".getBytes(),0,false);
 //      String[] uris = {"tcp://10.100.124.206:1883","tcp://10.100.124.207:1883"};
 //      connOpts.setServerURIs(uris);  //起到负载均衡和高可用的作用

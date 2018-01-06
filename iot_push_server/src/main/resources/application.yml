@@ -13,7 +13,7 @@ lxr:
        write: 60 # 写超时时间
        readAndWrite: 60 # 读写超时时间
        backlog: 1024 #  Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝
-       ssl: true # 使用ssl加密
+       ssl: false # 使用ssl加密
        mqttHander: com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler # 默认处理
        initalDelay: 10 # mqtt qos1 qos2 消息 重发延迟
        period: 10 # mqtt qos1 qos2 消息 重发周期

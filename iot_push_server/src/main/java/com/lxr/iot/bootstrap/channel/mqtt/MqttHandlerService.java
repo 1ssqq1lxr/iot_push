@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
@@ -49,11 +50,20 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
             channel.close();
             return false;
         }
-        if(mqttChannelService.getMqttChannel(deviceId)==null){
-            mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
-            return true;
-        }
-        return false;
+        return  Optional.ofNullable(mqttChannelService.getMqttChannel(deviceId))
+                .map(mqttChannel -> {
+                    switch (mqttChannel.getSessionStatus()){
+                        case OPEN:
+                            channel.close();
+                            return false;
+                    }
+                    mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
+                    return true;
+                }).orElseGet(() -> {
+                    mqttChannelService.loginSuccess(channel, deviceId, mqttConnectMessage);
+                    return  true;
+                });
+
     }
 
     /**

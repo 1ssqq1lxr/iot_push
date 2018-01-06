@@ -15,7 +15,7 @@ import javax.net.ssl.SSLSocketFactory;
 public class MqttClientConsumerTest1 {
 
     private static int qos = 0; //只有一次
-    private static String broker = "ssl://127.0.0.1:1884";
+    private static String broker = "tcp://127.0.0.1:1884";
     private static String userName = "tuyou";
     private static String passWord = "tuyou";
 
@@ -29,8 +29,8 @@ public class MqttClientConsumerTest1 {
         connOpts.setPassword(password.toCharArray());
         connOpts.setConnectionTimeout(10);
         connOpts.setKeepAliveInterval(20);
-        SSLSocketFactory socketFactory = SecureSocketSslContextFactory.getClientContext().getSocketFactory();
-        connOpts.setSocketFactory(socketFactory);
+//        SSLSocketFactory socketFactory = SecureSocketSslContextFactory.getClientContext().getSocketFactory();
+//        connOpts.setSocketFactory(socketFactory);
 //      String[] uris = {"tcp://10.100.124.206:1883","tcp://10.100.124.207:1883"};
 //      connOpts.setServerURIs(uris);  //起到负载均衡和高可用的作用
         MqttClient mqttClient = new MqttClient(broker, clientId, persistence);
