@@ -15,9 +15,20 @@ public class Cache {
     private static final ConcurrentHashMap<String,MqttMessage> message = new ConcurrentHashMap<>();
 
 
-    public boolean put(String topic,MqttMessage mqttMessage){
+    public boolean put(String messageId,MqttMessage mqttMessage){
 
-        return message.put(topic,mqttMessage)==null;
+        return message.put(messageId,mqttMessage)==null;
 
+    }
+
+    public MqttMessage get(String messageId){
+
+        return  message.get(messageId);
+
+    }
+
+
+    public void del(String messageId){
+        message.remove(messageId);
     }
 }

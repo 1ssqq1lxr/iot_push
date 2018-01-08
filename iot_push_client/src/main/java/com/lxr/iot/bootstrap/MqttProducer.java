@@ -2,6 +2,7 @@ package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.MqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
+import com.lxr.iot.bootstrap.back.ScanConfirmMessage;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.*;
@@ -46,17 +47,22 @@ public class MqttProducer  extends  AbsMqttProducer{
     @Override
     public void pub(String topic, String message, boolean retained, int qos) {
         MqttMessage   mqttMessage=  buildMqttMessage(topic,message,retained,qos,false,true);
-        Optional.ofNullable(mqttMessage).ifPresent(mqttMessage1 -> {
-            switch (MqttQoS.valueOf(mqttMessage1.getQos())){
-                case AT_MOST_ONCE:
-                    sendQos0(channel,mqttMessage1);
-                    break;
-                case AT_LEAST_ONCE:
-                    sendQos1(channel,mqttMessage1);
-                    break;
-                case EXACTLY_ONCE:
-            }
-        });
+        sendQosMessage(channel,mqttMessage);
+        boolean flag;
+        do{
+            flag=  ScanConfirmMessage.addQueue(mqttMessage);
+        }while (!flag);
+        //        Optional.ofNullable(mqttMessage).ifPresent(mqttMessage1 -> {
+//            switch (MqttQoS.valueOf(mqttMessage1.getQos())){
+//                case AT_MOST_ONCE:
+//                    sendQos0(channel,mqttMessage1);
+//                    break;
+//                case AT_LEAST_ONCE:
+//                    sendQos1(channel,mqttMessage1);
+//                    break;
+//                case EXACTLY_ONCE:
+//            }
+//        });
 
     }
 

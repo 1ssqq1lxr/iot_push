@@ -2,6 +2,7 @@ package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
+import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 
 /**
@@ -11,6 +12,8 @@ import io.netty.handler.codec.mqtt.MqttConnAckMessage;
  * @create 2018-01-04 17:17
  **/
 public interface Producer {
+
+    Channel getChannel();
 
     void connectTo(ConnectOptions connectOptions);
 

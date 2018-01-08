@@ -16,7 +16,7 @@ lxr:
        ssl: false # 使用ssl加密
        mqttHander: com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler # 默认处理
        initalDelay: 10 # mqtt qos1 qos2 消息 重发延迟
-       protocol: mqtt
+       protocol: mqtt  # mqtt  MQTT_WS_MQTT(mqtt.js)   MQTT_WS_PAHO(paho.js)
        period: 10 # mqtt qos1 qos2 消息 重发周期
        jksFile:  /securesocket.jks # ssl 加密 jks文件地址
        jksStorePassword: mu$tch8ng3 # 读取jks密码
