@@ -66,7 +66,6 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         });
         ConcurrentLinkedQueue<MqttMessage> queue = new ConcurrentLinkedQueue<>();
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(SacnScheduled.class);
-        AbstractBeanDefinition beanDefinition = beanBuilder.getBeanDefinition();
         beanBuilder.setInitMethodName("start");
         beanBuilder.setDestroyMethodName("close");
         beanBuilder.addConstructorArgValue(queue);
