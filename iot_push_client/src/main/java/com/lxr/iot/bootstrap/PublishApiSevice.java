@@ -1,14 +1,9 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bootstrap.Bean.*;
-import com.lxr.iot.pool.Scheduled;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * @author lxr
@@ -25,7 +20,7 @@ public class PublishApiSevice {
 //    }
 
 
-    protected  void sendQosMessage(Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
+    protected  void pubMessage(Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
         log.info("成功发送消息:"+new String(mqttMessage.getPayload()));
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,mqttMessage.isDup(), MqttQoS.valueOf(mqttMessage.getQos()),mqttMessage.isRetained(),0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(mqttMessage.getTopic(),mqttMessage.getMessageId());

@@ -44,10 +44,7 @@ public class ConnectOptions {
 
     private Class<MqttHander> mqttHander ;
 
-
-    private int  initalDelay ;
-
-    private  int period ;
+    private  int minPeriod ;
 
     private int bossThread;
 

@@ -1,6 +1,7 @@
 package com.lxr.iot.bootstrap.Bean;
 
 import com.lxr.iot.enums.ConfirmStatus;
+import com.lxr.iot.enums.QosStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -28,6 +29,9 @@ public class MqttMessage {
 
     private boolean time;
 
+    private long timestamp;
+
     private volatile ConfirmStatus confirmStatus;
+
 
 }

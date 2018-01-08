@@ -32,4 +32,14 @@ public class ScheduledPool implements Scheduled {
         return scheduledExecutorService.scheduleAtFixedRate(runnable, initalDelay, period, TimeUnit.SECONDS);
     }
 
+//    public static void main(String[] a) throws InterruptedException {
+//        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
+//        ScheduledFuture<?> schedule = scheduledExecutorService.schedule(new Runnable() {
+//            @Override
+//            public void run() {
+//                System.out.print("123");
+//            }
+//        }, 2, TimeUnit.SECONDS);
+//    }
+
 }

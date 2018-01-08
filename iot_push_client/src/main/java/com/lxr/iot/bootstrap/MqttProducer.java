@@ -2,11 +2,16 @@ package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.MqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
-import com.lxr.iot.bootstrap.back.ScanConfirmMessage;
+import com.lxr.iot.bootstrap.cache.Cache;
+import com.lxr.iot.bootstrap.time.ScanRunnable;
+import com.lxr.iot.enums.ConfirmStatus;
+import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
@@ -23,6 +28,17 @@ import java.util.Optional;
 @Slf4j
 public class MqttProducer  extends  AbsMqttProducer{
 
+
+
+    private static ScanRunnable scanRunnable;
+
+    private static Scheduled scheduled;
+
+
+    public MqttProducer(ScanRunnable scanRunnable,Scheduled scheduled) {
+        this.scanRunnable = scanRunnable;
+        this.scheduled=scheduled;
+    }
 
     public  MqttProducer connect(ConnectOptions connectOptions){
         connectTo(connectOptions);
@@ -46,27 +62,17 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     @Override
     public void pub(String topic, String message, boolean retained, int qos) {
-        MqttMessage   mqttMessage=  buildMqttMessage(topic,message,retained,qos,false,true);
-        sendQosMessage(channel,mqttMessage);
-        boolean flag;
-        do{
-            flag=  ScanConfirmMessage.addQueue(mqttMessage);
-        }while (!flag);
-        //        Optional.ofNullable(mqttMessage).ifPresent(mqttMessage1 -> {
-//            switch (MqttQoS.valueOf(mqttMessage1.getQos())){
-//                case AT_MOST_ONCE:
-//                    sendQos0(channel,mqttMessage1);
-//                    break;
-//                case AT_LEAST_ONCE:
-//                    sendQos1(channel,mqttMessage1);
-//                    break;
-//                case EXACTLY_ONCE:
-//            }
-//        });
-
+        MqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
+        pubMessage(channel, mqttMessage);
+        scheduled.submit(() -> {
+            boolean flag;
+            do {
+                flag = scanRunnable.addQueue(mqttMessage);
+            } while (!flag);
+        });
     }
 
-    private MqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos,boolean dup,boolean time) {
+    private MqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {
         int messageId=0;
         if(qos!=0){
             messageId=MessageId.messageId();
@@ -78,6 +84,7 @@ public class MqttProducer  extends  AbsMqttProducer{
                     .dup(dup)
                     .retained(retained)
                     .qos(qos)
+                    .confirmStatus(ConfirmStatus.PUB)
                     .payload(message.getBytes("Utf-8")).build();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

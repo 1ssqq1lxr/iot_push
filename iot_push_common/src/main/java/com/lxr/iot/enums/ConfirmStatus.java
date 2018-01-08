@@ -9,7 +9,9 @@ package com.lxr.iot.enums;/**
  * @create 2018-01-06 17:15
  **/
 public enum ConfirmStatus {
-    YES,
-    NO
+    PUB,
+    PUBREC,
+    PUBREL,
+    COMPLETE
 
 }
