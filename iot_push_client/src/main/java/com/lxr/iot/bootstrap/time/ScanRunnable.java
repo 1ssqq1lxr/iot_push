@@ -1,9 +1,7 @@
 package com.lxr.iot.bootstrap.time;
 
 import com.lxr.iot.bootstrap.PublishApiSevice;
-import com.lxr.iot.pool.Scheduled;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -33,6 +31,7 @@ public abstract class ScanRunnable<T> extends PublishApiSevice implements Runnab
     @Override
     public void run() {
         T poll ;
+        System.out.print("===========================");
         for(;(poll=queue.poll())!=null;){
             doInfo(poll);
         }

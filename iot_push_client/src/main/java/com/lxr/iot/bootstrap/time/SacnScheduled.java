@@ -2,7 +2,6 @@ package com.lxr.iot.bootstrap.time;
 
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.pool.Scheduled;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.concurrent.*;
@@ -18,6 +17,8 @@ public class SacnScheduled extends ScanRunnable {
 
     private Producer producer;
 
+    private  ScheduledFuture<?> submit;
+
     public SacnScheduled(ConcurrentLinkedQueue queue,Producer producer) {
         super(queue);
         this.producer=producer;
@@ -25,8 +26,15 @@ public class SacnScheduled extends ScanRunnable {
 
     public  void start(){
         Scheduled  scheduled = new ScheduledPool();
-        scheduled.submit(this);
+        this.submit = scheduled.submit(this);
     }
+
+    public  void close(){
+        if(submit!=null && !submit.isCancelled()){
+            submit.cancel(true);
+        }
+    }
+
 
     @Override
     public void doInfo(Object poll) {

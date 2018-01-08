@@ -9,6 +9,7 @@ import com.lxr.iot.properties.ConnectOptions;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -65,6 +66,9 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         });
         ConcurrentLinkedQueue<MqttMessage> queue = new ConcurrentLinkedQueue<>();
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(SacnScheduled.class);
+        AbstractBeanDefinition beanDefinition = beanBuilder.getBeanDefinition();
+        beanBuilder.setInitMethodName("start");
+        beanBuilder.setDestroyMethodName("close");
         beanBuilder.addConstructorArgValue(queue);
         beanBuilder.addConstructorArgValue(connect);
         String containerBeanName = String.format("%s_%s", SacnScheduled.class.getName(), counter.incrementAndGet());
