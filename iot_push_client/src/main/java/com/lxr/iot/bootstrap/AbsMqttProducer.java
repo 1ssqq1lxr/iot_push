@@ -37,14 +37,12 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     private  NettyBootstrapClient nettyBootstrapClient ;
 
+
+
+
     public Channel getChannel() {
         return channel;
     }
-
-
-    //    public AbsMqttProducer() {
-//        super((Runnable runnable) -> scheduledExecutorService.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.SECONDS));
-//    }
 
     public void setMqttListener(MqttListener mqttListener) {
         this.mqttListener = mqttListener;

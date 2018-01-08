@@ -1,8 +1,7 @@
 package com.lxr.iot.bootstrap.time;
 
-import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.PublishApiSevice;
-import com.lxr.iot.properties.ConnectOptions;
+import com.lxr.iot.pool.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,23 +32,11 @@ public abstract class ScanRunnable<T> extends PublishApiSevice implements Runnab
 
     @Override
     public void run() {
-        for (;;){
-            T poll = queue.poll();
-            if(poll==null){
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    log.error("睡眠异常",e);
-                }
-            }
-            else{
-                // 进行处理
-                doInfo(poll);
-            }
+        T poll ;
+        for(;(poll=queue.poll())!=null;){
+            doInfo(poll);
         }
     }
-
-
     public  abstract  void  doInfo( T poll);
 
 

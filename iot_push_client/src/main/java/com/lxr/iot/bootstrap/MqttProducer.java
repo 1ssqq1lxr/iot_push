@@ -3,6 +3,7 @@ package com.lxr.iot.bootstrap;
 import com.lxr.iot.bootstrap.Bean.MqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.bootstrap.cache.Cache;
+import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.bootstrap.time.ScanRunnable;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.pool.Scheduled;
@@ -29,16 +30,8 @@ import java.util.Optional;
 public class MqttProducer  extends  AbsMqttProducer{
 
 
-
-    private static ScanRunnable scanRunnable;
-
-    private static Scheduled scheduled;
-
-
-    public MqttProducer(ScanRunnable scanRunnable,Scheduled scheduled) {
-        this.scanRunnable = scanRunnable;
-        this.scheduled=scheduled;
-    }
+    @Autowired
+    private SacnScheduled sacnScheduled;
 
     public  MqttProducer connect(ConnectOptions connectOptions){
         connectTo(connectOptions);
@@ -56,7 +49,7 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
     @Override
     public void pub(String topic,String message){
-            pub(topic,message,false,0);
+        pub(topic,message,false,0);
     }
 
 
@@ -64,12 +57,10 @@ public class MqttProducer  extends  AbsMqttProducer{
     public void pub(String topic, String message, boolean retained, int qos) {
         MqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
         pubMessage(channel, mqttMessage);
-        scheduled.submit(() -> {
-            boolean flag;
-            do {
-                flag = scanRunnable.addQueue(mqttMessage);
-            } while (!flag);
-        });
+        boolean flag;
+        do {
+            flag = sacnScheduled.addQueue(mqttMessage);
+        } while (!flag);
     }
 
     private MqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {
@@ -103,7 +94,7 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
     private List<MqttTopicSubscription> getTopics(SubMessage[] subMessages) {
-       return  Optional.ofNullable(subMessages)
+        return  Optional.ofNullable(subMessages)
                 .map(subMessages1 -> {
                     List<MqttTopicSubscription> mqttTopicSubscriptions = new LinkedList<>();
                     for(SubMessage sb :subMessages1){
@@ -113,8 +104,6 @@ public class MqttProducer  extends  AbsMqttProducer{
                     return mqttTopicSubscriptions;
                 }).orElseGet(null);
     }
-
-
 
 
 }

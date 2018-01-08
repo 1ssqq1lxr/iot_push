@@ -5,6 +5,7 @@ import com.lxr.iot.exception.NoFindHandlerException;
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.mqtt.MqttHandlerIntf;
 import com.lxr.iot.mqtt.ServerMqttHandlerService;
+import com.lxr.iot.properties.ConnectOptions;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -87,6 +88,13 @@ public class DefaultMqttHandler extends MqttHander {
                     break;
             }
         }
+    }
+
+
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().remoteAddress().toString()+"链接成功");
     }
 
     @Override

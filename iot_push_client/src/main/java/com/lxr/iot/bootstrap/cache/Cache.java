@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class Cache {
 
-    private  ConcurrentHashMap<String,MqttMessage> message = new ConcurrentHashMap<>();
+    private static  ConcurrentHashMap<String,MqttMessage> message = new ConcurrentHashMap<>();
 
 
     public boolean put(String messageId,MqttMessage mqttMessage){
