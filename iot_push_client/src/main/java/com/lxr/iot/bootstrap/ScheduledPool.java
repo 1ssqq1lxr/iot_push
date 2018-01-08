@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  **/
 public class ScheduledPool implements Scheduled {
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
 
     private final ConnectOptions connectOptions;
 

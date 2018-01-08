@@ -4,10 +4,7 @@ import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.InitBean;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 定时任务
@@ -18,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class ScheduledPool implements Scheduled {
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(20);
+
 
     private final InitBean serverBean;
 
