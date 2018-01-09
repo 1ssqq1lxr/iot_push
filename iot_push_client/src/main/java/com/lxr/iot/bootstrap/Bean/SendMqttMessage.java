@@ -13,7 +13,7 @@ import lombok.Data;
  **/
 @Data
 @Builder
-public class MqttMessage {
+public class SendMqttMessage {
 
     private String Topic;
 

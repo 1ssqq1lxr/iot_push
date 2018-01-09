@@ -1,18 +1,14 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
-import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.bootstrap.time.SacnScheduled;
-import com.lxr.iot.bootstrap.time.ScanRunnable;
 import com.lxr.iot.enums.ConfirmStatus;
-import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
@@ -55,7 +51,7 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     @Override
     public void pub(String topic, String message, boolean retained, int qos) {
-        MqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
+        SendMqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
         pubMessage(channel, mqttMessage);
         boolean flag;
         do {
@@ -63,13 +59,13 @@ public class MqttProducer  extends  AbsMqttProducer{
         } while (!flag);
     }
 
-    private MqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {
+    private SendMqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {
         int messageId=0;
         if(qos!=0){
             messageId=MessageId.messageId();
         }
         try {
-            return MqttMessage.builder().messageId(messageId)
+            return SendMqttMessage.builder().messageId(messageId)
                     .time(time)
                     .Topic(topic)
                     .dup(dup)

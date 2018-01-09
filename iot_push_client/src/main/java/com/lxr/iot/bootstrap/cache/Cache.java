@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.cache;
 
-import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,23 +12,23 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class Cache {
 
-    private static  ConcurrentHashMap<String,MqttMessage> message = new ConcurrentHashMap<>();
+    private static  ConcurrentHashMap<Integer,SendMqttMessage> message = new ConcurrentHashMap<>();
 
 
-    public boolean put(String messageId,MqttMessage mqttMessage){
+    public static  boolean put(Integer messageId,SendMqttMessage mqttMessage){
 
         return message.put(messageId,mqttMessage)==null;
 
     }
 
-    public MqttMessage get(String messageId){
+    public static SendMqttMessage get(Integer messageId){
 
         return  message.get(messageId);
 
     }
 
 
-    public void del(String messageId){
-        message.remove(messageId);
+    public static SendMqttMessage del(Integer messageId){
+        return message.remove(messageId);
     }
 }

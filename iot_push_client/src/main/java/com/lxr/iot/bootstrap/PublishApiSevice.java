@@ -1,5 +1,7 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.cache.Cache;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
@@ -20,16 +22,19 @@ public class PublishApiSevice {
 //    }
 
 
-    protected  void pubMessage(Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
+    protected  void pubMessage(Channel channel, SendMqttMessage mqttMessage){
         log.info("成功发送消息:"+new String(mqttMessage.getPayload()));
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,mqttMessage.isDup(), MqttQoS.valueOf(mqttMessage.getQos()),mqttMessage.isRetained(),0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(mqttMessage.getTopic(),mqttMessage.getMessageId());
         MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader, Unpooled.wrappedBuffer(mqttMessage.getPayload()));
         channel.writeAndFlush(mqttPublishMessage);
+        if(mqttMessage.getQos()!=0){
+            Cache.put(mqttMessage.getMessageId(),mqttMessage);
+        }
     }
 
 //
-//    protected void  sendQos0(Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
+//    protected void  sendQos0(Channel channel, com.lxr.iot.bootstrap.Bean.SendMqttMessage mqttMessage){
 //        log.info("成功发送消息:"+new String(mqttMessage.getPayload()));
 //        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,mqttMessage.isDup(), MqttQoS.AT_MOST_ONCE,mqttMessage.isRetained(),0);
 //        MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(mqttMessage.getTopic(),0 );
@@ -42,7 +47,7 @@ public class PublishApiSevice {
 //     * @param channel
 //     * @param mqttMessage
 //     */
-//    protected   void  sendQos1(Channel channel, com.lxr.iot.bootstrap.Bean.MqttMessage mqttMessage){
+//    protected   void  sendQos1(Channel channel, com.lxr.iot.bootstrap.Bean.SendMqttMessage mqttMessage){
 //        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,mqttMessage.isDup(), MqttQoS.AT_LEAST_ONCE,mqttMessage.isRetained(),0);
 //        MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(mqttMessage.getTopic(),mqttMessage.getMessageId());
 //        MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader, Unpooled.wrappedBuffer(mqttMessage.getPayload()));

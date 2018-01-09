@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.time;
 
-import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.pool.Scheduled;
 import io.netty.channel.Channel;
 import lombok.Data;
@@ -41,13 +41,13 @@ public class SacnScheduled extends ScanRunnable {
 
 
     @Override
-    public void doInfo(MqttMessage poll) {
+    public void doInfo(SendMqttMessage poll) {
             if(checkTime(poll)){
                 pubMessage(channel,poll);
             }
     }
 
-    private boolean checkTime(MqttMessage poll) {
+    private boolean checkTime(SendMqttMessage poll) {
         return System.currentTimeMillis()-poll.getTimestamp()>=seconds*1000;
     }
 

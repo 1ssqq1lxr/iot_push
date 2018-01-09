@@ -1,8 +1,12 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
+import com.lxr.iot.bootstrap.Bean.*;
+import com.lxr.iot.bootstrap.cache.Cache;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,6 +26,9 @@ public class MqttHandlerServiceService extends ClientMqttHandlerService {
 
     @Override
     public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
+        int messageId = mqttMessage.variableHeader().messageId();
+        SendMqttMessage sendMqttMessage = Cache.del(messageId);
+        sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
     }
 
     @Override

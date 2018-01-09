@@ -1,6 +1,6 @@
 package com.lxr.iot.bootstrap.time;
 
-import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.PublishApiSevice;
 import com.lxr.iot.enums.ConfirmStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -21,25 +21,25 @@ public abstract class ScanRunnable extends PublishApiSevice implements Runnable 
 
 
 
-    public ScanRunnable(ConcurrentLinkedQueue<MqttMessage> queue) {
+    public ScanRunnable(ConcurrentLinkedQueue<SendMqttMessage> queue) {
         this.queue = queue;
     }
 
-    private ConcurrentLinkedQueue<MqttMessage> queue ;
+    private ConcurrentLinkedQueue<SendMqttMessage> queue ;
 
-    public  boolean addQueue(MqttMessage t){
+    public  boolean addQueue(SendMqttMessage t){
         return queue.add(t);
     }
 
-    public  boolean addQueues(List<MqttMessage> ts){
+    public  boolean addQueues(List<SendMqttMessage> ts){
         return queue.addAll(ts);
     }
 
 
     @Override
     public void run() {
-        List<MqttMessage> list = new LinkedList<>();
-        MqttMessage poll ;
+        List<SendMqttMessage> list = new LinkedList<>();
+        SendMqttMessage poll ;
         for(;(poll=queue.poll())!=null;){
             doInfo(poll);
             if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
@@ -48,7 +48,7 @@ public abstract class ScanRunnable extends PublishApiSevice implements Runnable 
         }
         addQueues(list);
     }
-    public  abstract  void  doInfo( MqttMessage poll);
+    public  abstract  void  doInfo( SendMqttMessage poll);
 
 
 }

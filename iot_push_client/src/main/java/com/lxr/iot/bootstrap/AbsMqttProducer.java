@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class AbsMqttProducer extends PublishApiSevice implements  Producer {
 
-    private static ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(100);
 
     protected   Channel channel;
 

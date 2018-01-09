@@ -1,6 +1,6 @@
 package com.lxr.iot.auto;
 
-import com.lxr.iot.bootstrap.Bean.MqttMessage;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
@@ -9,7 +9,6 @@ import com.lxr.iot.properties.ConnectOptions;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -64,7 +63,7 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
 
             });
         });
-        ConcurrentLinkedQueue<MqttMessage> queue = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<SendMqttMessage> queue = new ConcurrentLinkedQueue<>();
         BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(SacnScheduled.class);
         beanBuilder.setInitMethodName("start");
         beanBuilder.setDestroyMethodName("close");
