@@ -70,6 +70,7 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         beanBuilder.setDestroyMethodName("close");
         beanBuilder.addConstructorArgValue(queue);
         beanBuilder.addConstructorArgValue(connect);
+        beanBuilder.addConstructorArgValue(connectOptions.getMinPeriod());
         String containerBeanName = String.format("%s_%s", SacnScheduled.class.getName(), counter.incrementAndGet());
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
         beanFactory.registerBeanDefinition(containerBeanName, beanBuilder.getBeanDefinition());

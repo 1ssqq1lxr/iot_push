@@ -1,7 +1,8 @@
 package com.lxr.iot.bootstrap.time;
 
-import com.lxr.iot.bootstrap.Producer;
+import com.lxr.iot.bootstrap.Bean.MqttMessage;
 import com.lxr.iot.pool.Scheduled;
+import io.netty.channel.Channel;
 import lombok.Data;
 
 import java.util.concurrent.*;
@@ -15,13 +16,16 @@ import java.util.concurrent.*;
 @Data
 public class SacnScheduled extends ScanRunnable {
 
-    private Producer producer;
+    private Channel channel;
 
     private  ScheduledFuture<?> submit;
 
-    public SacnScheduled(ConcurrentLinkedQueue queue,Producer producer) {
+    private  int  seconds;
+
+    public SacnScheduled(ConcurrentLinkedQueue queue,Channel channel,int seconds) {
         super(queue);
-        this.producer=producer;
+        this.channel=channel;
+        this.seconds=seconds;
     }
 
     public  void start(){
@@ -37,8 +41,14 @@ public class SacnScheduled extends ScanRunnable {
 
 
     @Override
-    public void doInfo(Object poll) {
+    public void doInfo(MqttMessage poll) {
+            if(checkTime(poll)){
+                pubMessage(channel,poll);
+            }
+    }
 
+    private boolean checkTime(MqttMessage poll) {
+        return System.currentTimeMillis()-poll.getTimestamp()>=seconds*1000;
     }
 
 
