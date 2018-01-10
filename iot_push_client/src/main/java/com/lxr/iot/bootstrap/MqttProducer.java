@@ -79,6 +79,7 @@ public class MqttProducer  extends  AbsMqttProducer{
                     .retained(retained)
                     .qos(qos)
                     .confirmStatus(ConfirmStatus.PUB)
+                    .timestamp(System.currentTimeMillis())
                     .payload(message.getBytes("Utf-8")).build();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
