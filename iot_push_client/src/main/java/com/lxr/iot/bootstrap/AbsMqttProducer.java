@@ -79,6 +79,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         }
     }
 
+
     protected void initPool(ConcurrentLinkedQueue queue, int seconds){
         this.sacnScheduled =new SacnScheduled(queue,this.channel,seconds);
         sacnScheduled.start();

@@ -1,7 +1,6 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
-import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
