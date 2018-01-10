@@ -24,7 +24,6 @@ public class ConnectOptions {
 
     private boolean reuseaddr ;
 
-
     private boolean tcpNodelay ;
 
     private int backlog ;
@@ -41,8 +40,6 @@ public class ConnectOptions {
     private String jksStorePassword;
 
     private String jksCertificatePassword;
-
-    private Class<MqttHander> mqttHander ;
 
     private  int minPeriod ;
 
