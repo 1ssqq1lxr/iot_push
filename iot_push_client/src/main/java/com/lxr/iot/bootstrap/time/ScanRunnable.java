@@ -1,10 +1,11 @@
 package com.lxr.iot.bootstrap.time;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
-import com.lxr.iot.bootstrap.PublishApiSevice;
+import com.lxr.iot.bootstrap.MqttApi;
 import com.lxr.iot.enums.ConfirmStatus;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  **/
 
 @Slf4j
-public abstract class ScanRunnable extends PublishApiSevice implements Runnable {
+public abstract class ScanRunnable extends MqttApi implements Runnable {
 
 
 
@@ -26,6 +27,8 @@ public abstract class ScanRunnable extends PublishApiSevice implements Runnable 
     }
 
     private ConcurrentLinkedQueue<SendMqttMessage> queue ;
+
+    private List<SendMqttMessage> list = Collections.synchronizedList(new LinkedList<>());
 
     public  boolean addQueue(SendMqttMessage t){
         return queue.add(t);
@@ -38,7 +41,6 @@ public abstract class ScanRunnable extends PublishApiSevice implements Runnable 
 
     @Override
     public void run() {
-        List<SendMqttMessage> list = new LinkedList<>();
         SendMqttMessage poll ;
         for(;(poll=queue.poll())!=null;){
             doInfo(poll);

@@ -40,14 +40,14 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
 
     private ConfigurableApplicationContext applicationContext;
 
-    private AtomicLong counter = new AtomicLong(0);
 
     @Bean
     @ConditionalOnMissingBean()
     public Producer initServer(ConnectOptions connectOptions, Environment env){
         MqttProducer mqttProducer = new MqttProducer();
         Map<String, Object> beansWithAnnotation = this.applicationContext.getBeansWithAnnotation(MqttMessageListener.class);
-        MqttProducer connect = mqttProducer.connect(connectOptions);
+        checkArgs(connectOptions);
+        mqttProducer.connect(connectOptions);
         Optional.of(beansWithAnnotation).ifPresent(mqttListener -> {
             beansWithAnnotation.forEach((name, bean) -> {
                 Class<?> clazz = AopUtils.getTargetClass(bean);
@@ -63,17 +63,12 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
 
             });
         });
-        ConcurrentLinkedQueue<SendMqttMessage> queue = new ConcurrentLinkedQueue<>();
-        BeanDefinitionBuilder beanBuilder = BeanDefinitionBuilder.rootBeanDefinition(SacnScheduled.class);
-        beanBuilder.setInitMethodName("start");
-        beanBuilder.setDestroyMethodName("close");
-        beanBuilder.addConstructorArgValue(queue);
-        beanBuilder.addConstructorArgValue(connect);
-        beanBuilder.addConstructorArgValue(connectOptions.getMinPeriod());
-        String containerBeanName = String.format("%s_%s", SacnScheduled.class.getName(), counter.incrementAndGet());
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
-        beanFactory.registerBeanDefinition(containerBeanName, beanBuilder.getBeanDefinition());
         return mqttProducer;
+    }
+
+    private void checkArgs(ConnectOptions connectOptions) {
+
+
     }
 
     @Override

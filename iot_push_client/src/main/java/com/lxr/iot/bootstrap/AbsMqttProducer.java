@@ -1,13 +1,17 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
+import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.ip.IpUtils;
+import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.ConnectOptions;
-import com.lxr.iot.util.MessageId;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -16,6 +20,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @create 2018-01-04 17:23
  **/
 @Slf4j
-public abstract class AbsMqttProducer extends PublishApiSevice implements  Producer {
+public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
 
     protected   Channel channel;
@@ -36,6 +41,7 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
 
     private  NettyBootstrapClient nettyBootstrapClient ;
 
+    protected SacnScheduled sacnScheduled;
 
 
 
@@ -61,9 +67,17 @@ public abstract class AbsMqttProducer extends PublishApiSevice implements  Produ
         }
     }
 
+    protected void initPool(ConcurrentLinkedQueue queue,int seconds){
+        this.sacnScheduled =new SacnScheduled(queue,this.channel,seconds);
+        sacnScheduled.start();
+    }
+
+
+
     @Override
     public void close() {
         nettyBootstrapClient.shutdown();
+        sacnScheduled.close();
     }
 
     public  void connectBack(MqttConnAckMessage mqttConnAckMessage){

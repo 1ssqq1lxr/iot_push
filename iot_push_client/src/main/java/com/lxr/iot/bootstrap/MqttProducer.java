@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.bootstrap.time.SacnScheduled;
@@ -7,13 +8,16 @@ import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -26,12 +30,18 @@ import java.util.Optional;
 public class MqttProducer  extends  AbsMqttProducer{
 
 
-    @Autowired
-    private SacnScheduled sacnScheduled;
+    private static final AttributeKey key  =  AttributeKey.valueOf("topic");
+
 
     public  MqttProducer connect(ConnectOptions connectOptions){
         connectTo(connectOptions);
+        initPool(new ConcurrentLinkedQueue(),connectOptions.getMinPeriod());
         return this;
+    }
+
+    @Override
+    protected void initPool(ConcurrentLinkedQueue queue, int seconds) {
+        super.initPool(queue, seconds);
     }
 
     @Override
@@ -79,23 +89,41 @@ public class MqttProducer  extends  AbsMqttProducer{
         return null;
     }
 
+
     public void sub(SubMessage... subMessages){
-        Optional.ofNullable(getTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
-            MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(mqttTopicSubscriptions);
-            MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0);
-            MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(MessageId.messageId());
-            MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
-            channel.writeAndFlush(mqttSubscribeMessage);
+        Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
+            subMessage(channel,mqttTopicSubscriptions);
+        });
+        Optional.ofNullable(getTopics(subMessages)).ifPresent(strings -> {
+            List<String> topics = (List<String>) channel.attr(key).get();
+            if(CollectionUtils.isEmpty(topics)){
+                channel.attr(key).set(strings);
+            }
+            else{
+                topics.addAll(strings);
+            }
         });
     }
 
-    private List<MqttTopicSubscription> getTopics(SubMessage[] subMessages) {
+    private List<MqttTopicSubscription> getSubTopics(SubMessage[] subMessages) {
         return  Optional.ofNullable(subMessages)
                 .map(subMessages1 -> {
                     List<MqttTopicSubscription> mqttTopicSubscriptions = new LinkedList<>();
                     for(SubMessage sb :subMessages1){
                         MqttTopicSubscription mqttTopicSubscription  = new MqttTopicSubscription(sb.getTopic(),sb.getQos());
                         mqttTopicSubscriptions.add(mqttTopicSubscription);
+                    }
+                    return mqttTopicSubscriptions;
+                }).orElseGet(null);
+    }
+
+
+    private List<String> getTopics(SubMessage[] subMessages) {
+        return  Optional.ofNullable(subMessages)
+                .map(subMessages1 -> {
+                    List<String> mqttTopicSubscriptions = new LinkedList<>();
+                    for(SubMessage sb :subMessages1){
+                        mqttTopicSubscriptions.add(sb.getTopic());
                     }
                     return mqttTopicSubscriptions;
                 }).orElseGet(null);

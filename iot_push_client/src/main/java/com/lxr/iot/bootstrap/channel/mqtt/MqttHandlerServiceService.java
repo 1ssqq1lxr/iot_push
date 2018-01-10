@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @create 2018-01-02 20:48
  **/
 @Slf4j
-public class MqttHandlerServiceService extends ClientMqttHandlerService {
+public class MqttHandlerServiceService extends  ClientMqttHandlerService{
 
     @Override
     public void close(Channel channel) {
