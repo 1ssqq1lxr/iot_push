@@ -88,8 +88,12 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     @Override
     public void close() {
-        nettyBootstrapClient.shutdown();
-        sacnScheduled.close();
+        if(nettyBootstrapClient!=null){
+            nettyBootstrapClient.shutdown();
+        }
+        if(sacnScheduled!=null){
+            sacnScheduled.close();
+        }
     }
 
     public  void connectBack(MqttConnAckMessage mqttConnAckMessage){

@@ -1,6 +1,7 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
 import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import com.lxr.iot.mqtt.MqttHander;
@@ -64,7 +65,8 @@ public class DefaultMqttHandler extends MqttHander {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
             case CONNACK:
-                producer.connectBack((MqttConnAckMessage) mqttMessage);
+                MqttProducer mqttProducer = (MqttProducer)producer;
+                mqttProducer.connectBack((MqttConnAckMessage) mqttMessage);
                 break;
             case PUBLISH:
                 publish((MqttPublishMessage)mqttMessage);

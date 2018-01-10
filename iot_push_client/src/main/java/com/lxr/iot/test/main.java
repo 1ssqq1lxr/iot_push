@@ -37,6 +37,7 @@ public class main {
         connectOptions.setMqtt(mqttOpntions);
         producer.connect(connectOptions);
         producer.pub("/topic","hah",1);
+        producer.close();
     }
 
 }

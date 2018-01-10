@@ -17,8 +17,6 @@ public interface Producer {
 
     Producer connect(ConnectOptions connectOptions);
 
-    void connectBack(MqttConnAckMessage mqttConnAckMessage);
-
     void  close();
 
     void pub(String topic,String message,boolean retained,int qos);
