@@ -2,6 +2,7 @@ package com.lxr.iot.mqtt;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.timeout.IdleStateEvent;
 
 /**
  * 抽象出服务端事件
@@ -25,5 +26,7 @@ public abstract class ServerMqttHandlerService implements MqttHandlerIntf {
 
 
     public abstract void disconnect(Channel channel, MqttMessage mqttMessage);
+
+    public abstract void doTimeOut(Channel channel, IdleStateEvent evt);
 }
 

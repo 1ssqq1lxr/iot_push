@@ -84,9 +84,6 @@ public class DefaultMqttHandler extends MqttHander {
                 break;
             case SUBACK:
                 mqttProducer.suback((MqttSubAckMessage)mqttMessage);
-            case PINGRESP:
-                mqttHandlerApi.pingresp(channelHandlerContext.channel());
-                break;
             default:
                 break;
         }

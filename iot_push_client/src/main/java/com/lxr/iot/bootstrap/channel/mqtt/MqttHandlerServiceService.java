@@ -47,17 +47,11 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     }
 
     @Override
-    public void doTimeOut(Channel channel, IdleStateEvent evt) {
-
+    public void heart(Channel channel, IdleStateEvent evt) {
+        MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0);
+        MqttMessage mqttMessage  = new MqttMessage(fixedHeader);
+        channel.writeAndFlush(mqttMessage);
     }
+    
 
-    @Override
-    public void suback(Channel channel, MqttSubAckMessage mqttMessage) {
-
-    }
-
-    @Override
-    public void pingresp(Channel channel) {
-
-    }
 }
