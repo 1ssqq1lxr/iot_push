@@ -56,7 +56,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     public  void  connectTo(ConnectOptions connectOptions){
-        ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
         this.nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
         try {

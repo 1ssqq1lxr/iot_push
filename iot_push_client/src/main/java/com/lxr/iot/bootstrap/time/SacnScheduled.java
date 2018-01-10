@@ -4,6 +4,7 @@ import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.pool.Scheduled;
 import io.netty.channel.Channel;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.*;
  * @create 2018-01-08 19:22
  **/
 @Data
+@Slf4j
 public class SacnScheduled extends ScanRunnable {
 
     private Channel channel;
@@ -43,6 +45,7 @@ public class SacnScheduled extends ScanRunnable {
     @Override
     public void doInfo(SendMqttMessage poll) {
             if(checkTime(poll)){
+                log.info(String.format("【发送消息确认完成 %s : % s】",poll.getTopic(),poll.getMessageId()));
                 pubMessage(channel,poll);
             }
     }
