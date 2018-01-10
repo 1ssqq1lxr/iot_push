@@ -1,6 +1,8 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.bootstrap.time.SacnScheduled;
@@ -65,7 +67,19 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         }
     }
 
-    protected void initPool(ConcurrentLinkedQueue queue,int seconds){
+    @Override
+    protected void pubMessage(Channel channel, SendMqttMessage mqttMessage) {
+        super.pubMessage(channel, mqttMessage);
+        if(mqttMessage.getQos()!=0){
+            Cache.put(mqttMessage.getMessageId(),mqttMessage);
+            boolean flag;
+            do {
+                flag = sacnScheduled.addQueue(mqttMessage);
+            } while (!flag);
+        }
+    }
+
+    protected void initPool(ConcurrentLinkedQueue queue, int seconds){
         this.sacnScheduled =new SacnScheduled(queue,this.channel,seconds);
         sacnScheduled.start();
     }

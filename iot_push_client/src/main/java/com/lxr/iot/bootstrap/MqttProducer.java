@@ -30,7 +30,7 @@ public class MqttProducer  extends  AbsMqttProducer{
     private static final AttributeKey key  =  AttributeKey.valueOf("topic");
 
 
-    public  MqttProducer connect(ConnectOptions connectOptions){
+    public  Producer connect(ConnectOptions connectOptions){
         connectTo(connectOptions);
         initPool(new ConcurrentLinkedQueue(),connectOptions.getMinPeriod());
         return this;
@@ -60,10 +60,6 @@ public class MqttProducer  extends  AbsMqttProducer{
     public void pub(String topic, String message, boolean retained, int qos) {
         SendMqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
         pubMessage(channel, mqttMessage);
-        boolean flag;
-        do {
-            flag = sacnScheduled.addQueue(mqttMessage);
-        } while (!flag);
     }
 
     private SendMqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {

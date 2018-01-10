@@ -15,7 +15,7 @@ public interface Producer {
 
     Channel getChannel();
 
-    void connectTo(ConnectOptions connectOptions);
+    Producer connect(ConnectOptions connectOptions);
 
     void connectBack(MqttConnAckMessage mqttConnAckMessage);
 

@@ -26,9 +26,7 @@ public class MqttApi {
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(mqttMessage.getTopic(),mqttMessage.getMessageId());
         MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader, Unpooled.wrappedBuffer(mqttMessage.getPayload()));
         channel.writeAndFlush(mqttPublishMessage);
-        if(mqttMessage.getQos()!=0){
-            Cache.put(mqttMessage.getMessageId(),mqttMessage);
-        }
+
     }
 
     protected  void subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions){

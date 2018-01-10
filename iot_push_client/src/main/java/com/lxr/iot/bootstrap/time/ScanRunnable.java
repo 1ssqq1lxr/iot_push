@@ -28,7 +28,6 @@ public abstract class ScanRunnable extends MqttApi implements Runnable {
 
     private ConcurrentLinkedQueue<SendMqttMessage> queue ;
 
-    private List<SendMqttMessage> list = Collections.synchronizedList(new LinkedList<>());
 
     public  boolean addQueue(SendMqttMessage t){
         return queue.add(t);
@@ -41,13 +40,16 @@ public abstract class ScanRunnable extends MqttApi implements Runnable {
 
     @Override
     public void run() {
+        List<SendMqttMessage> list =new LinkedList<>();
         SendMqttMessage poll ;
         for(;(poll=queue.poll())!=null;){
-            doInfo(poll);
             if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
-                log.info(String.format("【消息没完成确认完成 %s : % s】",poll.getTopic(),poll.getMessageId()));
+                log.info("【消息未确认成功 "+poll.getMessageId()+":"+poll.getTopic()+"】");
                 list.add(poll);
+                doInfo(poll);
             }
+            log.info("【消息确认成功 "+poll.getMessageId()+":"+poll.getTopic()+"】");
+            break;
         }
         addQueues(list);
     }

@@ -45,11 +45,9 @@ public class SacnScheduled extends ScanRunnable {
     @Override
     public void doInfo(SendMqttMessage poll) {
         if(checkTime(poll)){
-            log.info(String.format("【发送消息确认完成 %s : % s】",poll.getTopic(),poll.getMessageId()));
+            log.info("【重复发送消息 "+poll.getMessageId()+":"+poll.getTopic()+"】");
             pubMessage(channel,poll);
         }
-        else
-            log.info(String.format("【重复发送消息时间未到 %s : % s】",poll.getTopic(),poll.getMessageId()));
     }
 
     private boolean checkTime(SendMqttMessage poll) {
@@ -60,7 +58,7 @@ public class SacnScheduled extends ScanRunnable {
     static class ScheduledPool implements Scheduled {
         private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         public ScheduledFuture<?> submit(Runnable runnable){
-            return scheduledExecutorService.scheduleAtFixedRate(runnable,10,10, TimeUnit.SECONDS);
+            return scheduledExecutorService.scheduleAtFixedRate(runnable,2,2, TimeUnit.SECONDS);
         }
 
 
