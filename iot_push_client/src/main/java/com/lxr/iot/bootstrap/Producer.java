@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap;
 
+import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
 import io.netty.channel.Channel;
@@ -18,6 +19,8 @@ public interface Producer {
     Producer connect(ConnectOptions connectOptions);
 
     void  close();
+
+    void setMqttListener(MqttListener mqttListener);
 
     void pub(String topic,String message,boolean retained,int qos);
 
