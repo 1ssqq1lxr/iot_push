@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class MqttProducer  extends  AbsMqttProducer{
 
-
     private static final AttributeKey key  =  AttributeKey.valueOf("topic");
 
 
