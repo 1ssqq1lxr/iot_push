@@ -18,12 +18,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
+import io.netty.handler.codec.mqtt.MqttSubAckMessage;
+import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
+    protected ConcurrentHashMap<Integer,List<MqttTopicSubscription>> submessage = new ConcurrentHashMap<>();
 
     protected   Channel channel;
 
@@ -43,7 +44,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     private  NettyBootstrapClient nettyBootstrapClient ;
 
     protected SacnScheduled sacnScheduled;
-
 
 
     public Channel getChannel() {
@@ -79,13 +79,15 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         }
     }
 
-
     protected void initPool(ConcurrentLinkedQueue queue, int seconds){
         this.sacnScheduled =new SacnScheduled(queue,this.channel,seconds);
         sacnScheduled.start();
     }
 
-
+    @Override
+    protected int subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions) {
+        return super.subMessage(channel, mqttTopicSubscriptions);
+    }
 
     @Override
     public void close() {
@@ -115,6 +117,14 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                 throw new RuntimeException("未授权登录");
         }
 
+    }
+
+    
+    public void suback(MqttSubAckMessage mqttMessage) {
+        ScheduledFuture<?> scheduledFuture = channel.attr(getKey(Integer.toString(mqttMessage.variableHeader().messageId()))).get();
+        if(scheduledFuture!=null){
+            scheduledFuture.cancel(true);
+        }
     }
 
     class NettyBootstrapClient extends AbstractBootstrapClient {

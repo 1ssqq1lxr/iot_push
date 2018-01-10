@@ -86,7 +86,8 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     public void sub(SubMessage... subMessages){
         Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
-            subMessage(channel,mqttTopicSubscriptions);
+            submessage.put(subMessage(channel,mqttTopicSubscriptions),mqttTopicSubscriptions);
+
         });
         Optional.ofNullable(getTopics(subMessages)).ifPresent(strings -> {
             List<String> topics = (List<String>) channel.attr(key).get();

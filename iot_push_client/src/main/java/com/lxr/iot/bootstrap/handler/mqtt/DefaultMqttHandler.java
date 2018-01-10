@@ -62,10 +62,10 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
+        MqttProducer mqttProducer = (MqttProducer)producer;
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
             case CONNACK:
-                MqttProducer mqttProducer = (MqttProducer)producer;
                 mqttProducer.connectBack((MqttConnAckMessage) mqttMessage);
                 break;
             case PUBLISH:
@@ -83,7 +83,7 @@ public class DefaultMqttHandler extends MqttHander {
                 mqttHandlerApi.pubcomp(channelHandlerContext.channel(),mqttMessage);
                 break;
             case SUBACK:
-                mqttHandlerApi.suback(channelHandlerContext.channel(),(MqttSubAckMessage)mqttMessage);
+                mqttProducer.suback((MqttSubAckMessage)mqttMessage);
             case PINGRESP:
                 mqttHandlerApi.pingresp(channelHandlerContext.channel());
                 break;
