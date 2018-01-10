@@ -1,16 +1,13 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.auto.MqttListener;
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
-import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
-import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;

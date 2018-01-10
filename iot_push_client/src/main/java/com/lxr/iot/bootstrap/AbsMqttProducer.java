@@ -1,28 +1,27 @@
 package com.lxr.iot.bootstrap;
 
-import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
-import com.lxr.iot.bootstrap.cache.Cache;
-import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.ip.IpUtils;
-import com.lxr.iot.pool.Scheduled;
 import com.lxr.iot.properties.ConnectOptions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttConnAckMessage;
+import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
