@@ -45,7 +45,6 @@ public class SacnScheduled extends ScanRunnable {
     @Override
     public void doInfo(SendMqttMessage poll) {
         if(checkTime(poll)){
-            log.info("【重复发送消息 "+poll.getMessageId()+":"+poll.getTopic()+"】");
             pubMessage(channel,poll);
         }
     }

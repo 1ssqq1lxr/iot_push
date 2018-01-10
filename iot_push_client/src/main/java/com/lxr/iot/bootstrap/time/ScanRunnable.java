@@ -44,11 +44,9 @@ public abstract class ScanRunnable extends MqttApi implements Runnable {
         SendMqttMessage poll ;
         for(;(poll=queue.poll())!=null;){
             if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
-                log.info("【消息未确认成功 "+poll.getMessageId()+":"+poll.getTopic()+"】");
                 list.add(poll);
                 doInfo(poll);
             }
-            log.info("【消息确认成功 "+poll.getMessageId()+":"+poll.getTopic()+"】");
             break;
         }
         addQueues(list);
