@@ -100,10 +100,9 @@ public class DefaultMqttHandler extends MqttHander {
         if(mqttListener!=null){
             mqttListener.callBack(mqttPublishVariableHeader.topicName(),new String(bytes));
         }
-        int messageId = mqttPublishVariableHeader.messageId();
         switch (mqttFixedHeader.qosLevel()){
-            case AT_LEAST_ONCE:
             case AT_MOST_ONCE:
+            case AT_LEAST_ONCE:
             case EXACTLY_ONCE:
         }
 
