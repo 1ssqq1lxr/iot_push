@@ -67,7 +67,7 @@ public class DefaultMqttHandler extends MqttHander {
                 mqttProducer.connectBack((MqttConnAckMessage) mqttMessage);
                 break;
             case PUBLISH:
-                publish((MqttPublishMessage)mqttMessage);
+                publish(channelHandlerContext.channel(),(MqttPublishMessage)mqttMessage);
             case PUBACK: // qos 1回复确认
                 mqttHandlerApi.puback(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
                 break;
@@ -81,13 +81,13 @@ public class DefaultMqttHandler extends MqttHander {
                 mqttHandlerApi.pubcomp(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
                 break;
             case SUBACK:
-                mqttProducer.suback((MqttSubAckMessage)mqttMessage);
+                mqttHandlerApi.suback(channelHandlerContext.channel(),(MqttSubAckMessage)mqttMessage);
             default:
                 break;
         }
     }
 
-    private void publish(MqttPublishMessage mqttMessage) {
+    private void publish(Channel channel,MqttPublishMessage mqttMessage) {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         MqttPublishVariableHeader mqttPublishVariableHeader = mqttMessage.variableHeader();
         ByteBuf payload = mqttMessage.payload();
@@ -97,7 +97,10 @@ public class DefaultMqttHandler extends MqttHander {
         }
         switch (mqttFixedHeader.qosLevel()){
             case AT_MOST_ONCE:
+                break;
             case AT_LEAST_ONCE:
+                mqttHandlerApi.pubRecMessage(channel,mqttPublishVariableHeader.messageId());
+                break;
             case EXACTLY_ONCE:
         }
 

@@ -117,13 +117,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     }
 
-    
-    public void suback(MqttSubAckMessage mqttMessage) {
-        ScheduledFuture<?> scheduledFuture = channel.attr(getKey(Integer.toString(mqttMessage.variableHeader().messageId()))).get();
-        if(scheduledFuture!=null){
-            scheduledFuture.cancel(true);
-        }
-    }
+
 
     class NettyBootstrapClient extends AbstractBootstrapClient {
 

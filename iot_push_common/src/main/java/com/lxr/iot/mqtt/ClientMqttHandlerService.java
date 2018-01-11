@@ -1,6 +1,7 @@
 package com.lxr.iot.mqtt;
 
 import io.netty.channel.Channel;
+import io.netty.handler.codec.mqtt.MqttSubAckMessage;
 import io.netty.handler.timeout.IdleStateEvent;
 
 /**
@@ -18,5 +19,8 @@ public abstract class ClientMqttHandlerService implements MqttHandlerIntf {
 
     public abstract void  heart(Channel channel, IdleStateEvent evt);
 
+    public abstract void pubRecMessage(Channel channel,int messageId);
+
+    public abstract void suback(Channel channel,MqttSubAckMessage mqttMessage) ;
 }
 

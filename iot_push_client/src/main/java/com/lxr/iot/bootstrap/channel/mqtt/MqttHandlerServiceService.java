@@ -8,13 +8,15 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledFuture;
 
 /**
- * 客户端channelService
+ * 客户端channelService 处理收到消息信息
  *
  * @author lxr
  * @create 2018-01-02 20:48
@@ -49,7 +51,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     @Override
     public void pubrel(Channel channel, MqttPubAckMessage mqttMessage ) {
         int messageId = mqttMessage.variableHeader().messageId();
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL,false, MqttQoS.AT_MOST_ONCE,false,0x02);
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP,false, MqttQoS.AT_MOST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
         Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
@@ -72,6 +74,24 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
         MqttMessage mqttMessage  = new MqttMessage(fixedHeader);
         channel.writeAndFlush(mqttMessage);
     }
-    
+
+    @Override
+    public void pubRecMessage(Channel channel,int messageId) {
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        channel.writeAndFlush(mqttPubAckMessage);
+    }
+
+    public void suback(Channel channel,MqttSubAckMessage mqttMessage) {
+        ScheduledFuture<?> scheduledFuture = channel.attr(getKey(Integer.toString(mqttMessage.variableHeader().messageId()))).get();
+        if(scheduledFuture!=null){
+            scheduledFuture.cancel(true);
+        }
+    }
+
+    private AttributeKey<ScheduledFuture<?>> getKey(String id){
+        return   AttributeKey.valueOf(id);
+    }
 
 }

@@ -15,13 +15,14 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 操作api
+ * 操作api 处理主动发送请求
  *
  * @author lxr
  * @create 2018-01-10 9:36
  **/
 @Slf4j
 public class MqttApi {
+
 
 
 
@@ -52,7 +53,7 @@ public class MqttApi {
 
     }
 
-    protected AttributeKey<ScheduledFuture<?>> getKey(String id){
+    private AttributeKey<ScheduledFuture<?>> getKey(String id){
        return   AttributeKey.valueOf(id);
     }
 

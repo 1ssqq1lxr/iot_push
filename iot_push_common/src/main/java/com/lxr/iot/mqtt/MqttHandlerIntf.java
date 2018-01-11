@@ -23,4 +23,6 @@ public interface MqttHandlerIntf {
     void pubcomp(Channel channel, MqttPubAckMessage mqttMessage);
 
     void doTimeOut(Channel channel, IdleStateEvent evt);
+
+
 }
