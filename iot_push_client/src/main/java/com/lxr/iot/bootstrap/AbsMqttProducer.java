@@ -10,9 +10,7 @@ import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.ConnectOptions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -63,7 +61,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            log.error("等待链接超时",e);
+            nettyBootstrapClient.doubleConnect(); // 重新连接
         }
     }
 
@@ -139,6 +137,18 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         public NettyBootstrapClient(ConnectOptions connectOptions) {
             this.connectOptions = connectOptions;
         }
+
+
+        public void doubleConnect(){
+            ChannelFuture connect = bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort());
+            connect.addListener((ChannelFutureListener) future -> {
+                    if (future.isSuccess())
+                        AbsMqttProducer.this.channel =future.channel();
+                    else
+                        doubleConnect();
+            });
+        }
+
 
         @Override
         public Channel start() {

@@ -47,8 +47,6 @@ public class DefaultMqttHandler extends MqttHander {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        channel.writeAndFlush("123");
-//        Channel channel = ctx.channel();
         ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
         log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().localAddress().toString()+"启动成功");
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_LEAST_ONCE,false,10);
