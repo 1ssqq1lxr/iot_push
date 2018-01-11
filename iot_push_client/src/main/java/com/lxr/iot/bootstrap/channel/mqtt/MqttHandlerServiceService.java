@@ -25,9 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 public class MqttHandlerServiceService extends  ClientMqttHandlerService{
 
     @Override
-    public void close(Channel channel) {
-        channel.close();
-    }
+    public void close(Channel channel) {}
 
     @Override
     public void puback(Channel channel, MqttPubAckMessage mqttMessage) {

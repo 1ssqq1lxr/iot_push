@@ -72,16 +72,16 @@ public class DefaultMqttHandler extends MqttHander {
                 case UNSUBSCRIBE:
                     serverMqttHandlerService.unsubscribe(channel,(MqttUnsubscribeMessage)mqttMessage);
                     break;
-                case PUBACK: // qos 1回复确认
+                case PUBACK:
                     mqttHandlerApi.puback(channel,(MqttPubAckMessage)mqttMessage);
                     break;
-                case PUBREC: // 待实现
+                case PUBREC:
                     mqttHandlerApi.pubrec(channel,(MqttPubAckMessage)mqttMessage);
                     break;
-                case PUBREL: // 待实现
+                case PUBREL:
                     mqttHandlerApi.pubrel(channel,(MqttPubAckMessage)mqttMessage);
                     break;
-                case PUBCOMP: // 待实现
+                case PUBCOMP:
                     mqttHandlerApi.pubcomp(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 default:

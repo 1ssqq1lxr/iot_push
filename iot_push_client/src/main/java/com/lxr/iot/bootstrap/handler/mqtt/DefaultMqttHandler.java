@@ -1,6 +1,7 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
 import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.bootstrap.AbsMqttProducer;
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
@@ -108,7 +109,9 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        mqttHandlerApi.close(ctx.channel());
+        MqttProducer mqttProducer = (MqttProducer)producer;
+        mqttProducer.getNettyBootstrapClient().doubleConnect();
+//        log.error("exception",cause);
         if(mqttListener!=null){
             mqttListener.callThrowable(cause);
         }

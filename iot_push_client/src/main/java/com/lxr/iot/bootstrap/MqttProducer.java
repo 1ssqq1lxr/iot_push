@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,7 +28,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 public class MqttProducer  extends  AbsMqttProducer{
 
-    private static final AttributeKey key  =  AttributeKey.valueOf("topic");
 
 
     public  Producer connect(ConnectOptions connectOptions){
@@ -85,17 +86,16 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     public void sub(SubMessage... subMessages){
         Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
-            submessage.put(subMessage(channel,mqttTopicSubscriptions),mqttTopicSubscriptions);
-
+            int messageId = subMessage(channel, mqttTopicSubscriptions);
+            ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
+                if(channel.isActive()){
+                    subMessage(channel, mqttTopicSubscriptions);
+                }
+            }, 10, 10, TimeUnit.SECONDS);
+            channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
         });
         Optional.ofNullable(getTopics(subMessages)).ifPresent(strings -> {
-            List<String> topics = (List<String>) channel.attr(key).get();
-            if(CollectionUtils.isEmpty(topics)){
-                channel.attr(key).set(strings);
-            }
-            else{
                 topics.addAll(strings);
-            }
         });
     }
 

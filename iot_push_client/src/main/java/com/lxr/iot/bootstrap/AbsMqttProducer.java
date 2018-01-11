@@ -16,7 +16,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
-import io.netty.handler.codec.mqtt.MqttSubAckMessage;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,8 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
-    protected ConcurrentHashMap<Integer,List<MqttTopicSubscription>> submessage = new ConcurrentHashMap<>();
-
     protected   Channel channel;
 
     protected static  MqttListener mqttListener;
@@ -43,19 +40,12 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     protected SacnScheduled sacnScheduled;
 
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setMqttListener(MqttListener mqttListener) {
-        this.mqttListener = mqttListener;
-    }
+    protected   List<String> topics = new CopyOnWriteArrayList<>();
 
 
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-    public  void  connectTo(ConnectOptions connectOptions){
+    protected   void  connectTo(ConnectOptions connectOptions){
         this.nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
         try {
@@ -117,9 +107,13 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     }
 
+//    private  reSub(){
+//
+//    }
 
 
-    class NettyBootstrapClient extends AbstractBootstrapClient {
+
+    public class NettyBootstrapClient extends AbstractBootstrapClient {
 
         private NioEventLoopGroup bossGroup;
 
@@ -136,6 +130,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         public void doubleConnect(){
             ChannelFuture connect = bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort());
             connect.addListener((ChannelFutureListener) future -> {
+                    Thread.sleep(2000);
                     if (future.isSuccess())
                         AbsMqttProducer.this.channel =future.channel();
                     else
@@ -191,6 +186,18 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                 }
             });
         }
+    }
+
+    public NettyBootstrapClient getNettyBootstrapClient() {
+        return nettyBootstrapClient;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setMqttListener(MqttListener mqttListener) {
+        this.mqttListener = mqttListener;
     }
 
 

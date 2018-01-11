@@ -26,7 +26,7 @@ public class MqttApi {
 
 
 
-    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+    protected ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
 
     protected  void pubMessage(Channel channel, SendMqttMessage mqttMessage){
@@ -45,15 +45,11 @@ public class MqttApi {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(messageId);
         MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
         channel.writeAndFlush(mqttSubscribeMessage);
-        ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
-            subMessage(channel, mqttTopicSubscriptions);
-        }, 10, 10, TimeUnit.SECONDS);
-        channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
         return messageId;
 
     }
 
-    private AttributeKey<ScheduledFuture<?>> getKey(String id){
+    protected AttributeKey<ScheduledFuture<?>> getKey(String id){
        return   AttributeKey.valueOf(id);
     }
 

@@ -56,7 +56,6 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
             throw new Error(
                     "Failed to initialize the client-side SSLContext", e);
         }
-
         CLIENT_CONTEXT = clientContext;
     }
 }
