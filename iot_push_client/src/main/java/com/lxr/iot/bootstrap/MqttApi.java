@@ -49,6 +49,14 @@ public class MqttApi {
 
     }
 
+
+    protected void pubRecMessage(Channel channel,int messageId) {
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        channel.writeAndFlush(mqttPubAckMessage);
+    }
+
     protected AttributeKey<ScheduledFuture<?>> getKey(String id){
        return   AttributeKey.valueOf(id);
     }

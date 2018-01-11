@@ -19,8 +19,8 @@ public abstract class ClientMqttHandlerService implements MqttHandlerIntf {
 
     public abstract void  heart(Channel channel, IdleStateEvent evt);
 
-    public abstract void pubRecMessage(Channel channel,int messageId);
-
     public abstract void suback(Channel channel,MqttSubAckMessage mqttMessage) ;
+
+    public abstract void pubBackMessage(Channel channel, int i);
 }
 

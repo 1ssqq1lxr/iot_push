@@ -29,7 +29,7 @@ public class DefaultMqttHandler extends MqttHander {
 
     private ClientMqttHandlerService mqttHandlerApi;
 
-    private Producer producer;
+    private MqttProducer mqttProducer;
 
     private  MqttListener mqttListener;
     
@@ -37,7 +37,7 @@ public class DefaultMqttHandler extends MqttHander {
 
     public DefaultMqttHandler(ConnectOptions connectOptions, ClientMqttHandlerService mqttHandlerApi, Producer producer, MqttListener mqttListener) {
         super(mqttHandlerApi);
-        this.producer = producer;
+        this.mqttProducer =(MqttProducer) producer;
         this.mqttListener = mqttListener;
         this.mqttHandlerApi=mqttHandlerApi;
         this.connectOptions=connectOptions;
@@ -61,7 +61,6 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
-        MqttProducer mqttProducer = (MqttProducer)producer;
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
             case CONNACK:
@@ -100,16 +99,17 @@ public class DefaultMqttHandler extends MqttHander {
             case AT_MOST_ONCE:
                 break;
             case AT_LEAST_ONCE:
-                mqttHandlerApi.pubRecMessage(channel,mqttPublishVariableHeader.messageId());
+                mqttHandlerApi.pubBackMessage(channel,mqttPublishVariableHeader.messageId());
                 break;
             case EXACTLY_ONCE:
+                mqttProducer.pubRecMessage(channel,mqttPublishVariableHeader.messageId());
+                break;
         }
 
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        MqttProducer mqttProducer = (MqttProducer)producer;
         mqttProducer.getNettyBootstrapClient().doubleConnect();
 //        log.error("exception",cause);
         if(mqttListener!=null){

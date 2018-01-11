@@ -73,19 +73,19 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
         channel.writeAndFlush(mqttMessage);
     }
 
-    @Override
-    public void pubRecMessage(Channel channel,int messageId) {
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
-        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
-        channel.writeAndFlush(mqttPubAckMessage);
-    }
-
     public void suback(Channel channel,MqttSubAckMessage mqttMessage) {
         ScheduledFuture<?> scheduledFuture = channel.attr(getKey(Integer.toString(mqttMessage.variableHeader().messageId()))).get();
         if(scheduledFuture!=null){
             scheduledFuture.cancel(true);
         }
+    }
+    //qos1 send
+    @Override
+    public void pubBackMessage(Channel channel, int messageId) {
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBACK,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        channel.writeAndFlush(mqttPubAckMessage);
     }
 
     private AttributeKey<ScheduledFuture<?>> getKey(String id){

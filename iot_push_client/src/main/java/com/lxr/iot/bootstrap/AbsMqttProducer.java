@@ -57,6 +57,11 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     }
 
     @Override
+    public void pubRecMessage(Channel channel, int messageId) {
+        super.pubRecMessage(channel, messageId);
+    }
+
+    @Override
     protected void pubMessage(Channel channel, SendMqttMessage mqttMessage) {
         super.pubMessage(channel, mqttMessage);
         if(mqttMessage.getQos()!=0){
