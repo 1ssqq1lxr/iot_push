@@ -194,8 +194,8 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubrec(Channel channel, MqttMessage mqttMessage) {
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+    public void pubrec(Channel channel, MqttPubAckMessage mqttMessage ) {
+        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =  mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
         AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
@@ -214,7 +214,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubrel(Channel channel, MqttMessage mqttMessage) {
+    public void pubrel(Channel channel, MqttPubAckMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
         mqttChannelService.doPubrel(channel, messageId);
@@ -234,7 +234,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubcomp(Channel channel, MqttMessage mqttMessage) {
+    public void pubcomp(Channel channel, MqttPubAckMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
         AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);

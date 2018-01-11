@@ -9,6 +9,9 @@ import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Optional;
 
 /**
  * 客户端channelService
@@ -32,18 +35,35 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     }
 
     @Override
-    public void pubrec(Channel channel, MqttMessage mqttMessage) {
-
+    public void pubrec(Channel channel, MqttPubAckMessage mqttMessage ) {
+        int messageId = mqttMessage.variableHeader().messageId();
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+            sendMqttMessage.setConfirmStatus(ConfirmStatus.PUBREL);
+        });
+        channel.writeAndFlush(mqttPubAckMessage);
     }
 
     @Override
-    public void pubrel(Channel channel, MqttMessage mqttMessage) {
-
+    public void pubrel(Channel channel, MqttPubAckMessage mqttMessage ) {
+        int messageId = mqttMessage.variableHeader().messageId();
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL,false, MqttQoS.AT_MOST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+            sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
+        });
+        channel.writeAndFlush(mqttPubAckMessage);
     }
 
     @Override
-    public void pubcomp(Channel channel, MqttMessage mqttMessage) {
-
+    public void pubcomp(Channel channel,MqttPubAckMessage mqttMessage ) {
+        int messageId = mqttMessage.variableHeader().messageId();
+        Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+            sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
+        });
     }
 
     @Override
