@@ -76,13 +76,13 @@ public class DefaultMqttHandler extends MqttHander {
                     mqttHandlerApi.puback(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 case PUBREC: // 待实现
-                    mqttHandlerApi.pubrec(channel,mqttMessage);
+                    mqttHandlerApi.pubrec(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 case PUBREL: // 待实现
-                    mqttHandlerApi.pubrel(channel,mqttMessage);
+                    mqttHandlerApi.pubrel(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 case PUBCOMP: // 待实现
-                    mqttHandlerApi.pubcomp(channel,mqttMessage);
+                    mqttHandlerApi.pubcomp(channel,(MqttPubAckMessage)mqttMessage);
                     break;
                 default:
                     break;
