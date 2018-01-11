@@ -69,7 +69,6 @@ public class MqttProducer  extends  AbsMqttProducer{
         }
         try {
             return SendMqttMessage.builder().messageId(messageId)
-                    .time(time)
                     .Topic(topic)
                     .dup(dup)
                     .retained(retained)

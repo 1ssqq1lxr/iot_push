@@ -1,6 +1,8 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.cache.Cache;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -9,6 +11,7 @@ import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -49,7 +52,12 @@ public class MqttApi {
 
     }
 
-
+    protected void  sendAck(MqttMessageType type,boolean isDup,Channel channel, int messageId){
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(type,isDup, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        channel.writeAndFlush(mqttPubAckMessage);
+    }
     protected void pubRecMessage(Channel channel,int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);

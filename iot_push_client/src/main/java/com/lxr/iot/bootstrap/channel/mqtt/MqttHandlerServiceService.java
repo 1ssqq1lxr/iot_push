@@ -30,8 +30,9 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     @Override
     public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
         int messageId = mqttMessage.variableHeader().messageId();
-        SendMqttMessage sendMqttMessage = Cache.del(messageId);
-        sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
+        Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
+            sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
+        });
     }
 
     @Override
@@ -41,6 +42,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
         Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+            sendMqttMessage.setTimestamp(System.currentTimeMillis());
             sendMqttMessage.setConfirmStatus(ConfirmStatus.PUBREL);
         });
         channel.writeAndFlush(mqttPubAckMessage);
@@ -52,7 +54,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP,false, MqttQoS.AT_MOST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
-        Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+        Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
         });
         channel.writeAndFlush(mqttPubAckMessage);
@@ -61,7 +63,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     @Override
     public void pubcomp(Channel channel,MqttPubAckMessage mqttMessage ) {
         int messageId = mqttMessage.variableHeader().messageId();
-        Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
+        Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
         });
     }

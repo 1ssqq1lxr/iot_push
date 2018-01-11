@@ -2,12 +2,16 @@ package com.lxr.iot.bootstrap.time;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.MqttApi;
+import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.enums.ConfirmStatus;
+import io.netty.channel.Channel;
+import io.netty.handler.codec.mqtt.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -36,6 +40,8 @@ public abstract class ScanRunnable extends MqttApi implements Runnable {
     public  boolean addQueues(List<SendMqttMessage> ts){
         return queue.addAll(ts);
     }
+
+
 
 
     @Override

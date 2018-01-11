@@ -6,6 +6,7 @@ import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.bootstrap.channel.mqtt.MqttHandlerServiceService;
 import com.lxr.iot.bootstrap.handler.mqtt.DefaultMqttHandler;
 import com.lxr.iot.bootstrap.time.SacnScheduled;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.ConnectOptions;
 import io.netty.bootstrap.Bootstrap;
@@ -58,6 +59,15 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     @Override
     public void pubRecMessage(Channel channel, int messageId) {
+        SendMqttMessage sendMqttMessage= SendMqttMessage.builder().messageId(messageId)
+                .confirmStatus(ConfirmStatus.PUBREC)
+                .timestamp(System.currentTimeMillis())
+                .build();
+        Cache.put(messageId,sendMqttMessage);
+        boolean flag;
+        do {
+            flag = sacnScheduled.addQueue(sendMqttMessage);
+        } while (!flag);
         super.pubRecMessage(channel, messageId);
     }
 

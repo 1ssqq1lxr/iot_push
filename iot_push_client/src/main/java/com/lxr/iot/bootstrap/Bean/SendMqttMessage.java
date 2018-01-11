@@ -27,7 +27,6 @@ public class SendMqttMessage {
 
     private int messageId;
 
-    private boolean time;
 
     private long timestamp;
 
