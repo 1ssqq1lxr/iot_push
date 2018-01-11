@@ -31,13 +31,12 @@ public class main {
         mqttOpntions.setCleanSession(true);
         mqttOpntions.setWillFlag(false);
         mqttOpntions.setClientIdentifier("111");
-        mqttOpntions.setKeepAliveTimeSeconds(1000);
+        mqttOpntions.setKeepAliveTimeSeconds(20);
         mqttOpntions.setHasPassword(false);
         mqttOpntions.setHasPassword(false);
         connectOptions.setMqtt(mqttOpntions);
         producer.connect(connectOptions);
         producer.pub("/topic","hah",1);
-        producer.close();
     }
 
 }
