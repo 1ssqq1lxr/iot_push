@@ -135,8 +135,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                         doubleConnect();
             });
         }
-
-
         @Override
         public Channel start() {
             initEventPool();
@@ -151,8 +149,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            initHandler(ch.pipeline(),connectOptions,new DefaultMqttHandler(connectOptions,new MqttHandlerServiceService(), AbsMqttProducer.this, mqttListener
-                            ));
+                            initHandler(ch.pipeline(),connectOptions,new DefaultMqttHandler(connectOptions,new MqttHandlerServiceService(), AbsMqttProducer.this, mqttListener));
                         }
                     });
             try {
@@ -162,7 +159,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
             }
             return null;
         }
-
         @Override
         public void shutdown() {
             if( bossGroup!=null ){

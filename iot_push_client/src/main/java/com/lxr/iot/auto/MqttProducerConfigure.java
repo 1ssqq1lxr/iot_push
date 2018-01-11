@@ -47,25 +47,25 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         MqttProducer mqttProducer = new MqttProducer();
         Map<String, Object> beansWithAnnotation = this.applicationContext.getBeansWithAnnotation(MqttMessageListener.class);
         checkArgs(connectOptions);
-        mqttProducer.connect(connectOptions);
         Optional.of(beansWithAnnotation).ifPresent(mqttListener -> {
             beansWithAnnotation.forEach((name, bean) -> {
                 Class<?> clazz = AopUtils.getTargetClass(bean);
-                MqttMessageListener mqttMessageListener =(MqttMessageListener) bean;
                 if (!MqttListener.class.isAssignableFrom(bean.getClass())) {
                     throw new IllegalStateException(clazz + " is not instance of " + MqttListener.class.getName());
                 }
+                MqttMessageListener annotation = clazz.getAnnotation(MqttMessageListener.class);
+                MqttListener listener = (MqttListener) bean;
+                mqttProducer.setMqttListener(listener);
                 SubMessage build = SubMessage.builder()
-                        .qos(mqttMessageListener.qos())
-                        .topic(mqttMessageListener.topic())
+                        .qos(annotation.qos())
+                        .topic(annotation.topic())
                         .build();
                 mqttProducer.sub(build);
-
             });
         });
+        mqttProducer.connect(connectOptions);
         return mqttProducer;
     }
-
     private void checkArgs(ConnectOptions connectOptions) {
 
 
