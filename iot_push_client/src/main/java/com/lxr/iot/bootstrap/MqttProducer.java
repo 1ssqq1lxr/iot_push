@@ -93,9 +93,7 @@ public class MqttProducer  extends  AbsMqttProducer{
                 }
             }, 10, 10, TimeUnit.SECONDS);
             channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
-        });
-        Optional.ofNullable(getTopics(subMessages)).ifPresent(strings -> {
-                topics.addAll(strings);
+            topics.addAll(mqttTopicSubscriptions);
         });
     }
 

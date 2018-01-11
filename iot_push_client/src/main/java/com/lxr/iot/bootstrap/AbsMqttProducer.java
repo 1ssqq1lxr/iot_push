@@ -20,6 +20,7 @@ import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,7 +41,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     protected SacnScheduled sacnScheduled;
 
-    protected   List<String> topics = new CopyOnWriteArrayList<>();
+    protected List<MqttTopicSubscription> topics = new ArrayList<>();
 
 
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -107,12 +108,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     }
 
-//    private  reSub(){
-//
-//    }
-
-
-
     public class NettyBootstrapClient extends AbstractBootstrapClient {
 
         private NioEventLoopGroup bossGroup;
@@ -131,8 +126,11 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
             ChannelFuture connect = bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort());
             connect.addListener((ChannelFutureListener) future -> {
                     Thread.sleep(2000);
-                    if (future.isSuccess())
-                        AbsMqttProducer.this.channel =future.channel();
+                    if (future.isSuccess()){
+                        AbsMqttProducer absMqttProducer = AbsMqttProducer.this;
+                        absMqttProducer.channel =future.channel();
+                        absMqttProducer.subMessage(future.channel(),topics);
+                    }
                     else
                         doubleConnect();
             });
