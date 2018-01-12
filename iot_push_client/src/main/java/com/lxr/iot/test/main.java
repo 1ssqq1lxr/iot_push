@@ -34,7 +34,6 @@ public class main {
         mqttOpntions.setCleanSession(true);
         mqttOpntions.setWillFlag(false);
         mqttOpntions.setClientIdentifier("111");
-        mqttOpntions.setKeepAliveTimeSeconds(20);
         mqttOpntions.setHasPassword(false);
         mqttOpntions.setHasPassword(false);
         connectOptions.setMqtt(mqttOpntions);

@@ -39,7 +39,7 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
         }
         channelPipeline.addLast("decoder", new MqttDecoder());
         channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
-        channelPipeline.addLast(new IdleStateHandler(clientBean.getMqtt().getKeepAliveTimeSeconds(),0,0));
+        channelPipeline.addLast(new IdleStateHandler(clientBean.getHeart(),0,0));
         channelPipeline.addLast(mqttHander);
 
     }

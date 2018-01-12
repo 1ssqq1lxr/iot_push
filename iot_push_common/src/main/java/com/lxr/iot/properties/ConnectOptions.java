@@ -32,6 +32,7 @@ public class ConnectOptions {
 
     private int revbuf ;
 
+    private int heart;
 
     private boolean ssl ;
 
@@ -74,7 +75,6 @@ public class ConnectOptions {
 
         private  boolean isCleanSession;
 
-        private  int keepAliveTimeSeconds;
 
     }
 }
