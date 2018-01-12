@@ -1,8 +1,6 @@
 package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
-import com.lxr.iot.bootstrap.cache.Cache;
-import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -11,11 +9,9 @@ import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 操作api 处理主动发送请求
@@ -41,14 +37,12 @@ public class MqttApi {
 
     }
 
-    protected  int  subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions){
-        int messageId = MessageId.messageId();
+    protected void subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions, int messageId){
         MqttSubscribePayload mqttSubscribePayload = new MqttSubscribePayload(mqttTopicSubscriptions);
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.SUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0);
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader =MqttMessageIdVariableHeader.from(messageId);
         MqttSubscribeMessage mqttSubscribeMessage = new MqttSubscribeMessage(mqttFixedHeader,mqttMessageIdVariableHeader,mqttSubscribePayload);
         channel.writeAndFlush(mqttSubscribeMessage);
-        return messageId;
 
     }
 

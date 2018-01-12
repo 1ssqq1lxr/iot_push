@@ -51,7 +51,7 @@ public class MqttClientProducerTest {
             e.printStackTrace();
         }
         message.setQos(qos);
-        message.setRetained(false);
+        message.setRetained(true);
         sampleClient.publish(topic, message);
     }
 

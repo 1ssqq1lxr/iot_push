@@ -9,6 +9,7 @@ import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.ConnectOptions;
+import com.lxr.iot.util.MessageId;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -89,8 +90,14 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     }
 
     @Override
-    protected int subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions) {
-        return super.subMessage(channel, mqttTopicSubscriptions);
+    protected void subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions, int messageId) {
+        ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
+            if(channel.isActive()){
+                subMessage(channel, mqttTopicSubscriptions, messageId);
+            }
+        }, 10, 10, TimeUnit.SECONDS);
+        channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
+         super.subMessage(channel, mqttTopicSubscriptions, messageId);
     }
 
     @Override
@@ -144,7 +151,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                     if (future.isSuccess()){
                         AbsMqttProducer absMqttProducer = AbsMqttProducer.this;
                         absMqttProducer.channel =future.channel();
-                        absMqttProducer.subMessage(future.channel(),topics);
+                        absMqttProducer.subMessage(future.channel(),topics, MessageId.messageId());
                     }
                     else
                         doubleConnect();

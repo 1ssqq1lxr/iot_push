@@ -6,9 +6,7 @@ import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
@@ -85,13 +83,8 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     public void sub(SubMessage... subMessages){
         Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
-            int messageId = subMessage(channel, mqttTopicSubscriptions);
-            ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
-                if(channel.isActive()){
-                    subMessage(channel, mqttTopicSubscriptions);
-                }
-            }, 10, 10, TimeUnit.SECONDS);
-            channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
+            int messageId = MessageId.messageId();
+            subMessage(channel, mqttTopicSubscriptions,messageId);
             topics.addAll(mqttTopicSubscriptions);
         });
     }
