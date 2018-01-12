@@ -36,7 +36,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     protected   Channel channel;
 
-    protected static  MqttListener mqttListener;
+    protected  MqttListener mqttListener;
 
     private  NettyBootstrapClient nettyBootstrapClient ;
 

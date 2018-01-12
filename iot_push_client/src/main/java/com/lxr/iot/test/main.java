@@ -1,8 +1,11 @@
 package com.lxr.iot.test;
 
+import com.lxr.iot.auto.MqttListener;
+import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.properties.ConnectOptions;
+import io.netty.handler.codec.mqtt.MqttQoS;
 
 /**
  * 测试
@@ -35,8 +38,19 @@ public class main {
         mqttOpntions.setHasPassword(false);
         mqttOpntions.setHasPassword(false);
         connectOptions.setMqtt(mqttOpntions);
+        producer.setMqttListener(new MqttListener() {
+            @Override
+            public void callBack(String topic, String msg) {
+                        System.out.print("========================================"+topic+msg);
+            }
+            @Override
+            public void callThrowable(Throwable e) {
+
+            }
+        });
         producer.connect(connectOptions);
-        producer.pub("/topic","hah",2);
+        producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
+//        producer.pub("/topic","hah",2);
     }
 
 }

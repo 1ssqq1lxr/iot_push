@@ -49,16 +49,16 @@ public class SacnScheduled extends ScanRunnable {
             if(checkTime(poll)){
                 poll.setTimestamp(System.currentTimeMillis());
                 switch (poll.getConfirmStatus()){
-//                    case PUB:
-//                        poll.setDup(true);
-//                        pubMessage(channel,poll);
-//                        break;
-//                    case PUBREC:
-//                        sendAck(MqttMessageType.PUBREC,true,channel,poll.getMessageId());
-//                        break;
-//                    case PUBREL:
-//                        sendAck(MqttMessageType.PUBREL,true,channel,poll.getMessageId());
-//                        break;
+                    case PUB:
+                        poll.setDup(true);
+                        pubMessage(channel,poll);
+                        break;
+                    case PUBREC:
+                        sendAck(MqttMessageType.PUBREC,true,channel,poll.getMessageId());
+                        break;
+                    case PUBREL:
+                        sendAck(MqttMessageType.PUBREL,true,channel,poll.getMessageId());
+                        break;
                 }
 
             }

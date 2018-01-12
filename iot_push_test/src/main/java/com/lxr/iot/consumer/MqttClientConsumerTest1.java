@@ -24,7 +24,7 @@ public class MqttClientConsumerTest1 {
                                           String password) throws MqttException {
         MemoryPersistence persistence = new MemoryPersistence();
         MqttConnectOptions connOpts = new MqttConnectOptions();
-        connOpts.setCleanSession(false);
+        connOpts.setCleanSession(true);
         connOpts.setUserName(userName);
         connOpts.setPassword(password.toCharArray());
         connOpts.setConnectionTimeout(10);
