@@ -2,10 +2,7 @@ package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.properties.ConnectOptions;
-import com.lxr.iot.properties.InitBean;
 import com.lxr.iot.ssl.SecureSokcetTrustManagerFactory;
-import com.lxr.iot.util.SpringBeanUtils;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
@@ -42,7 +39,7 @@ public abstract class AbstractBootstrapClient implements  BootstrapClient {
         }
         channelPipeline.addLast("decoder", new MqttDecoder());
         channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
-        channelPipeline.addLast(new IdleStateHandler(clientBean.getMqtt().getKeepAliveTimeSeconds(), clientBean.getMqtt().getKeepAliveTimeSeconds(), clientBean.getMqtt().getKeepAliveTimeSeconds()));
+        channelPipeline.addLast(new IdleStateHandler(clientBean.getMqtt().getKeepAliveTimeSeconds(),0,0));
         channelPipeline.addLast(mqttHander);
 
     }

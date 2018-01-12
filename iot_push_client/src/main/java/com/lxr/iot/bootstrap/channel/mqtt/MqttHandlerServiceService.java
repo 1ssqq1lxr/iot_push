@@ -73,6 +73,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     public void heart(Channel channel, IdleStateEvent evt) {
         MqttFixedHeader fixedHeader = new MqttFixedHeader(MqttMessageType.PINGREQ, false, MqttQoS.AT_MOST_ONCE, false, 0);
         MqttMessage mqttMessage  = new MqttMessage(fixedHeader);
+        log.info("发送心跳");
         channel.writeAndFlush(mqttMessage);
     }
 
