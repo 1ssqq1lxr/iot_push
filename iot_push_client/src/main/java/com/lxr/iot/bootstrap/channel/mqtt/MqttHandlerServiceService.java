@@ -1,16 +1,13 @@
 package com.lxr.iot.bootstrap.channel.mqtt;
 
-import com.lxr.iot.bootstrap.Bean.*;
 import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
-import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
@@ -28,19 +25,21 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     public void close(Channel channel) {}
 
     @Override
-    public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
-        int messageId = mqttMessage.variableHeader().messageId();
+    public void puback(Channel channel, MqttMessage mqttMessage) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
         Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
         });
     }
 
     @Override
-    public void pubrec(Channel channel, MqttPubAckMessage mqttMessage ) {
-        int messageId = mqttMessage.variableHeader().messageId();
+    public void pubrec(Channel channel, MqttMessage mqttMessage ) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        MqttMessage mqttPubAckMessage = new MqttMessage(mqttFixedHeader,from);
         Optional.ofNullable(Cache.get(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setTimestamp(System.currentTimeMillis());
             sendMqttMessage.setConfirmStatus(ConfirmStatus.PUBREL);
@@ -49,11 +48,12 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     }
 
     @Override
-    public void pubrel(Channel channel, MqttPubAckMessage mqttMessage ) {
-        int messageId = mqttMessage.variableHeader().messageId();
+    public void pubrel(Channel channel, MqttMessage mqttMessage ) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBCOMP,false, MqttQoS.AT_MOST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        MqttMessage mqttPubAckMessage = new MqttMessage(mqttFixedHeader,from);
         Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
         });
@@ -61,8 +61,9 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
     }
 
     @Override
-    public void pubcomp(Channel channel,MqttPubAckMessage mqttMessage ) {
-        int messageId = mqttMessage.variableHeader().messageId();
+    public void pubcomp(Channel channel,MqttMessage mqttMessage ) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
         Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
         });

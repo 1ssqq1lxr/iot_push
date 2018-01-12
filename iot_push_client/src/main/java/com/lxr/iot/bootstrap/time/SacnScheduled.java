@@ -45,20 +45,28 @@ public class SacnScheduled extends ScanRunnable {
 
     @Override
     public void doInfo(SendMqttMessage poll) {
-        if(checkTime(poll)){
-            switch (poll.getConfirmStatus()){
-                case PUB:
-                    poll.setDup(true);
-                    pubMessage(channel,poll);
-                    break;
-                case PUBREC:
-                    sendAck(MqttMessageType.PUBREC,true,channel,poll.getMessageId());
-                    break;
-                case PUBREL:
-                    sendAck(MqttMessageType.PUBREL,true,channel,poll.getMessageId());
-                    break;
-            }
+        if(channel.isActive()){
+            if(checkTime(poll)){
+                poll.setTimestamp(System.currentTimeMillis());
+                switch (poll.getConfirmStatus()){
+//                    case PUB:
+//                        poll.setDup(true);
+//                        pubMessage(channel,poll);
+//                        break;
+//                    case PUBREC:
+//                        sendAck(MqttMessageType.PUBREC,true,channel,poll.getMessageId());
+//                        break;
+//                    case PUBREL:
+//                        sendAck(MqttMessageType.PUBREL,true,channel,poll.getMessageId());
+//                        break;
+                }
 
+            }
+        }
+        else
+        {
+            log.info("channel is not alived");
+            submit.cancel(true);
         }
     }
 

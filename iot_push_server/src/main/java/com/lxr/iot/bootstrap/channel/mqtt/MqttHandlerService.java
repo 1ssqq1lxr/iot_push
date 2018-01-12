@@ -163,11 +163,12 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void puback(Channel channel, MqttPubAckMessage mqttMessage) {
-        AttributeKey<ScheduledFuture> objectAttributeKey = AttributeKey.valueOf("qos1" + mqttMessage.variableHeader().messageId());
+    public void puback(Channel channel, MqttMessage mqttMessage) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
+        AttributeKey<ScheduledFuture> objectAttributeKey = AttributeKey.valueOf("qos1" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(objectAttributeKey).get();
         if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            int messageId = mqttMessage.variableHeader().messageId();
             log.info("MqttHandlerService========= puback【message:" + messageId + "】确认成功");
             mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeConfigMsg(messageId); // 移除确认消息
             scheduledFuture.cancel(true);
@@ -194,9 +195,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubrec(Channel channel, MqttPubAckMessage mqttMessage ) {
-        MqttMessageIdVariableHeader mqttMessageIdVariableHeader =  mqttMessage.variableHeader();
-        int messageId = mqttMessageIdVariableHeader.messageId();
+    public void pubrec(Channel channel, MqttMessage mqttMessage ) {
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+        int messageId = messageIdVariableHeader.messageId();
         AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
         ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
         if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
@@ -214,7 +215,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubrel(Channel channel, MqttPubAckMessage mqttMessage ) {
+    public void pubrel(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
         mqttChannelService.doPubrel(channel, messageId);
@@ -234,7 +235,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * @param mqttMessage
      */
     @Override
-    public void pubcomp(Channel channel, MqttPubAckMessage mqttMessage ) {
+    public void pubcomp(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
         AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);

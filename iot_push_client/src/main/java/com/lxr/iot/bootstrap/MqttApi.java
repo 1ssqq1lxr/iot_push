@@ -52,16 +52,16 @@ public class MqttApi {
 
     }
 
-    protected void  sendAck(MqttMessageType type,boolean isDup,Channel channel, int messageId){
-        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(type,isDup, MqttQoS.AT_LEAST_ONCE,false,0x02);
-        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
-        channel.writeAndFlush(mqttPubAckMessage);
-    }
+//    protected void  sendAck(MqttMessageType type,boolean isDup,Channel channel, int messageId){
+//        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(type,isDup, MqttQoS.AT_LEAST_ONCE,false,0x02);
+//        MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
+//        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+//        channel.writeAndFlush(mqttPubAckMessage);
+//    }
     protected void pubRecMessage(Channel channel,int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
-        MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        MqttMessage mqttPubAckMessage = new MqttMessage(mqttFixedHeader,from);
         channel.writeAndFlush(mqttPubAckMessage);
     }
 

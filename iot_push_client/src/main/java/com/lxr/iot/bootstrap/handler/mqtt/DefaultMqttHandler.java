@@ -69,16 +69,16 @@ public class DefaultMqttHandler extends MqttHander {
             case PUBLISH:
                 publish(channelHandlerContext.channel(),(MqttPublishMessage)mqttMessage);
             case PUBACK: // qos 1回复确认
-                mqttHandlerApi.puback(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
+                mqttHandlerApi.puback(channelHandlerContext.channel(),mqttMessage);
                 break;
             case PUBREC: //
-                mqttHandlerApi.pubrec(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
+                mqttHandlerApi.pubrec(channelHandlerContext.channel(),mqttMessage);
                 break;
             case PUBREL: //
-                mqttHandlerApi.pubrel(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
+                mqttHandlerApi.pubrel(channelHandlerContext.channel(),mqttMessage);
                 break;
             case PUBCOMP: //
-                mqttHandlerApi.pubcomp(channelHandlerContext.channel(),(MqttPubAckMessage)mqttMessage);
+                mqttHandlerApi.pubcomp(channelHandlerContext.channel(),mqttMessage);
                 break;
             case SUBACK:
                 mqttHandlerApi.suback(channelHandlerContext.channel(),(MqttSubAckMessage)mqttMessage);
@@ -110,8 +110,8 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        mqttProducer.getNettyBootstrapClient().doubleConnect();
-//        log.error("exception",cause);
+//        mqttProducer.getNettyBootstrapClient().doubleConnect();
+        log.error("exception",cause);
         if(mqttListener!=null){
             mqttListener.callThrowable(cause);
         }

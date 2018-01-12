@@ -36,7 +36,7 @@ public class main {
         mqttOpntions.setHasPassword(false);
         connectOptions.setMqtt(mqttOpntions);
         producer.connect(connectOptions);
-        producer.pub("/topic","hah",1);
+        producer.pub("/topic","hah",2);
     }
 
 }
