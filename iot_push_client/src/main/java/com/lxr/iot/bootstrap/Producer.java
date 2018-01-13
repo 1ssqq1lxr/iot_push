@@ -34,6 +34,8 @@ public interface Producer {
 
     void unsub(SubMessage... subMessages);
 
+    void unsub();
+
     void disConnect();
 
 }

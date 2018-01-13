@@ -81,7 +81,7 @@ public class MqttProducer  extends  AbsMqttProducer{
         return null;
     }
 
-
+    @Override
     public void sub(SubMessage... subMessages){
         Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
             int messageId = MessageId.messageId();
@@ -91,20 +91,19 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
     @Override
+    public void unsub(){
+    }
+
+    @Override
     public void unsub(SubMessage... subMessages) {
-        Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
-            int messageId = MessageId.messageId();
-            subMessage(channel, mqttTopicSubscriptions,messageId);
-            topics.addAll(mqttTopicSubscriptions);
-        });
+//            super.unsub(subMessages);
     }
 
     @Override
     public void disConnect() {
 
     }
-
-    private List<MqttTopicSubscription> getSubTopics(SubMessage[] subMessages) {
+    private List<MqttTopicSubscription> getSubTopics(SubMessage[]subMessages ) {
         return  Optional.ofNullable(subMessages)
                 .map(subMessages1 -> {
                     List<MqttTopicSubscription> mqttTopicSubscriptions = new LinkedList<>();
