@@ -1,6 +1,5 @@
 package com.lxr.iot.properties;
 
-import com.lxr.iot.mqtt.MqttHander;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -74,6 +73,8 @@ public class ConnectOptions {
         private  boolean isWillFlag;
 
         private  boolean isCleanSession;
+
+        private int KeepAliveTime;
 
 
     }

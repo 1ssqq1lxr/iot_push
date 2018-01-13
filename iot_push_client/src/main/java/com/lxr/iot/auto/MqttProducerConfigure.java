@@ -1,16 +1,12 @@
 package com.lxr.iot.auto;
 
-import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
-import com.lxr.iot.bootstrap.time.SacnScheduled;
 import com.lxr.iot.properties.ConnectOptions;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,8 +19,6 @@ import org.springframework.core.env.Environment;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 自动配置类

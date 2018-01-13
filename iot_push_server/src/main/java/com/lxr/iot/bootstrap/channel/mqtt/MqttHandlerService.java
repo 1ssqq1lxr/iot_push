@@ -180,10 +180,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
      * disconnect 主动断线
      *
      * @param channel
-     * @param mqttMessage
      */
     @Override
-    public void disconnect(Channel channel, MqttMessage mqttMessage) {
+    public void disconnect(Channel channel) {
         mqttChannelService.closeSuccess(mqttChannelService.getDeviceId(channel), true);
     }
 

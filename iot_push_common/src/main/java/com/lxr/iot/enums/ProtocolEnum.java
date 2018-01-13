@@ -1,6 +1,5 @@
 package com.lxr.iot.enums;
 
-import com.sun.xml.internal.ws.api.server.SDDocument;
 
 /**
  * 协议

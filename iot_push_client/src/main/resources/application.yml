@@ -26,13 +26,13 @@ lxr:
           keepAliveTimeSeconds: 3000
           hasUserName: false
           hasPassword: false
-          willTopic:   # isWillFlag = true 时候配置
-          willMessage:  # isWillFlag = true 时候配置
-          password:   # hasPassword = true 时候配置
-          userName:  # hasUserName = true 时候配置
-          isWillRetain:  # isWillFlag = true 时候配置
-          willQos:   # isWillFlag = true 时候配置
-          keepAliveTimeSeconds: # 心跳时长
+          willTopic:  /test # isWillFlag = true 时候配置
+          willMessage:  123123 # isWillFlag = true 时候配置
+          password:  123 # hasPassword = true 时候配置
+          userName: 123 # hasUserName = true 时候配置
+          isWillRetain: true # isWillFlag = true 时候配置
+          willQos:  1 # isWillFlag = true 时候配置
+          KeepAliveTime:  10 # 心跳时长
 
 server:
   port: 8989

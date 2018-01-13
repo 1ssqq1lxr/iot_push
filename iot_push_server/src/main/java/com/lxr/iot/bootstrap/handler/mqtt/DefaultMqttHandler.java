@@ -67,7 +67,7 @@ public class DefaultMqttHandler extends MqttHander {
                     serverMqttHandlerService.pong(channel);
                     break;
                 case DISCONNECT:
-                    serverMqttHandlerService.disconnect(channel,mqttMessage);
+                    serverMqttHandlerService.disconnect(channel);
                     break;
                 case UNSUBSCRIBE:
                     serverMqttHandlerService.unsubscribe(channel,(MqttUnsubscribeMessage)mqttMessage);

@@ -1,7 +1,6 @@
 package com.lxr.iot.bootstrap.handler.mqtt;
 
 import com.lxr.iot.auto.MqttListener;
-import com.lxr.iot.bootstrap.AbsMqttProducer;
 import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.mqtt.ClientMqttHandlerService;
@@ -51,7 +50,7 @@ public class DefaultMqttHandler extends MqttHander {
         ConnectOptions.MqttOpntions mqtt = connectOptions.getMqtt();
         log.info("【DefaultMqttHandler：channelActive】"+ctx.channel().localAddress().toString()+"启动成功");
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.CONNECT,false, MqttQoS.AT_LEAST_ONCE,false,10);
-        MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(MqttVersion.MQTT_3_1_1.protocolName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTimeSeconds());
+        MqttConnectVariableHeader mqttSubscribePayload = new MqttConnectVariableHeader(MqttVersion.MQTT_3_1_1.protocolName(),MqttVersion.MQTT_3_1_1.protocolLevel(),mqtt.isHasUserName(),mqtt.isHasPassword(),mqtt.isWillRetain(),mqtt.getWillQos(),mqtt.isWillFlag(),mqtt.isCleanSession(),mqtt.getKeepAliveTime());
         MqttConnectPayload mqttConnectPayload = new MqttConnectPayload(mqtt.getClientIdentifier(),mqtt.getWillTopic(),mqtt.getWillMessage(),mqtt.getUserName(),mqtt.getPassword());
         MqttConnectMessage mqttSubscribeMessage = new MqttConnectMessage(mqttFixedHeader,mqttSubscribePayload,mqttConnectPayload);
         channel.writeAndFlush(mqttSubscribeMessage);
