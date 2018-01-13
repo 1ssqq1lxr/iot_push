@@ -62,6 +62,8 @@ public class DefaultMqttHandler extends MqttHander {
     public void doMessage(ChannelHandlerContext channelHandlerContext, MqttMessage mqttMessage) {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
+            case UNSUBACK:
+                break;
             case CONNACK:
                 mqttProducer.connectBack((MqttConnAckMessage) mqttMessage);
                 break;
@@ -109,7 +111,7 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        mqttProducer.getNettyBootstrapClient().doubleConnect();
+        mqttProducer.getNettyBootstrapClient().doubleConnect();
         log.error("exception",cause);
         if(mqttListener!=null){
             mqttListener.callThrowable(cause);

@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.time;
+package com.lxr.iot.bootstrap.scan;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
 import com.lxr.iot.pool.Scheduled;

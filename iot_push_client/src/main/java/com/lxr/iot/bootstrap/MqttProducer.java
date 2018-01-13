@@ -6,6 +6,7 @@ import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
+import io.netty.handler.codec.mqtt.MqttUnsubscribeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
@@ -87,6 +88,20 @@ public class MqttProducer  extends  AbsMqttProducer{
             subMessage(channel, mqttTopicSubscriptions,messageId);
             topics.addAll(mqttTopicSubscriptions);
         });
+    }
+
+    @Override
+    public void unsub(SubMessage... subMessages) {
+        Optional.ofNullable(getSubTopics(subMessages)).ifPresent(mqttTopicSubscriptions -> {
+            int messageId = MessageId.messageId();
+            subMessage(channel, mqttTopicSubscriptions,messageId);
+            topics.addAll(mqttTopicSubscriptions);
+        });
+    }
+
+    @Override
+    public void disConnect() {
+
     }
 
     private List<MqttTopicSubscription> getSubTopics(SubMessage[] subMessages) {
