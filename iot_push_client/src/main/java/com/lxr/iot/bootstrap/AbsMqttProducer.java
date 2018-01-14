@@ -69,6 +69,9 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         do {
             flag = sacnScheduled.addQueue(sendMqttMessage);
         } while (!flag);
+
+
+
         super.pubRecMessage(channel, messageId);
     }
 

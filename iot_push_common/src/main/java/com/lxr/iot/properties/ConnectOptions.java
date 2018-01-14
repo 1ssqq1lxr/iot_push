@@ -13,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class ConnectOptions {
 
-    private Long connectTime;
+    private long connectTime;
 
     private String serverIp;
 

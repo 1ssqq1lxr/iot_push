@@ -31,6 +31,15 @@ import java.util.Optional;
 @EnableConfigurationProperties({ConnectOptions.class})
 public class MqttProducerConfigure   implements ApplicationContextAware,DisposableBean {
 
+    private static  final  int _BLACKLOG =   1024;
+
+    private static final  int  CPU =Runtime.getRuntime().availableProcessors();
+
+    private static final  int  SEDU_DAY =10;
+
+    private static final  int TIMEOUT =120;
+
+    private static final  int BUF_SIZE=10*1024*1024;
 
     private ConfigurableApplicationContext applicationContext;
 
@@ -62,8 +71,41 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         return mqttProducer;
     }
     private void checkArgs(ConnectOptions connectOptions) {
-
-
+        if(connectOptions.getServerIp()==null)
+            throw  new RuntimeException("ip地址为空");
+        if(connectOptions.getPort()<1)
+            throw new RuntimeException("端口号为空");
+        if(connectOptions.getBacklog()<1)
+            connectOptions.setBacklog(_BLACKLOG);
+        if(connectOptions.getBossThread()<1)
+            connectOptions.setBossThread(CPU);
+        if (connectOptions.getConnectTime()<1)
+            connectOptions.setConnectTime(10);
+        if (connectOptions.getHeart()<1)
+            connectOptions.setConnectTime(120);
+        if(connectOptions.getMinPeriod()<1)
+            connectOptions.setMinPeriod(10);
+        if(connectOptions.getRevbuf()<1)
+            connectOptions.setRevbuf(BUF_SIZE);
+        if(connectOptions.getSndbuf()<1)
+            connectOptions.setSndbuf(BUF_SIZE);
+        ConnectOptions.MqttOpntions mqtt=connectOptions.getMqtt();
+        if(mqtt!=null){
+            if(mqtt.getClientIdentifier()==null)
+                throw  new RuntimeException("设备号为空");
+            if(mqtt.getKeepAliveTime()<1)
+                mqtt.setKeepAliveTime(100);
+            if (mqtt.isHasUserName()&&mqtt.getUserName()==null)
+                throw new RuntimeException("未设置用户");
+            if (mqtt.isHasPassword()&&mqtt.getPassword()==null)
+                throw new RuntimeException("未设置密码");
+            if(!mqtt.isWillFlag()){
+                mqtt.setWillRetain(false);
+                mqtt.setWillQos(0);
+                mqtt.setWillMessage(null);
+                mqtt.setWillTopic(null);
+            }
+        }
     }
 
     @Override
