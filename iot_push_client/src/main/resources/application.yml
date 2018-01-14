@@ -31,7 +31,7 @@ lxr:
           password:  123 # hasPassword = true 时候配置
           userName: 123 # hasUserName = true 时候配置
           isWillRetain: true # isWillFlag = true 时候配置
-          willQos:  1 # isWillFlag = true 时候配置
+          willQos:  0 # isWillFlag = true 时候配置
           KeepAliveTime:  10 # 心跳时长
 
 server:
