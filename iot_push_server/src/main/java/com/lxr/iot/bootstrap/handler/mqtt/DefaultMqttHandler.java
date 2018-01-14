@@ -99,6 +99,7 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        log.error("exception",cause);
         mqttHandlerApi.close(ctx.channel());
     }
 }
