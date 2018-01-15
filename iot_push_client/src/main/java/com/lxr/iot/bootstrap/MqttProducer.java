@@ -6,7 +6,6 @@ import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.properties.ConnectOptions;
 import com.lxr.iot.util.MessageId;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
-import io.netty.handler.codec.mqtt.MqttUnsubscribeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
@@ -14,8 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -91,13 +89,19 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
     @Override
-    public void unsub(){
+    public void unsub(List<String> topics) {
+        Optional.ofNullable(toArray()).ifPresent(strings -> {
+
+        });
     }
 
     @Override
-    public void unsub(SubMessage... subMessages) {
-//            super.unsub(subMessages);
+    public void unsub(){
+        Optional.ofNullable(toArray()).ifPresent(strings -> {
+
+        });
     }
+
 
     @Override
     public void disConnect() {
@@ -112,7 +116,15 @@ public class MqttProducer  extends  AbsMqttProducer{
                         mqttTopicSubscriptions.add(mqttTopicSubscription);
                     }
                     return mqttTopicSubscriptions;
-                }).orElseGet(null);
+                }).orElse(null);
+    }
+
+    private List<String> toArray(){
+        return Optional.ofNullable(topics).
+                map(mqttTopicSubscriptions ->
+                    mqttTopicSubscriptions.stream().
+                            map(mqttTopicSubscription -> mqttTopicSubscription.topicName()).collect(Collectors.toList()))
+                        .orElse(null);
     }
 
 
@@ -124,7 +136,7 @@ public class MqttProducer  extends  AbsMqttProducer{
                         mqttTopicSubscriptions.add(sb.getTopic());
                     }
                     return mqttTopicSubscriptions;
-                }).orElseGet(null);
+                }).orElse(null);
     }
 
 

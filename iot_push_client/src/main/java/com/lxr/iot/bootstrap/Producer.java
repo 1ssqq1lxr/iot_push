@@ -6,6 +6,8 @@ import com.lxr.iot.properties.ConnectOptions;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.MqttConnAckMessage;
 
+import java.util.List;
+
 /**
  * 生产者
  *
@@ -32,7 +34,7 @@ public interface Producer {
 
     void sub(SubMessage... subMessages);
 
-    void unsub(SubMessage... subMessages);
+    void unsub(List<String> topics);
 
     void unsub();
 
