@@ -60,6 +60,14 @@ public class MqttApi {
         channel.writeAndFlush(mqttPubAckMessage);
     }
 
+    protected  void unSubMessage(Channel channel,List<String> topic,int messageId){
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBSCRIBE,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessageIdVariableHeader variableHeader = MqttMessageIdVariableHeader.from(messageId);
+        MqttUnsubscribePayload MqttUnsubscribeMessage = new MqttUnsubscribePayload(topic);
+        MqttUnsubscribeMessage mqttUnsubscribeMessage = new MqttUnsubscribeMessage(mqttFixedHeader,variableHeader,MqttUnsubscribeMessage);
+        channel.writeAndFlush(mqttUnsubscribeMessage);
+    }
+
     protected AttributeKey<ScheduledFuture<?>> getKey(String id){
        return   AttributeKey.valueOf(id);
     }

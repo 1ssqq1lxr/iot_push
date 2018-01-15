@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,6 +49,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
+
     protected   void  connectTo(ConnectOptions connectOptions){
         this.nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
         this.channel =nettyBootstrapClient.start();
@@ -69,8 +71,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         do {
             flag = sacnScheduled.addQueue(sendMqttMessage);
         } while (!flag);
-
-
 
         super.pubRecMessage(channel, messageId);
     }
@@ -100,7 +100,17 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
             }
         }, 10, 10, TimeUnit.SECONDS);
         channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
-         super.subMessage(channel, mqttTopicSubscriptions, messageId);
+        super.subMessage(channel, mqttTopicSubscriptions, messageId);
+    }
+
+    public void unsub(List<String> topics,int messageId) {
+        ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(() -> {
+            if(channel.isActive()){
+                unSubMessage(channel, topics, messageId);
+            }
+        }, 10, 10, TimeUnit.SECONDS);
+        channel.attr(getKey(Integer.toString(messageId))).setIfAbsent(scheduledFuture);
+        unSubMessage(channel, topics, messageId);
     }
 
     @Override
@@ -118,7 +128,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         switch ( mqttConnAckVariableHeader.connectReturnCode()){
             case CONNECTION_ACCEPTED:
                 countDownLatch.countDown();
-                 break;
+                break;
             case CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD:
                 throw new RuntimeException("用户名密码错误");
             case CONNECTION_REFUSED_IDENTIFIER_REJECTED:
@@ -150,14 +160,14 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         public void doubleConnect(){
             ChannelFuture connect = bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort());
             connect.addListener((ChannelFutureListener) future -> {
-                    Thread.sleep(2000);
-                    if (future.isSuccess()){
-                        AbsMqttProducer absMqttProducer = AbsMqttProducer.this;
-                        absMqttProducer.channel =future.channel();
-                        absMqttProducer.subMessage(future.channel(),topics, MessageId.messageId());
-                    }
-                    else
-                        doubleConnect();
+                Thread.sleep(2000);
+                if (future.isSuccess()){
+                    AbsMqttProducer absMqttProducer = AbsMqttProducer.this;
+                    absMqttProducer.channel =future.channel();
+                    absMqttProducer.subMessage(future.channel(),topics, MessageId.messageId());
+                }
+                else
+                    doubleConnect();
             });
         }
         @Override

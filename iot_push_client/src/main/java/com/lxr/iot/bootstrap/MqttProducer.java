@@ -90,16 +90,15 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     @Override
     public void unsub(List<String> topics) {
-        Optional.ofNullable(toArray()).ifPresent(strings -> {
-
+        Optional.ofNullable(topics).ifPresent(strings -> {
+            int messageId = MessageId.messageId();
+            super.unsub(strings,messageId);
         });
     }
 
     @Override
     public void unsub(){
-        Optional.ofNullable(toArray()).ifPresent(strings -> {
-
-        });
+            unsub(toList());
     }
 
 
@@ -119,7 +118,7 @@ public class MqttProducer  extends  AbsMqttProducer{
                 }).orElse(null);
     }
 
-    private List<String> toArray(){
+    private List<String> toList(){
         return Optional.ofNullable(topics).
                 map(mqttTopicSubscriptions ->
                     mqttTopicSubscriptions.stream().
