@@ -92,6 +92,25 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
         channel.writeAndFlush(mqttPubAckMessage);
     }
 
+    @Override
+    public void unsubBack(Channel channel, MqttMessage mqttMessage) {
+        int messageId;
+        if(mqttMessage instanceof  MqttUnsubAckMessage){
+            MqttUnsubAckMessage mqttUnsubAckMessage = (MqttUnsubAckMessage)mqttMessage;
+            messageId= mqttUnsubAckMessage.variableHeader().messageId();
+        }
+        else {
+            MqttMessageIdVariableHeader o =(MqttMessageIdVariableHeader) mqttMessage.variableHeader();
+            messageId= o.messageId();
+        }
+        if(messageId>0){
+            ScheduledFuture<?> scheduledFuture = channel.attr(getKey(Integer.toString(messageId))).get();
+            if(!scheduledFuture.isCancelled()){
+                scheduledFuture.cancel(true);
+            }
+        }
+    }
+
     private AttributeKey<ScheduledFuture<?>> getKey(String id){
         return   AttributeKey.valueOf(id);
     }

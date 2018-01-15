@@ -63,6 +63,7 @@ public class DefaultMqttHandler extends MqttHander {
         MqttFixedHeader mqttFixedHeader = mqttMessage.fixedHeader();
         switch (mqttFixedHeader.messageType()){
             case UNSUBACK:
+                mqttHandlerApi.unsubBack(channelHandlerContext.channel(),mqttMessage);
                 break;
             case CONNACK:
                 mqttProducer.connectBack((MqttConnAckMessage) mqttMessage);
