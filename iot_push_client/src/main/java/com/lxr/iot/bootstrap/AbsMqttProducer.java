@@ -189,8 +189,8 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                     });
             try {
                 return bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort()).sync().channel();
-            } catch (InterruptedException e) {
-                log.info("connect to channel fail ");
+            } catch (Exception e) {
+                log.info("connect to channel fail ",e);
             }
             return null;
         }
