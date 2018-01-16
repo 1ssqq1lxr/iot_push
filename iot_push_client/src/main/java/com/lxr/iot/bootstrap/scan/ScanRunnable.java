@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  **/
 
 @Slf4j
-public abstract class ScanRunnable extends MqttApi implements Runnable {
+public abstract class ScanRunnable  extends MqttApi implements Runnable {
 
 
 

@@ -28,7 +28,6 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     public  Producer connect(ConnectOptions connectOptions){
         connectTo(connectOptions);
-        initPool(new ConcurrentLinkedQueue(),connectOptions.getMinPeriod());
         return this;
     }
 

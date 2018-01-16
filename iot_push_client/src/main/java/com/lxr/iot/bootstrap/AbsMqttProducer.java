@@ -51,8 +51,11 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
 
     protected   void  connectTo(ConnectOptions connectOptions){
-        this.nettyBootstrapClient= new NettyBootstrapClient(connectOptions);
+        if(this.nettyBootstrapClient ==null){
+            this.nettyBootstrapClient = new NettyBootstrapClient(connectOptions);
+        }
         this.channel =nettyBootstrapClient.start();
+        initPool(new ConcurrentLinkedQueue(),connectOptions.getMinPeriod());
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
