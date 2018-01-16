@@ -48,7 +48,6 @@ public class MqttChannel {
     private volatile boolean cleanSession; // 当为 true 时 channel close 时 从缓存中删除  此channel
 
 
-    private volatile boolean flag; // 锁  取消订阅时使用
 
 
     private ConcurrentHashMap<Integer,ConfirmMessage>  message ; // messageId - message(qos1)  // 待确认消息

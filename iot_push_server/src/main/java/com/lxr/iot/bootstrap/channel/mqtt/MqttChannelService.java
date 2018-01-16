@@ -59,9 +59,7 @@ public class MqttChannelService extends AbstractChannelService{
     public void unsubscribe(String deviceId, List<String> topics1) {
         Optional.ofNullable(mqttChannels.get(deviceId)).ifPresent(mqttChannel -> {
             topics1.forEach(topic -> {
-                mqttChannel.setFlag(false);// 加锁
                 deleteChannel(topic,mqttChannel);
-                mqttChannel.setFlag(true);
             });
         });
     }
@@ -72,8 +70,6 @@ public class MqttChannelService extends AbstractChannelService{
      * @param mqttConnectMessage
      */
     private void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
-        //  当will flag == 1  标识遗嘱生效  此时  负载中  will messgae 跟will topic 不可以为空
-        //当will flag == 0  标识遗嘱不生效  此时  负载中  will messgae 跟will topic 必须为空  且 可变头中 will retain ==0  will QOS = 0
         MqttFixedHeader mqttFixedHeader1 = mqttConnectMessage.fixedHeader();
         MqttConnectVariableHeader mqttConnectVariableHeader = mqttConnectMessage.variableHeader();
         final MqttConnectPayload payload = mqttConnectMessage.payload();
@@ -86,7 +82,6 @@ public class MqttChannelService extends AbstractChannelService{
                 .topic(new CopyOnWriteArraySet<>())
                 .message(new ConcurrentHashMap<>())
                 .receive(new CopyOnWriteArraySet<>())
-                .flag(true)
                 .build();
         if (connectSuccess(deviceId, build)) { // 初始化存储mqttchannel
             if (mqttConnectVariableHeader.isWillFlag()) { // 遗嘱消息标志
@@ -296,37 +291,35 @@ public class MqttChannelService extends AbstractChannelService{
         Collection<MqttChannel> subChannels = getChannels(topic, topic1 -> cacheMap.getData(getTopic(topic1)));
         if(!CollectionUtils.isEmpty(subChannels)){
             subChannels.parallelStream().forEach(subChannel -> {
-                if(subChannel.isFlag()){ // 判断是否取消订阅
-                    switch (subChannel.getSessionStatus()){
-                        case OPEN: // 在线
-                            if(subChannel.isActive()){ // 防止channel失效  但是离线状态没更改
-                                switch (qos){
-                                    case AT_LEAST_ONCE:
-                                        sendQosConfirmMsg(MqttQoS.AT_LEAST_ONCE,subChannel,topic,bytes);
-                                        break;
-                                    case AT_MOST_ONCE:
-                                        sendQos0Msg(subChannel.getChannel(),topic,bytes);
-                                        break;
-                                    case EXACTLY_ONCE:
-                                        sendQosConfirmMsg(MqttQoS.EXACTLY_ONCE,subChannel,topic,bytes);
-                                        break;
-                                }
-                            }
-                            else{
-                                if(!subChannel.isCleanSession()){
-                                    clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
-                                            SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
+                switch (subChannel.getSessionStatus()){
+                    case OPEN: // 在线
+                        if(subChannel.isActive()){ // 防止channel失效  但是离线状态没更改
+                            switch (qos){
+                                case AT_LEAST_ONCE:
+                                    sendQosConfirmMsg(MqttQoS.AT_LEAST_ONCE,subChannel,topic,bytes);
                                     break;
-                                }
+                                case AT_MOST_ONCE:
+                                    sendQos0Msg(subChannel.getChannel(),topic,bytes);
+                                    break;
+                                case EXACTLY_ONCE:
+                                    sendQosConfirmMsg(MqttQoS.EXACTLY_ONCE,subChannel,topic,bytes);
+                                    break;
                             }
-                            break;
-                        case CLOSE: // 连接 设置了 clean session =false
+                        }
+                        else{
+                            if(!subChannel.isCleanSession()){
+                                clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
+                                        SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
+                                break;
+                            }
+                        }
+                        break;
+                    case CLOSE: // 连接 设置了 clean session =false
 //                                if(!mqttFixedHeader.isRetain()){ // 保留session  但是不保留  直接放入session信息中  若是保留信息  下次登录后 直接从保留信息中消费
-                            clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
-                                    SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
+                        clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
+                                SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
 //                                }
-                            break;
-                    }
+                        break;
                 }
             });
         }
