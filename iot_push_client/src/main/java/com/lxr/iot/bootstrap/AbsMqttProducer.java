@@ -21,10 +21,12 @@ import io.netty.handler.codec.mqtt.MqttConnAckVariableHeader;
 import io.netty.handler.codec.mqtt.MqttTopicSubscription;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -55,7 +57,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
             this.nettyBootstrapClient = new NettyBootstrapClient(connectOptions);
         }
         this.channel =nettyBootstrapClient.start();
-        initPool(new ConcurrentLinkedQueue(),connectOptions.getMinPeriod());
+        initPool(connectOptions.getMinPeriod());
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
@@ -90,8 +92,8 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         }
     }
 
-    protected void initPool(ConcurrentLinkedQueue queue, int seconds){
-        this.sacnScheduled =new SacnScheduled(queue,this.channel,seconds);
+    protected void initPool( int seconds){
+        this.sacnScheduled =new SacnScheduled(this,seconds);
         sacnScheduled.start();
     }
 

@@ -21,11 +21,7 @@ public abstract class ScanRunnable  extends MqttApi implements Runnable {
 
 
 
-    public ScanRunnable(ConcurrentLinkedQueue<SendMqttMessage> queue) {
-        this.queue = queue;
-    }
-
-    private ConcurrentLinkedQueue<SendMqttMessage> queue ;
+    private ConcurrentLinkedQueue<SendMqttMessage> queue  = new ConcurrentLinkedQueue<>();
 
 
     public  boolean addQueue(SendMqttMessage t){
@@ -35,7 +31,6 @@ public abstract class ScanRunnable  extends MqttApi implements Runnable {
     public  boolean addQueues(List<SendMqttMessage> ts){
         return queue.addAll(ts);
     }
-
 
 
 

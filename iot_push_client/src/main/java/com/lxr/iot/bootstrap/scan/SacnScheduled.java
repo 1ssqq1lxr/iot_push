@@ -1,13 +1,16 @@
 package com.lxr.iot.bootstrap.scan;
 
 import com.lxr.iot.bootstrap.Bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.pool.Scheduled;
-import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.MqttMessageType;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 扫描消息确认
@@ -19,15 +22,14 @@ import java.util.concurrent.*;
 @Slf4j
 public class SacnScheduled extends ScanRunnable {
 
-    private Channel channel;
+    private Producer producer;
 
     private  ScheduledFuture<?> submit;
 
     private  int  seconds;
 
-    public SacnScheduled(ConcurrentLinkedQueue queue,Channel channel,int seconds) {
-        super(queue);
-        this.channel=channel;
+    public SacnScheduled(Producer producer,int seconds) {
+        this.producer=producer;
         this.seconds=seconds;
     }
 
@@ -45,19 +47,19 @@ public class SacnScheduled extends ScanRunnable {
 
     @Override
     public void doInfo(SendMqttMessage poll) {
-        if(channel.isActive()){
+        if(producer.getChannel().isActive()){
             if(checkTime(poll)){
                 poll.setTimestamp(System.currentTimeMillis());
                 switch (poll.getConfirmStatus()){
                     case PUB:
                         poll.setDup(true);
-                        pubMessage(channel,poll);
+                        pubMessage(producer.getChannel(),poll);
                         break;
                     case PUBREC:
-                        sendAck(MqttMessageType.PUBREC,true,channel,poll.getMessageId());
+                        sendAck(MqttMessageType.PUBREC,true,producer.getChannel(),poll.getMessageId());
                         break;
                     case PUBREL:
-                        sendAck(MqttMessageType.PUBREL,true,channel,poll.getMessageId());
+                        sendAck(MqttMessageType.PUBREL,true,producer.getChannel(),poll.getMessageId());
                         break;
                 }
 

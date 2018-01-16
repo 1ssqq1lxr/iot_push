@@ -32,11 +32,6 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
     @Override
-    protected void initPool(ConcurrentLinkedQueue queue, int seconds) {
-        super.initPool(queue, seconds);
-    }
-
-    @Override
     public void pub(String topic,String message,int qos){
         pub(topic,message,false,qos);
     }
