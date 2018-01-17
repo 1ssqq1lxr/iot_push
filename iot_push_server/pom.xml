@@ -16,7 +16,12 @@
 
     <dependencies>
 
-
+        <!-- https://mvnrepository.com/artifact/com.alibaba/dubbo -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.5.3</version>
+        </dependency>
 
         <dependency>
             <groupId>com.lxr.iot</groupId>

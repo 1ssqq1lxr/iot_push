@@ -12,6 +12,9 @@ public enum ConfirmStatus {
     PUB,
     PUBREC,
     PUBREL,
-    COMPLETE
+    COMPLETE,
+    NOT, // 服务端
+
+
 
 }

@@ -70,61 +70,62 @@ public class MqttChannelService extends AbstractChannelService{
      * @param mqttConnectMessage
      */
     private void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
-        MqttFixedHeader mqttFixedHeader1 = mqttConnectMessage.fixedHeader();
-        MqttConnectVariableHeader mqttConnectVariableHeader = mqttConnectMessage.variableHeader();
-        final MqttConnectPayload payload = mqttConnectMessage.payload();
-        String deviceId = getDeviceId(channel);
-        MqttChannel build = MqttChannel.builder().channel(channel).cleanSession(mqttConnectVariableHeader.isCleanSession())
-                .deviceId(payload.clientIdentifier())
-                .sessionStatus(SessionStatus.OPEN)
-                .isWill(mqttConnectVariableHeader.isWillFlag())
-                .subStatus(SubStatus.NO)
-                .topic(new CopyOnWriteArraySet<>())
-                .message(new ConcurrentHashMap<>())
-                .receive(new CopyOnWriteArraySet<>())
-                .build();
-        if (connectSuccess(deviceId, build)) { // 初始化存储mqttchannel
-            if (mqttConnectVariableHeader.isWillFlag()) { // 遗嘱消息标志
-                boolean b = doIf(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (payload.willMessage() != null)
-                        , mqttConnectVariableHeader1 -> (payload.willTopic() != null));
-                if (!b) {
-                    throw new ConnectionException("will message and will topic is not null");
+        executorService.execute(() -> {
+            MqttFixedHeader mqttFixedHeader1 = mqttConnectMessage.fixedHeader();
+            MqttConnectVariableHeader mqttConnectVariableHeader = mqttConnectMessage.variableHeader();
+            final MqttConnectPayload payload = mqttConnectMessage.payload();
+            String deviceId = getDeviceId(channel);
+            MqttChannel build = MqttChannel.builder().channel(channel).cleanSession(mqttConnectVariableHeader.isCleanSession())
+                    .deviceId(payload.clientIdentifier())
+                    .sessionStatus(SessionStatus.OPEN)
+                    .isWill(mqttConnectVariableHeader.isWillFlag())
+                    .subStatus(SubStatus.NO)
+                    .topic(new CopyOnWriteArraySet<>())
+                    .message(new ConcurrentHashMap<>())
+                    .receive(new CopyOnWriteArraySet<>())
+                    .build();
+            if (connectSuccess(deviceId, build)) { // 初始化存储mqttchannel
+                if (mqttConnectVariableHeader.isWillFlag()) { // 遗嘱消息标志
+                    boolean b = doIf(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (payload.willMessage() != null)
+                            , mqttConnectVariableHeader1 -> (payload.willTopic() != null));
+                    if (!b) {
+                        throw new ConnectionException("will message and will topic is not null");
+                    }
+                    // 处理遗嘱消息
+                    final WillMeaasge buildWill = WillMeaasge.builder().
+                            qos(mqttConnectVariableHeader.willQos())
+                            .willMessage(payload.willMessage())
+                            .willTopic(payload.willTopic())
+                            .isRetain(mqttConnectVariableHeader.isWillRetain())
+                            .build();
+                    willService.save(payload.clientIdentifier(), buildWill);
+                } else {
+                    willService.del(payload.clientIdentifier());
+                    boolean b = doIf(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (!mqttConnectVariableHeader1.isWillRetain()),
+                            mqttConnectVariableHeader1 -> (mqttConnectVariableHeader1.willQos() == 0));
+                    if (!b) {
+                        throw new ConnectionException("will retain should be  null and will QOS equal 0");
+                    }
                 }
-                // 处理遗嘱消息
-                final WillMeaasge buildWill = WillMeaasge.builder().
-                        qos(mqttConnectVariableHeader.willQos())
-                        .willMessage(payload.willMessage())
-                        .willTopic(payload.willTopic())
-                        .isRetain(mqttConnectVariableHeader.isWillRetain())
-                        .build();
-                willService.save(payload.clientIdentifier(), buildWill);
-            } else {
-                willService.del(payload.clientIdentifier());
-                boolean b = doIf(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (!mqttConnectVariableHeader1.isWillRetain()),
-                        mqttConnectVariableHeader1 -> (mqttConnectVariableHeader1.willQos() == 0));
-                if (!b) {
-                    throw new ConnectionException("will retain should be  null and will QOS equal 0");
-                }
-            }
-            doIfElse(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (mqttConnectVariableHeader1.isCleanSession()), mqttConnectVariableHeader1 -> {
-                MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_ACCEPTED;
-                MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, false);
-                MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
-                        MqttMessageType.CONNACK, mqttFixedHeader1.isDup(), MqttQoS.AT_MOST_ONCE, mqttFixedHeader1.isRetain(), 0x02);
-                MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
-                channel.writeAndFlush(connAck);// 清理会话
-            }, mqttConnectVariableHeader1 -> {
-                MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_ACCEPTED;
-                MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
-                MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
-                        MqttMessageType.CONNACK, mqttFixedHeader1.isDup(), MqttQoS.AT_MOST_ONCE, mqttFixedHeader1.isRetain(), 0x02);
-                MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
-                channel.writeAndFlush(connAck);// 非清理会话
+                doIfElse(mqttConnectVariableHeader, mqttConnectVariableHeader1 -> (mqttConnectVariableHeader1.isCleanSession()), mqttConnectVariableHeader1 -> {
+                    MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_ACCEPTED;
+                    MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, false);
+                    MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+                            MqttMessageType.CONNACK, mqttFixedHeader1.isDup(), MqttQoS.AT_MOST_ONCE, mqttFixedHeader1.isRetain(), 0x02);
+                    MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
+                    channel.writeAndFlush(connAck);// 清理会话
+                }, mqttConnectVariableHeader1 -> {
+                    MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_ACCEPTED;
+                    MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
+                    MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+                            MqttMessageType.CONNACK, mqttFixedHeader1.isDup(), MqttQoS.AT_MOST_ONCE, mqttFixedHeader1.isRetain(), 0x02);
+                    MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
+                    channel.writeAndFlush(connAck);// 非清理会话
 
-            });         //发送 session  数据
-            ConcurrentLinkedQueue<SessionMessage> sessionMessages = clientSessionService.getByteBuf(payload.clientIdentifier());
-            doIfElse(sessionMessages, messages -> messages != null && !messages.isEmpty(), byteBufs -> {
-                executorService.execute(() -> {
+                });         //发送 session  数据
+                ConcurrentLinkedQueue<SessionMessage> sessionMessages = clientSessionService.getByteBuf(payload.clientIdentifier());
+                doIfElse(sessionMessages, messages -> messages != null && !messages.isEmpty(), byteBufs -> {
+
                     SessionMessage sessionMessage;
                     while ((sessionMessage = byteBufs.poll()) != null) {
                         log.info("【发送会话消息】"+channel.remoteAddress()+":"+sessionMessage.getString()+"【成功】");
@@ -140,9 +141,10 @@ public class MqttChannelService extends AbstractChannelService{
                                 break;
                         }
                     }
+
                 });
-            });
-        }
+            }
+        });
     }
 
 
@@ -315,10 +317,8 @@ public class MqttChannelService extends AbstractChannelService{
                         }
                         break;
                     case CLOSE: // 连接 设置了 clean session =false
-//                                if(!mqttFixedHeader.isRetain()){ // 保留session  但是不保留  直接放入session信息中  若是保留信息  下次登录后 直接从保留信息中消费
                         clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
                                 SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
-//                                }
                         break;
                 }
             });

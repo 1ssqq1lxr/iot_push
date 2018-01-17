@@ -22,11 +22,5 @@ public class StreamReader {
 		
 		return buf.toString();
 	}
-	
-	public static void main(String[] args) {
-		StreamReader reader = new StreamReader();
-		System.out.println(reader.toByteArray(StreamReader.class.getResourceAsStream("/securesocket.jks")));
-
-	}
 
 }
