@@ -14,7 +14,4 @@ public enum ConfirmStatus {
     PUBREL,
     COMPLETE,
     NOT, // 服务端
-
-
-
 }

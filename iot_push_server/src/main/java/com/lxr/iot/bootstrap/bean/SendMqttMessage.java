@@ -22,10 +22,9 @@ public class SendMqttMessage {
 
     private Channel channel;
 
-    private ConfirmStatus confirmStatus;
+    private volatile ConfirmStatus confirmStatus;
 
     private long time;
-
 
 
 }
