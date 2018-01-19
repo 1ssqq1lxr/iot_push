@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt.cache;
+package com.lxr.iot.bootstrap.channel.cache;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

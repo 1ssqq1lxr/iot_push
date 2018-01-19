@@ -76,8 +76,7 @@ public class SacnScheduled extends ScanRunnable {
         return System.currentTimeMillis()-poll.getTimestamp()>=seconds*1000;
     }
 
-
-    static class ScheduledPool implements Scheduled {
+    private class ScheduledPool implements Scheduled {
         private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
         public ScheduledFuture<?> submit(Runnable runnable){
             return scheduledExecutorService.scheduleAtFixedRate(runnable,2,2, TimeUnit.SECONDS);

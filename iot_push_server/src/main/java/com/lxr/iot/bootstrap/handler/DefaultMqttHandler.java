@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.handler.mqtt;
+package com.lxr.iot.bootstrap.handler;
 
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.exception.NoFindHandlerException;

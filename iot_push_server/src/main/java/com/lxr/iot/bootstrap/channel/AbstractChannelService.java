@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt;
+package com.lxr.iot.bootstrap.channel;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -6,7 +6,7 @@ import com.lxr.iot.bootstrap.bean.MqttChannel;
 import com.lxr.iot.bootstrap.bean.RetainMessage;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
-import com.lxr.iot.bootstrap.channel.mqtt.cache.CacheMap;
+import com.lxr.iot.bootstrap.channel.cache.CacheMap;
 import com.lxr.iot.pool.Scheduled;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;

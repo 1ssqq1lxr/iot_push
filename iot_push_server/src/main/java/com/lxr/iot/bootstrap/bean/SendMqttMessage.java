@@ -26,5 +26,4 @@ public class SendMqttMessage {
 
     private long time;
 
-
 }

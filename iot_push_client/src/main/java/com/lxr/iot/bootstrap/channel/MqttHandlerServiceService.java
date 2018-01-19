@@ -1,4 +1,4 @@
-package com.lxr.iot.bootstrap.channel.mqtt;
+package com.lxr.iot.bootstrap.channel;
 
 import com.lxr.iot.bootstrap.cache.Cache;
 import com.lxr.iot.enums.ConfirmStatus;
