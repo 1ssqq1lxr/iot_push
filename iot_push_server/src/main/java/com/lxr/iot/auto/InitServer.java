@@ -29,15 +29,15 @@ public class InitServer {
             bootstrapServer = new NettyBootstrapServer();
             bootstrapServer.setServerBean(serverBean);
             bootstrapServer.start();
-            this.thread = new Thread(new ScanRunnable() {
-                @Override
-                public void doInfo(SendMqttMessage poll) {
-                    poll.setTime(System.currentTimeMillis());
-                    poll.getChannel().writeAndFlush(poll.getMqttMessage());
-                }
-            });
-            thread.start();
-            thread.setDaemon(true);
+//            this.thread = new Thread(new ScanRunnable() {
+//                @Override
+//                public void doInfo(SendMqttMessage poll) {
+//                    poll.setTime(System.currentTimeMillis());
+//                    poll.getChannel().writeAndFlush(poll.getMqttMessage());
+//                }
+//            });
+//            thread.start();
+//            thread.setDaemon(true);
         }
     }
 
