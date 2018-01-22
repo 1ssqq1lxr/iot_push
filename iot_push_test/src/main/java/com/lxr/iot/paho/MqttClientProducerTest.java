@@ -1,12 +1,9 @@
-package com.lxr.iot;
+package com.lxr.iot.paho;
 
-import com.lxr.iot.ssl.SecureSocketSslContextFactory;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import javax.net.ssl.SSLSocketFactory;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 /**
  * 测试客户端
