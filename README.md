@@ -12,9 +12,8 @@
  ## <a name="2">功能</a>
  
  ## 服务端
- ### 已实现：
  
-#### 服务端
+ ### 已实现：
  * 发布订阅功能
  * 遗言通知
  * 会话session数据
@@ -23,10 +22,6 @@
  * 实现标准的 qos0 qos1 qos2消息确认机制
  * ssl加密
  * 支持ws协议
- 
-## 服务端
- * 发布订阅
- * 消息服务质量
  * 集成spring容器
    
  
@@ -36,26 +31,18 @@
   * springboot
   * jdk8
   * 导入IDE
-  
- ### 服务端的使用很简单： 
-   * 配置yml 或者properties 文件 [yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_server/src/main/resources/application.yml)  
- ### 测试方法也同样简单：
- * 简单测试：运行包 test 下的 测试 文件，即可开启测试客户端。
- * 压力测试：推荐使用jmeter 的mqtt插件 [插件](https://github.com/tuanhiep/mqtt-jmeter)
+  * 配置yml 或者properties 文件 [yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_server/src/main/resources/application.yml)  
+  * 简单测试：运行包 test 下的 测试 文件，即可开启测试客户端。
+  * 压力测试：推荐使用jmeter 的mqtt插件 [插件](https://github.com/tuanhiep/mqtt-jmeter)
  
   ## 客户端
   
-  ### 基于springboot 配置方式[yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client/src/main/resources/application.yml)
+  * 基于springboot 配置方式[yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client/src/main/resources/application.yml)
   
-  ### 订阅    
-  
-    * 配置实现 MqttListener 类并添加MqttMessageListener指定订阅的topic跟服务质量
+  * 配置实现 MqttListener 类并添加MqttMessageListener指定订阅的topic跟服务质量
     
-  ### 推送  
+  * @Autowired Procuder producer 即可使用;
     
-    * @Autowired Procuder producer 即可使用;
-    
-  ### 基于编码模式
   
      Producer producer = new MqttProducer();
             ConnectOptions connectOptions = new ConnectOptions();
