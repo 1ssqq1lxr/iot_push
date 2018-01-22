@@ -43,40 +43,7 @@
      
   * @Autowired Procuder producer 即可使用;
     
-     **Producer producer = new MqttProducer();
-            ConnectOptions connectOptions = new ConnectOptions();
-            connectOptions.setBacklog(1024);
-            connectOptions.setConnectTime(1000l);
-            connectOptions.setSsl(false);
-            connectOptions.setServerIp("127.0.0.1");
-            connectOptions.setPort(1884);
-            connectOptions.setBossThread(1);
-            connectOptions.setWorkThread(8);
-            connectOptions.setMinPeriod(10);
-            connectOptions.setRevbuf(1024);
-            connectOptions.setSndbuf(1024);
-            connectOptions.setTcpNodelay(true);
-            connectOptions.setKeepalive(true);
-            ConnectOptions.MqttOpntions mqttOpntions = new ConnectOptions.MqttOpntions();
-            mqttOpntions.setCleanSession(true);
-            mqttOpntions.setWillFlag(false);
-            mqttOpntions.setClientIdentifier("111");
-            mqttOpntions.setHasPassword(false);
-            mqttOpntions.setHasPassword(false);
-            connectOptions.setMqtt(mqttOpntions);
-            producer.setMqttListener(new MqttListener() {
-                @Override
-                public void callBack(String topic, String msg) {
-                            System.out.print("========================================"+topic+msg);
-                }
-                @Override
-                public void callThrowable(Throwable e) {
-    
-                }
-            });
-            producer.connect(connectOptions);
-            producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
-            producer.pub("/topic","hah",2);**
+  * 编码 [java](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client/src/main/java/com/lxr/iot/test/main.java)
     
  ### 交流群号 658212670
 
