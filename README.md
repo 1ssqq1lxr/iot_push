@@ -41,7 +41,8 @@
   
   * 配置实现 MqttListener 类并添加MqttMessageListener指定订阅的topic跟服务质量
     
-  * @Autowired Procuder producer 即可使用;
+    
+    * @Autowired Procuder producer 即可使用;
     
   
      Producer producer = new MqttProducer();
