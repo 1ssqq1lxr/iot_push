@@ -21,30 +21,25 @@
  * 发布保留消息
  * 主题过滤（/test 会接受到 /test/yy 的主题消息）
  * 实现标准的 qos0 qos1 qos2消息确认机制
+ * ssl加密
+ * 支持ws协议
  
-#### 客户端
+## 服务端
  * 发布订阅
  * 消息服务质量
  * 集成spring容器
-    
- ### 未实现：
- * 设计服务端集群模式
+   
  
- ## <a name="3">如何使用</a>
- ### 环境
- 
+ ### <a name="3">如何使用</a>
   * 安装lombok插件  
   * 下载源码
   * springboot
   * jdk8
   * 导入IDE
   
- ### mqttServer 的使用很简单： 
-   
+ ### 服务端的使用很简单： 
    * 配置yml 或者properties 文件 [yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_server/src/main/resources/application.yml)  
- 
  ### 测试方法也同样简单：
- 
  * 简单测试：运行包 test 下的 测试 文件，即可开启测试客户端。
  * 压力测试：推荐使用jmeter 的mqtt插件 [插件](https://github.com/tuanhiep/mqtt-jmeter)
  
@@ -52,11 +47,11 @@
   
   ### 基于springboot 配置方式[yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client/src/main/resources/application.yml)
   
-  #### 订阅    
+  ### 订阅    
   
     * 配置实现 MqttListener 类并添加MqttMessageListener指定订阅的topic跟服务质量
     
-  #### 推送  
+  ### 推送  
     
     * @Autowired Procuder producer 即可使用;
     
