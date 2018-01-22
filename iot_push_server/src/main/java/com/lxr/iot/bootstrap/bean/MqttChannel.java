@@ -1,6 +1,4 @@
-package com.lxr.iot.bootstrap.bean;/**
- * Created by wangcy on 2017/11/21.
- */
+package com.lxr.iot.bootstrap.bean;
 
 import com.lxr.iot.enums.SessionStatus;
 import com.lxr.iot.enums.SubStatus;
@@ -50,7 +48,7 @@ public class MqttChannel {
 
 
 
-    private ConcurrentHashMap<Integer,ConfirmMessage>  message ; // messageId - message(qos1)  // 待确认消息
+    private ConcurrentHashMap<Integer,SendMqttMessage>  message ; // messageId - message(qos1)  // 待确认消息
 
 
     private Set<Integer>  receive;
@@ -68,17 +66,17 @@ public class MqttChannel {
     }
 
 
-    public void addConfirmMsg(int messageId,ConfirmMessage msg){
+    public void addSendMqttMessage(int messageId,SendMqttMessage msg){
         message.put(messageId,msg);
     }
 
 
-    public ConfirmMessage getConfirmMsg(int messageId){
+    public SendMqttMessage getSendMqttMessage(int messageId){
         return  message.get(messageId);
     }
 
 
-    public  void removeConfigMsg(int messageId){
+    public  void removeSendMqttMessage(int messageId){
         message.remove(messageId);
     }
 

@@ -2,12 +2,12 @@ package com.lxr.iot.bootstrap.channel;
 
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
-import com.lxr.iot.enums.QosStatus;
+import com.lxr.iot.bootstrap.bean.SendMqttMessage;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.mqtt.ServerMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -166,13 +165,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void puback(Channel channel, MqttMessage mqttMessage) {
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
-        AttributeKey<ScheduledFuture> objectAttributeKey = AttributeKey.valueOf("qos1" + messageId);
-        ScheduledFuture scheduledFuture = channel.attr(objectAttributeKey).get();
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            log.info("MqttHandlerService========= puback【message:" + messageId + "】确认成功");
-            mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeConfigMsg(messageId); // 移除确认消息
-            scheduledFuture.cancel(true);
-        }
+        mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId).setConfirmStatus(ConfirmStatus.COMPLETE); // 复制为空
     }
 
 
@@ -197,14 +190,8 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void pubrec(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
-        ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            log.info("MqttHandlerService=========qos2 pubRec【message:" + messageId + "】确认成功");
-            scheduledFuture.cancel(true); // 取消
-            mqttChannelService.doPubrec(channel, messageId);
-            mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getConfirmMsg(messageId).setQosStatus(QosStatus.RECD); // 复制为空
-        }
+        mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId).setConfirmStatus(ConfirmStatus.PUBREL); // 复制为空
+        mqttChannelService.doPubrec(channel, messageId);
     }
 
     /**
@@ -217,14 +204,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void pubrel(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
+        mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId).setConfirmStatus(ConfirmStatus.COMPLETE); // 复制为空
         mqttChannelService.doPubrel(channel, messageId);
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("rec_qos2" + messageId);
-        ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            scheduledFuture.cancel(true); // 取消
-            log.info("MqttHandlerService=========qos2 puRel【message:" + messageId + "】确认成功");
-            mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeRecevice(messageId); // 复制为空
-        }
+
     }
 
     /**
@@ -237,13 +219,8 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void pubcomp(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
-        AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2" + messageId);
-        ScheduledFuture scheduledFuture = channel.attr(attributeKey).get();
-        if (scheduledFuture != null && !scheduledFuture.isCancelled()) {
-            log.info("MqttHandlerService=========qos2 puRComp【message:" + messageId + "】确认成功");
-            scheduledFuture.cancel(true); // 取消
-            mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).removeConfigMsg(messageId); // 复制为空
-        }
+        SendMqttMessage sendMqttMessage = mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId);
+        sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE); // 复制为空
     }
 
     @Override

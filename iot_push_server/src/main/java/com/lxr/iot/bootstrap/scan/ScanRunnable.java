@@ -39,7 +39,7 @@ public abstract class ScanRunnable  implements Runnable {
             List<SendMqttMessage> list =new LinkedList<>();
             SendMqttMessage poll ;
             for(;(poll=queue.poll())!=null;){
-                if(poll.getConfirmStatus()== ConfirmStatus.NOT){
+                if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
                     list.add(poll);
                     doInfo(poll);
                 }

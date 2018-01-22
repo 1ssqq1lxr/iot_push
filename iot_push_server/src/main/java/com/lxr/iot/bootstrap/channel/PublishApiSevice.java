@@ -1,18 +1,15 @@
 package com.lxr.iot.bootstrap.channel;
 
-import com.lxr.iot.bootstrap.bean.ConfirmMessage;
 import com.lxr.iot.bootstrap.bean.MqttChannel;
+import com.lxr.iot.bootstrap.bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.bean.WillMeaasge;
-import com.lxr.iot.enums.QosStatus;
-import com.lxr.iot.pool.Scheduled;
+import com.lxr.iot.bootstrap.scan.ScanRunnable;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * 发送消息以及确认
@@ -23,13 +20,12 @@ import java.util.concurrent.ScheduledFuture;
 @Slf4j
 public class PublishApiSevice {
 
+    private  final    ScanRunnable scanRunnable;
 
-    private  Scheduled scheduled;
-
-
-    public PublishApiSevice(Scheduled scheduled) {
-        this.scheduled =scheduled;
+    public PublishApiSevice(ScanRunnable scanRunnable) {
+        this.scanRunnable = scanRunnable;
     }
+
 
     /**
      * 写入遗嘱消息
@@ -49,6 +45,7 @@ public class PublishApiSevice {
                 break;
         }
 
+
     }
 
     protected void sendQosConfirmMsg(MqttQoS qos, MqttChannel mqttChannel, String topic, byte[] bytes) {
@@ -56,15 +53,12 @@ public class PublishApiSevice {
             int messageId = MessageId.messageId();
             switch (qos){
                 case AT_LEAST_ONCE:
-                    mqttChannel.addConfirmMsg(messageId, ConfirmMessage.builder().byteBuf(bytes).qos(MqttQoS.AT_LEAST_ONCE).topic(topic).build());
-                    sendQos1Msg(mqttChannel.getChannel(),topic,false,bytes,messageId,true);
+                    mqttChannel.addSendMqttMessage(messageId,sendQos1Msg(mqttChannel.getChannel(),topic,false,bytes,messageId));
                     break;
                 case EXACTLY_ONCE:
-                    mqttChannel.addConfirmMsg(messageId, ConfirmMessage.builder().byteBuf(bytes).qos(MqttQoS.EXACTLY_ONCE).qosStatus(QosStatus.PUBD).topic(topic).build());
-                    sendQos2Msg(mqttChannel.getChannel(),topic,false,bytes,messageId,true);
+                    mqttChannel.addSendMqttMessage(messageId,sendQos2Msg(mqttChannel.getChannel(),topic,false,bytes,messageId));
                     break;
             }
-
         }
 
     }
@@ -76,19 +70,12 @@ public class PublishApiSevice {
      * @param topic
      * @param byteBuf
      */
-    private   void  sendQos1Msg(Channel channel, String topic,boolean isDup, byte[] byteBuf,int messageId,boolean isTime){
-        log.info("PublishApiSevice sendQos1Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】发送qos1消息【topic："+topic+"】");
+    private   SendMqttMessage  sendQos1Msg(Channel channel, String topic,boolean isDup, byte[] byteBuf,int messageId){
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,isDup, MqttQoS.AT_LEAST_ONCE,false,0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic,messageId );
         MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader, Unpooled.wrappedBuffer(byteBuf));
         channel.writeAndFlush(mqttPublishMessage);
-        if(isTime){
-            AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("qos1"+messageId);
-            channel.attr(attributeKey).set(scheduled.submit(() -> {
-                log.info("PublishApiSevice sendQos1Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】重复发送消息【topic："+topic+"】");
-                sendQos1Msg(channel,topic,true,byteBuf,messageId,false);
-            }));
-        }
+        return addQueue(channel,messageId,topic,byteBuf,MqttQoS.AT_LEAST_ONCE,ConfirmStatus.PUB);
     }
 
 
@@ -105,7 +92,6 @@ public class PublishApiSevice {
         }
     }
     private    void  sendQos0Msg(Channel channel, String topic, byte[] byteBuf,int messageId){
-        log.info("成功发送消息:"+new String(byteBuf));
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,false, MqttQoS.AT_MOST_ONCE,false,0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic,messageId );
         MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader,Unpooled.wrappedBuffer(byteBuf));
@@ -115,19 +101,12 @@ public class PublishApiSevice {
 
 
 
-    private void sendQos2Msg(Channel channel, String topic,boolean isDup, byte[] byteBuf, int messageId,boolean isTime) {
-        log.info("PublishApiSevice sendQos2Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】发送qos2消息【topic："+topic+"】");
+    private SendMqttMessage sendQos2Msg(Channel channel, String topic,boolean isDup, byte[] byteBuf, int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBLISH,isDup, MqttQoS.EXACTLY_ONCE,false,0);
         MqttPublishVariableHeader mqttPublishVariableHeader = new MqttPublishVariableHeader(topic,messageId );
         MqttPublishMessage mqttPublishMessage = new MqttPublishMessage(mqttFixedHeader,mqttPublishVariableHeader, Unpooled.wrappedBuffer(byteBuf));
         channel.writeAndFlush(mqttPublishMessage);
-        if(isTime){
-            AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2"+messageId);
-            channel.attr(attributeKey).set(scheduled.submit(() -> {
-                log.info("PublishApiSevice sendQos2Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】重复发送消息【topic："+topic+"】");
-                sendQos2Msg(channel,topic,true,byteBuf,messageId,false);
-            }));
-        }
+        return addQueue(channel,messageId,topic,byteBuf,MqttQoS.EXACTLY_ONCE,ConfirmStatus.PUB);
     }
 
 
@@ -146,21 +125,16 @@ public class PublishApiSevice {
 
     /**
      * 发送qos2 publish  确认消息 第一步
-     * @param channel
      * @param messageId
      */
-    protected   void  sendPubRec(Channel channel,boolean isDup,int messageId,boolean isTime){
+    protected   void  sendPubRec( MqttChannel mqttChannel,int messageId){
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREC,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
+        Channel channel = mqttChannel.getChannel();
         channel.writeAndFlush(mqttPubAckMessage);
-        if(isTime){
-            AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("rec_qos2"+messageId);
-            channel.attr(attributeKey).set(scheduled.submit(() -> {
-                log.info("PublishApiSevice recQos2Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】重复 PubRec");
-                sendPubRec(channel,true,messageId,false);
-            }));
-        }
+        SendMqttMessage sendMqttMessage = addQueue(channel, messageId, null, null, null, ConfirmStatus.PUBREC);
+        mqttChannel.addSendMqttMessage(messageId,sendMqttMessage);
     }
 
     /**
@@ -168,18 +142,11 @@ public class PublishApiSevice {
      * @param channel
      * @param messageId
      */
-    protected   void  sendPubRel(Channel channel,boolean isDup,int messageId,boolean isTime){
+    protected   void  sendPubRel(Channel channel,boolean isDup,int messageId){
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.PUBREL,isDup, MqttQoS.AT_LEAST_ONCE,false,0x02);
         MqttMessageIdVariableHeader from = MqttMessageIdVariableHeader.from(messageId);
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
         channel.writeAndFlush(mqttPubAckMessage);
-        if(isTime){
-            AttributeKey<ScheduledFuture> attributeKey = AttributeKey.valueOf("send_qos2"+messageId);
-            channel.attr(attributeKey).set(scheduled.submit(() -> {
-                log.info("PublishApiSevice sendQos2Msg :"+channel.remoteAddress()+"【meaasgeId:"+messageId+"】重复 pubrel");
-                sendPubRel(channel,true,messageId,false);
-            }));
-        }
     }
 
     /**
@@ -193,5 +160,19 @@ public class PublishApiSevice {
         MqttPubAckMessage mqttPubAckMessage = new MqttPubAckMessage(mqttFixedHeader,from);
         channel.writeAndFlush(mqttPubAckMessage);
     }
+
+    private SendMqttMessage  addQueue(Channel channel,int messageId,String topic,byte[] datas,MqttQoS mqttQoS,ConfirmStatus confirmStatus){
+        SendMqttMessage build = SendMqttMessage.builder().
+                channel(channel).
+                confirmStatus(confirmStatus).
+                messageId(messageId)
+                .topic(topic)
+                .qos(mqttQoS)
+                .byteBuf(datas)
+                .time(System.currentTimeMillis()).build();
+        scanRunnable.addQueue(build);
+        return build;
+    }
+
 
 }

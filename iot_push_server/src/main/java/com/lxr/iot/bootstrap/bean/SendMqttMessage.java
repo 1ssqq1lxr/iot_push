@@ -2,7 +2,7 @@ package com.lxr.iot.bootstrap.bean;
 
 import com.lxr.iot.enums.ConfirmStatus;
 import io.netty.channel.Channel;
-import io.netty.handler.codec.mqtt.MqttMessage;
+import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,12 +18,18 @@ public class SendMqttMessage {
 
     private int messageId;
 
-    private MqttMessage mqttMessage;
-
     private Channel channel;
 
     private volatile ConfirmStatus confirmStatus;
 
     private long time;
+
+    private byte[]  byteBuf;
+
+    private boolean isRetain;
+
+    private MqttQoS qos;
+
+    private String topic;
 
 }

@@ -1,13 +1,19 @@
 package com.lxr.iot.auto;
 
+import com.lxr.iot.bootstrap.scan.SacnScheduled;
+import com.lxr.iot.bootstrap.scan.ScanRunnable;
 import com.lxr.iot.enums.ProtocolEnum;
 import com.lxr.iot.properties.InitBean;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 /**
@@ -17,7 +23,7 @@ import org.springframework.core.env.Environment;
  * @create 2017-11-29 19:52
  **/
 @Configuration
-@ConditionalOnClass({InitServer.class})
+@ConditionalOnClass
 @EnableConfigurationProperties({InitBean.class})
 public class ServerAutoConfigure {
 
@@ -37,9 +43,21 @@ public class ServerAutoConfigure {
 
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "sacnScheduled")
+    public ScanRunnable initRunable(@Autowired  InitBean serverBean){
+        long time =(serverBean==null || serverBean.getPeriod()<5)?10:serverBean.getPeriod();
+        ScanRunnable sacnScheduled = new SacnScheduled(time);
+        Thread scanRunnable = new Thread(sacnScheduled);
+        scanRunnable.setDaemon(true);
+        scanRunnable.start();
+        return sacnScheduled;
+    }
+
+
     @Bean(initMethod = "open", destroyMethod = "close")
     @ConditionalOnMissingBean
-    public InitServer initServer(InitBean serverBean, Environment env){
+    public InitServer initServer(InitBean serverBean){
         if(!ObjectUtils.allNotNull(serverBean.getPort(),serverBean.getServerName())){
             throw  new NullPointerException("not set port");
         }
@@ -75,5 +93,6 @@ public class ServerAutoConfigure {
         }
         return new InitServer(serverBean);
     }
+
 
 }

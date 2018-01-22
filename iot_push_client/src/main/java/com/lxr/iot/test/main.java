@@ -48,8 +48,8 @@ public class main {
             }
         });
         producer.connect(connectOptions);
-        producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
-//        producer.pub("/topic","hah",2);
+//        producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
+        producer.pub("/t1/t2","hah",2);
     }
 
 }

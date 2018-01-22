@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 
@@ -48,8 +47,9 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     @Override
     public void pub(String topic, String message, boolean retained, int qos) {
-        SendMqttMessage mqttMessage = buildMqttMessage(topic, message, retained, qos, false, true);
-        pubMessage(channel, mqttMessage);
+        Optional.ofNullable(buildMqttMessage(topic, message, retained, qos, false, true)).ifPresent(sendMqttMessage -> {
+            pubMessage(channel, sendMqttMessage);
+        });
     }
 
     private SendMqttMessage buildMqttMessage(String topic, String message, boolean retained, int qos, boolean dup, boolean time) {
@@ -91,7 +91,7 @@ public class MqttProducer  extends  AbsMqttProducer{
 
     @Override
     public void unsub(){
-            unsub(toList());
+        unsub(toList());
     }
 
 
@@ -114,9 +114,9 @@ public class MqttProducer  extends  AbsMqttProducer{
     private List<String> toList(){
         return Optional.ofNullable(topics).
                 map(mqttTopicSubscriptions ->
-                    mqttTopicSubscriptions.stream().
-                            map(mqttTopicSubscription -> mqttTopicSubscription.topicName()).collect(Collectors.toList()))
-                        .orElse(null);
+                        mqttTopicSubscriptions.stream().
+                                map(mqttTopicSubscription -> mqttTopicSubscription.topicName()).collect(Collectors.toList()))
+                .orElse(null);
     }
 
 

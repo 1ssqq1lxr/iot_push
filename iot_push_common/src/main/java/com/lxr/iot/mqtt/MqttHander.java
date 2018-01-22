@@ -1,9 +1,9 @@
 package com.lxr.iot.mqtt;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.mqtt.*;
+import io.netty.handler.codec.mqtt.MqttFixedHeader;
+import io.netty.handler.codec.mqtt.MqttMessage;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +38,6 @@ public  abstract  class MqttHander extends SimpleChannelInboundHandler<MqttMessa
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("=================="+System.currentTimeMillis());
         log.info("【DefaultMqttHandler：channelInactive】"+ctx.channel().localAddress().toString()+"关闭成功");
         mqttHandlerApi.close(ctx.channel());
         super.channelInactive(ctx);

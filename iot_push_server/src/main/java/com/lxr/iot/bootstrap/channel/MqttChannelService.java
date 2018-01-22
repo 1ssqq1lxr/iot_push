@@ -1,15 +1,15 @@
 package com.lxr.iot.bootstrap.channel;
 
 import com.lxr.iot.bootstrap.bean.*;
+import com.lxr.iot.bootstrap.scan.ScanRunnable;
+import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.enums.SessionStatus;
 import com.lxr.iot.enums.SubStatus;
 import com.lxr.iot.exception.ConnectionException;
 import com.lxr.iot.util.ByteBufUtil;
-import com.lxr.iot.pool.Scheduled;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * channel事件处理service
@@ -42,11 +41,11 @@ public class MqttChannelService extends AbstractChannelService{
     @Autowired
     private WillService willService;
 
-    private final  Scheduled scheduled;
+    private final ScanRunnable scanRunnable;
 
-    public MqttChannelService(Scheduled scheduled) {
-        super(scheduled);
-        this.scheduled = scheduled;
+    public MqttChannelService(ScanRunnable scanRunnable) {
+        super(scanRunnable);
+        this.scanRunnable = scanRunnable;
     }
 
 
@@ -171,7 +170,7 @@ public class MqttChannelService extends AbstractChannelService{
      */
     @Override
     public void doPubrec(Channel channel, int mqttMessage) {
-        sendPubRel(channel,false,mqttMessage,true);
+        sendPubRel(channel,false,mqttMessage);
     }
 
     /**
@@ -262,7 +261,7 @@ public class MqttChannelService extends AbstractChannelService{
                         sendPubBack(channel, messageId);
                         break;
                     case EXACTLY_ONCE:
-                        sendPubRec(channel, false, messageId, true);
+                        sendPubRec(mqttChannel, messageId);
                         break;
                 }
                 if (!mqttChannel.checkRecevice(messageId)) {
@@ -340,41 +339,16 @@ public class MqttChannelService extends AbstractChannelService{
                     mqttChannel1.setChannel(null);
                     if(!mqttChannel1.isCleanSession()){ // 保持会话
                         // 处理 qos1 未确认数据
-                        ConcurrentHashMap<Integer, ConfirmMessage> message = mqttChannel1.getMessage();
+                        ConcurrentHashMap<Integer, SendMqttMessage> message = mqttChannel1.getMessage();
                         Optional.ofNullable(message).ifPresent(integerConfirmMessageConcurrentHashMap -> {
-                            integerConfirmMessageConcurrentHashMap.forEach((integer, confirmMessage) ->{
-                                        switch (confirmMessage.getQos()){
-                                            case EXACTLY_ONCE:
-                                                switch (confirmMessage.getQosStatus()){
-                                                    case PUBD:
-                                                        clientSessionService.saveSessionMsg(mqttChannel.getDeviceId(), SessionMessage.builder()
-                                                                .byteBuf(confirmMessage.getByteBuf())
-                                                                .qoS(confirmMessage.getQos())
-                                                                .topic(confirmMessage.getTopic())
-                                                                .build()); // 把待确认数据转入session中
-                                                        break;
-                                                }
-                                                AttributeKey< ScheduledFuture > attributeKey = AttributeKey.valueOf("qos2"+integer);
-                                                ScheduledFuture scheduledFuture = mqttChannel.getChannel().attr(attributeKey).get();
-                                                if (scheduledFuture != null && !scheduledFuture.isCancelled()){ // 取消确认
-                                                    scheduledFuture.cancel(true);
-                                                }
-                                                break;
-                                            case AT_MOST_ONCE:
-                                                clientSessionService.saveSessionMsg(mqttChannel.getDeviceId(), SessionMessage.builder()
-                                                        .byteBuf(confirmMessage.getByteBuf())
-                                                        .qoS(confirmMessage.getQos())
-                                                        .topic(confirmMessage.getTopic())
-                                                        .build()); // 把待确认数据转入session中
-                                                AttributeKey< ScheduledFuture > attributeKey1 = AttributeKey.valueOf("qos1"+integer);
-                                                ScheduledFuture scheduledFuture1 = mqttChannel.getChannel().attr(attributeKey1).get();
-                                                if (scheduledFuture1 != null && !scheduledFuture1.isCancelled()){ // 取消确认
-                                                    scheduledFuture1.cancel(true);
-                                                }
-                                                break;
-                                        }
+                            integerConfirmMessageConcurrentHashMap.forEach((integer, confirmMessage) -> doIfElse(confirmMessage, sendMqttMessage ->sendMqttMessage.getConfirmStatus()== ConfirmStatus.PUB, sendMqttMessage ->{
+                                        clientSessionService.saveSessionMsg(mqttChannel.getDeviceId(), SessionMessage.builder()
+                                                .byteBuf(sendMqttMessage.getByteBuf())
+                                                .qoS(sendMqttMessage.getQos())
+                                                .topic(sendMqttMessage.getTopic())
+                                                .build()); // 把待确认数据转入session中
                                     }
-                            );
+                            ));
 
                         });
                     }
