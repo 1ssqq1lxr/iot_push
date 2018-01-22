@@ -40,12 +40,10 @@
   * 基于springboot 配置方式[yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client/src/main/resources/application.yml)
   
   * 配置实现 MqttListener 类并添加MqttMessageListener指定订阅的topic跟服务质量
+     
+  * @Autowired Procuder producer 即可使用;
     
-    
-    * @Autowired Procuder producer 即可使用;
-    
-  
-     Producer producer = new MqttProducer();
+     **Producer producer = new MqttProducer();
             ConnectOptions connectOptions = new ConnectOptions();
             connectOptions.setBacklog(1024);
             connectOptions.setConnectTime(1000l);
@@ -78,7 +76,7 @@
             });
             producer.connect(connectOptions);
             producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
-    //        producer.pub("/topic","hah",2);
+            producer.pub("/topic","hah",2);**
     
  ### 交流群号 658212670
 
