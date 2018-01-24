@@ -13,7 +13,7 @@ import java.io.UnsupportedEncodingException;
  **/
 public class MqttClientProducerTest {
 
-    private static int qos = 2; //只有一次
+    private static int qos = 1; //只有一次
     private static String broker = "tcp://127.0.0.1:1884";
     private static String userName = "tuyou";
     private static String passWord = "tuyou";
