@@ -43,7 +43,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
 
     ServerBootstrap bootstrap=null ;// 启动辅助类
 
-
+    /**
+     * 服务开启
+     */
     public void start() {
         initEventPool();
         bootstrap.group(bossGroup, workGroup)
@@ -68,11 +70,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
         });
     }
     /**
-     * 初始化EnentPool
+     * 初始化EnentPool 参数
      */
     private void  initEventPool(){
-//        Multimap multima = ImmutableMultimap.builder().build();
-//        HashMultimap<Object, Object> objectObjectHashMultimap = HashMultimap.create();
         bootstrap= new ServerBootstrap();
         bossGroup = new NioEventLoopGroup(serverBean.getBossThread(), new ThreadFactory() {
             private AtomicInteger index = new AtomicInteger(0);

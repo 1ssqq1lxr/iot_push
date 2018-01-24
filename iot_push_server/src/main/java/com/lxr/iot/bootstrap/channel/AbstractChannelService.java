@@ -83,8 +83,6 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     /**
      * 获取channel
-     * @param deviceId
-     * @return
      */
     public MqttChannel getMqttChannel(String deviceId){
         return mqttChannels.get(deviceId);
@@ -93,8 +91,6 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     /**
      * 获取channelId
-     * @param channel
-     * @return
      */
     public String  getDeviceId(Channel channel){
         return channel.attr(_deviceId).get();

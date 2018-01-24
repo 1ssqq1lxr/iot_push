@@ -37,13 +37,10 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     /**
      * 登录
      *
-     * @param channel            通道
-     * @param mqttConnectMessage 连接信息
-     * @return
      */
     @Override
     public boolean login(Channel channel, MqttConnectMessage mqttConnectMessage) {
-//        校验规则
+//        校验规则 自定义校验规则
         String deviceId = mqttConnectMessage.payload().clientIdentifier();
         if (StringUtils.isBlank(deviceId)) {
             return false;
@@ -65,21 +62,14 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 发布
-     *
-     * @param channel            通道
-     * @param mqttPublishMessage 发布消息
      */
     @Override
     public void publish(Channel channel, MqttPublishMessage mqttPublishMessage) {
         mqttChannelService.publishSuccess(channel, mqttPublishMessage);
-
     }
 
     /**
      * 订阅
-     *
-     * @param channel              通道
-     * @param mqttSubscribeMessage 订阅消息
      */
     @Override
     public void subscribe(Channel channel, MqttSubscribeMessage mqttSubscribeMessage) {
@@ -105,8 +95,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 关闭通道
-     *
-     * @param channel 通道
      */
     @Override
     public void close(Channel channel) {
@@ -116,8 +104,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 回复pong消息
-     *
-     * @param channel 通道
      */
     @Override
     public void pong(Channel channel) {
@@ -130,9 +116,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 取消订阅
-     *
-     * @param channel     通道
-     * @param mqttMessage 取消订阅消息
      */
     @Override
     public void unsubscribe(Channel channel, MqttUnsubscribeMessage mqttMessage) {
@@ -143,9 +126,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 回复取消订阅
-     *
-     * @param channel
-     * @param messageId
      */
     private void unSubBack(Channel channel, int messageId) {
         MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.UNSUBACK, false, MqttQoS.AT_MOST_ONCE, false, 0x02);
@@ -157,9 +137,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * 消息回复确认(qos1 级别 保证收到消息  但是可能会重复)
-     *
-     * @param channel
-     * @param mqttMessage
      */
     @Override
     public void puback(Channel channel, MqttMessage mqttMessage) {
@@ -171,8 +148,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * disconnect 主动断线
-     *
-     * @param channel
      */
     @Override
     public void disconnect(Channel channel) {
@@ -182,9 +157,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * qos2 发布收到
-     *
-     * @param channel
-     * @param mqttMessage
      */
     @Override
     public void pubrec(Channel channel, MqttMessage mqttMessage ) {
@@ -196,9 +168,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * qos2 发布释放
-     *
-     * @param channel
-     * @param mqttMessage
      */
     @Override
     public void pubrel(Channel channel, MqttMessage mqttMessage ) {
@@ -211,9 +180,6 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
 
     /**
      * qos2 发布完成
-     *
-     * @param channel
-     * @param mqttMessage
      */
     @Override
     public void pubcomp(Channel channel, MqttMessage mqttMessage ) {

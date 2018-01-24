@@ -22,8 +22,6 @@ public class InitServer {
 
     BootstrapServer bootstrapServer;
 
-    private Thread thread;
-
     public void open(){
         if(serverBean!=null){
             bootstrapServer = new NettyBootstrapServer();
@@ -36,9 +34,6 @@ public class InitServer {
     public void close(){
         if(bootstrapServer!=null){
             bootstrapServer.shutdown();
-            if(thread!=null && thread.isDaemon()){
-                thread.interrupt();
-            }
         }
     }
 

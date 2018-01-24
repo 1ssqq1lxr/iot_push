@@ -51,8 +51,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * 取消订阅
-     * @param deviceId
-     * @param topics1
      */
     @Override
     public void unsubscribe(String deviceId, List<String> topics1) {
@@ -65,8 +63,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * 登录成功后 回复
-     * @param channel
-     * @param mqttConnectMessage
      */
     private void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
         executorService.execute(() -> {
@@ -124,10 +120,8 @@ public class MqttChannelService extends AbstractChannelService{
                 });         //发送 session  数据
                 ConcurrentLinkedQueue<SessionMessage> sessionMessages = clientSessionService.getByteBuf(payload.clientIdentifier());
                 doIfElse(sessionMessages, messages -> messages != null && !messages.isEmpty(), byteBufs -> {
-
                     SessionMessage sessionMessage;
                     while ((sessionMessage = byteBufs.poll()) != null) {
-                        log.info("【发送会话消息】"+channel.remoteAddress()+":"+sessionMessage.getString()+"【成功】");
                         switch (sessionMessage.getQoS()) {
                             case EXACTLY_ONCE:
                                 sendQosConfirmMsg(MqttQoS.EXACTLY_ONCE,getMqttChannel(deviceId), sessionMessage.getTopic(), sessionMessage.getByteBuf());
@@ -150,7 +144,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * qos2 第二步
-     * @param channel
      */
     @Override
     public void doPubrel(Channel channel, int messageId) {
@@ -165,8 +158,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * qos2 第三步
-     * @param channel
-     * @param mqttMessage
      */
     @Override
     public void doPubrec(Channel channel, int mqttMessage) {
@@ -203,8 +194,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * 订阅成功后 (发送保留消息)
-     * @param deviceId
-     * @param topics
      */
     public void suscribeSuccess(String deviceId, Set<String> topics){
         doIfElse(topics,topics1->!CollectionUtils.isEmpty(topics1),strings -> {
@@ -427,8 +416,6 @@ public class MqttChannelService extends AbstractChannelService{
 
     /**
      * 发送保留消息
-     * @param topic
-     * @param mqttChannel
      */
     public  void sendRetain(String topic,MqttChannel mqttChannel){
         retain.forEach((_topic, retainMessages) -> {

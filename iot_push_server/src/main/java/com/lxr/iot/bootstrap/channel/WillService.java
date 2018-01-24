@@ -36,8 +36,6 @@ public class WillService  implements BaseApi {
 
     /**
      * 保存遗嘱消息
-     * @param deviceid
-     * @param build
      */
     public void save(String deviceid, WillMeaasge build) {
         willMeaasges.put(deviceid,build); // 替换旧的
@@ -57,7 +55,6 @@ public class WillService  implements BaseApi {
 
     /**
      * 删除遗嘱消息
-     * @param deviceid
      */
     public void del(String deviceid ) {willMeaasges.remove(deviceid);}
 }

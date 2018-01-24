@@ -37,7 +37,6 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
 
     private static final String MQTT_CSV_LIST = "mqtt, mqttv3.1, mqttv3.1.1";
 
-//    private   SSLContext CLIENT_CONTEXT;
 
     /**
      *
@@ -102,11 +101,8 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(  SecureSocketSslContextFactory.class.getResourceAsStream(serverBean.getJksFile()),
                     serverBean.getJksStorePassword().toCharArray());
-            // Set up key manager factory to use our key store
             KeyManagerFactory kmf = KeyManagerFactory.getInstance(algorithm);
             kmf.init(ks,serverBean.getJksCertificatePassword().toCharArray());
-
-            // Initialize the SSLContext to work with our key managers.
             serverContext = SSLContext.getInstance(PROTOCOL);
             serverContext.init(kmf.getKeyManagers(), null, null);
         } catch (Exception e) {
