@@ -36,16 +36,18 @@ public abstract class ScanRunnable  extends MqttApi implements Runnable {
 
     @Override
     public void run() {
-        List<SendMqttMessage> list =new LinkedList<>();
-        SendMqttMessage poll ;
-        for(;(poll=queue.poll())!=null;){
-            if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
-                list.add(poll);
-                doInfo(poll);
+        if(!queue.isEmpty()) {
+            SendMqttMessage poll;
+            List<SendMqttMessage> list = new LinkedList<>();
+            for (; (poll = queue.poll()) != null; ) {
+                if (poll.getConfirmStatus() != ConfirmStatus.COMPLETE) {
+                    list.add(poll);
+                    doInfo(poll);
+                }
+                break;
             }
-            break;
+            addQueues(list);
         }
-        addQueues(list);
     }
     public  abstract  void  doInfo( SendMqttMessage poll);
 
