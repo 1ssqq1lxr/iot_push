@@ -36,16 +36,18 @@ public abstract class ScanRunnable  implements Runnable {
     @Override
     public void run() {
         for(;;){
-            List<SendMqttMessage> list =new LinkedList<>();
-            SendMqttMessage poll ;
-            for(;(poll=queue.poll())!=null;){
-                if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
-                    list.add(poll);
-                    doInfo(poll);
+            if(!queue.isEmpty()){
+                List<SendMqttMessage> list =new LinkedList<>();
+                SendMqttMessage poll ;
+                for(;(poll=queue.poll())!=null;){
+                    if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
+                        list.add(poll);
+                        doInfo(poll);
+                    }
+                    break;
                 }
-                break;
+                addQueues(list);
             }
-            addQueues(list);
         }
     }
     public  abstract  void  doInfo( SendMqttMessage poll);
