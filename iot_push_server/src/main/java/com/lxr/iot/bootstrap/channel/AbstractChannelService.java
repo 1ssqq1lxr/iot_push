@@ -35,7 +35,7 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     protected  static char SPLITOR = '/';
 
-    protected ExecutorService executorService =Executors.newCachedThreadPool();
+    protected ExecutorService executorService =Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*2);
 
 
     protected static CacheMap<String,MqttChannel> cacheMap= new CacheMap<>();
