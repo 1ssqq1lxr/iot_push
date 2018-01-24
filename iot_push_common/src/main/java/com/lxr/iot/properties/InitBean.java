@@ -36,11 +36,7 @@ public class InitBean {
     private int revbuf ;
 
 
-    private int read ;
-
-    private int write ;
-
-    private int readAndWrite ;
+    private int heart ;
 
     private boolean ssl ;
 

@@ -73,14 +73,8 @@ public class ServerAutoConfigure {
         if(serverBean.getPeriod()<1){
             serverBean.setPeriod(SEDU_DAY);
         }
-        if(serverBean.getRead()<1){
-            serverBean.setRead(TIMEOUT);
-        }
-        if(serverBean.getWrite()<1){
-            serverBean.setWrite(TIMEOUT);
-        }
-        if(serverBean.getReadAndWrite()<1){
-            serverBean.setReadAndWrite(TIMEOUT);
+        if(serverBean.getHeart()<1){
+            serverBean.setHeart(TIMEOUT);
         }
         if(serverBean.getRevbuf()<1){
             serverBean.setRevbuf(BUF_SIZE);
