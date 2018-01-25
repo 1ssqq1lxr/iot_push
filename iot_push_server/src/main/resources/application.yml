@@ -11,7 +11,7 @@ lxr:
        revbuf: 10485760 # Socket参数，TCP数据接收缓冲区大小。
        heart: 180 # 读超时时间
        backlog: 1024 #  Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝
-       ssl: false # 使用ssl加密
+       ssl: true # 使用ssl加密
        mqttHander: com.lxr.iot.bootstrap.handler.DefaultMqttHandler # 默认处理
        initalDelay: 10 # mqtt qos1 qos2 消息 重发延迟
        protocol: MQTT  # MQTT  MQTT_WS_MQTT(mqtt.js)   MQTT_WS_PAHO(paho.js)
