@@ -20,7 +20,10 @@ public class main {
         ConnectOptions connectOptions = new ConnectOptions();
         connectOptions.setBacklog(1024);
         connectOptions.setConnectTime(1000l);
-        connectOptions.setSsl(false);
+        connectOptions.setSsl(true);
+        connectOptions.setJksStorePassword("mu$tch8ng3");
+        connectOptions.setJksFile("/securesocket.jks");
+        connectOptions.setJksCertificatePassword("inc0rrect");
         connectOptions.setServerIp("127.0.0.1");
         connectOptions.setPort(1884);
         connectOptions.setBossThread(1);
