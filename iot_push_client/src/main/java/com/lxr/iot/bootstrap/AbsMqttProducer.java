@@ -66,6 +66,11 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     }
 
     @Override
+    public void disConnect() {
+        sendDisConnect(channel);
+    }
+
+    @Override
     public void pubRecMessage(Channel channel, int messageId) {
         SendMqttMessage sendMqttMessage= SendMqttMessage.builder().messageId(messageId)
                 .confirmStatus(ConfirmStatus.PUBREC)
@@ -96,6 +101,8 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         this.sacnScheduled =new SacnScheduled(this,seconds);
         sacnScheduled.start();
     }
+
+
 
     @Override
     protected void subMessage(Channel channel, List<MqttTopicSubscription> mqttTopicSubscriptions, int messageId) {

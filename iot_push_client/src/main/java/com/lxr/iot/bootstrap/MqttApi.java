@@ -67,8 +67,14 @@ public class MqttApi {
         channel.writeAndFlush(mqttUnsubscribeMessage);
     }
 
+    protected void sendDisConnect(Channel channel){
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(MqttMessageType.DISCONNECT,false, MqttQoS.AT_LEAST_ONCE,false,0x02);
+        MqttMessage mqttMessage = new MqttMessage(mqttFixedHeader);
+        channel.writeAndFlush(mqttMessage);
+    }
+
     protected AttributeKey<ScheduledFuture<?>> getKey(String id){
-       return   AttributeKey.valueOf(id);
+        return   AttributeKey.valueOf(id);
     }
 
 

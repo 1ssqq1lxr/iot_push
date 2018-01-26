@@ -95,10 +95,7 @@ public class MqttProducer  extends  AbsMqttProducer{
     }
 
 
-    @Override
-    public void disConnect() {
 
-    }
     private List<MqttTopicSubscription> getSubTopics(SubMessage[]subMessages ) {
         return  Optional.ofNullable(subMessages)
                 .map(subMessages1 -> {
