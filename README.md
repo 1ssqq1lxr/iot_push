@@ -31,7 +31,7 @@
   * springboot
   * jdk8
   * 导入IDE
-  * 配置yml 或者properties 文件 [yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_server/src/main/resources/application.yml)  
+  * 配置yml 或者properties 文件 [yml](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_server_starter_test/src/main/resources/application.yml)  
   * 简单测试：运行包 test 下的 测试 文件，即可开启测试客户端。
   * 压力测试：推荐使用jmeter 的mqtt插件 [插件](https://github.com/tuanhiep/mqtt-jmeter)
  
