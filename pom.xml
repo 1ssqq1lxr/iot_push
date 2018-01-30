@@ -10,8 +10,8 @@
         <module>iot_push_server</module>
         <module>iot_push_test</module>
         <module>iot_push_client</module>
-        <module>iot_push_client_starter</module>
-        <module>iot_push_server_starter</module>
+        <module>iot_push_client_starter_test</module>
+        <module>iot_push_server_starter_test</module>
     </modules>
     <packaging>pom</packaging>
 
