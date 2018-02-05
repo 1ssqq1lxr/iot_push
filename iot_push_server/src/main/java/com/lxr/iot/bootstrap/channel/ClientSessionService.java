@@ -3,6 +3,7 @@ package com.lxr.iot.bootstrap.channel;
 import com.lxr.iot.bootstrap.bean.SessionMessage;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -29,6 +30,7 @@ public class ClientSessionService {
     }
 
     public  ConcurrentLinkedQueue<SessionMessage> getByteBuf(String deviceId){
-        return queueSession.get(deviceId);
+        return   Optional.ofNullable(deviceId).map(s -> queueSession.get(s))
+                .orElse(null);
     }
 }

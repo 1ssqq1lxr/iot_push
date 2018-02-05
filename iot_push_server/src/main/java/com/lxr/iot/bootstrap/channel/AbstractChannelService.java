@@ -12,8 +12,10 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.zookeeper.Op;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -71,21 +73,26 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
     }
 
     protected boolean deleteChannel(String topic,MqttChannel mqttChannel){
-        mqttChannelCache.invalidate(topic);
-        return  cacheMap.delete(getTopic(topic),mqttChannel);
+      return  Optional.ofNullable(topic).map(s -> {
+            mqttChannelCache.invalidate(s);
+            return  cacheMap.delete(getTopic(s),mqttChannel);
+        }).orElse(false);
     }
 
     protected boolean addChannel(String topic,MqttChannel mqttChannel)
     {
-        mqttChannelCache.invalidate(topic);
-        return  cacheMap.putData(getTopic(topic),mqttChannel);
+        return  Optional.ofNullable(topic).map(s -> {
+            mqttChannelCache.invalidate(s);
+            return cacheMap.putData(getTopic(s),mqttChannel);
+        }).orElse(false);
     }
 
     /**
      * 获取channel
      */
     public MqttChannel getMqttChannel(String deviceId){
-        return mqttChannels.get(deviceId);
+        return Optional.ofNullable(deviceId).map(s -> mqttChannels.get(s))
+                .orElse(null);
 
     }
 
@@ -93,13 +100,16 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
      * 获取channelId
      */
     public String  getDeviceId(Channel channel){
-        return channel.attr(_deviceId).get();
+        return  Optional.ofNullable(channel).map( channel1->channel1.attr(_deviceId).get())
+                .orElse(null);
     }
 
 
 
     protected String[] getTopic(String topic)  {
-        return StringUtils.split(topic,SPLITOR);
+        return Optional.ofNullable(topic).map(s ->
+             StringUtils.split(topic,SPLITOR)
+        ).orElse(null);
     }
 
 

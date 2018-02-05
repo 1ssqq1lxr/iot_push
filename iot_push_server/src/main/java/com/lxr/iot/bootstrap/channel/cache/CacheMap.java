@@ -54,7 +54,6 @@ public class CacheMap<K,V>  {
     }
 
     public   List<V>  getData(K[] ks){
-        log.info("CacheMap【getData】 ================================================");
         if(ks.length==1){
             return datas.get(ks[0]).get();
         }

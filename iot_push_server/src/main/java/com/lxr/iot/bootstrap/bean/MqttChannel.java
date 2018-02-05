@@ -86,11 +86,10 @@ public class MqttChannel {
      * @return
      */
     public boolean isLogin(){
-        if(this.channel!=null){
+        return Optional.ofNullable(this.channel).map(channel1 -> {
             AttributeKey<Boolean> _login = AttributeKey.valueOf("login");
-            return channel.isActive() && channel.hasAttr(_login);
-        }
-        return false;
+            return channel1.isActive() && channel1.hasAttr(_login);
+        }).orElse(false);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.lxr.iot.bootstrap.handler;
 
 import com.lxr.iot.bootstrap.ChannelService;
+import com.lxr.iot.bootstrap.bean.MqttChannel;
 import com.lxr.iot.exception.NoFindHandlerException;
 import com.lxr.iot.mqtt.MqttHander;
 import com.lxr.iot.mqtt.MqttHandlerIntf;
@@ -55,7 +56,8 @@ public class DefaultMqttHandler extends MqttHander {
             }
             return ;
         }
-        if(channelService.getMqttChannel(channelService.getDeviceId(channel)).isLogin()){
+        MqttChannel mqttChannel = channelService.getMqttChannel(channelService.getDeviceId(channel));
+        if(mqttChannel!=null && mqttChannel.isLogin()){
             switch (mqttFixedHeader.messageType()){
                 case PUBLISH:
                     serverMqttHandlerService.publish(channel, (MqttPublishMessage) mqttMessage);
