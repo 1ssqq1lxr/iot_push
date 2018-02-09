@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  **/
 
 @Service
-public class DefaleAutoService  implements BaseAuthService{
+public class DefaultAutoService implements BaseAuthService{
     @Override
     public boolean authorized(String username, String password) {
         return false;
