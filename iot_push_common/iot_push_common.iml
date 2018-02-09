@@ -84,7 +84,7 @@
     <orderEntry type="library" name="Maven: com.google.errorprone:error_prone_annotations:2.0.18" level="project" />
     <orderEntry type="library" name="Maven: com.google.j2objc:j2objc-annotations:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.14" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.11.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.12.Final" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
     <orderEntry type="library" name="Maven: org.apache.curator:curator-recipes:2.9.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.curator:curator-client:2.9.1" level="project" />

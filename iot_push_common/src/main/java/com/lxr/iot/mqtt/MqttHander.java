@@ -40,7 +40,6 @@ public  abstract  class MqttHander extends SimpleChannelInboundHandler<MqttMessa
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("【DefaultMqttHandler：channelInactive】"+ctx.channel().localAddress().toString()+"关闭成功");
         mqttHandlerApi.close(ctx.channel());
-        super.channelInactive(ctx);
     }
 
     @Override

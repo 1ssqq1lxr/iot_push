@@ -1,6 +1,7 @@
 package com.lxr.iot.bootstrap.channel;
 
 import com.lxr.iot.bootstrap.BaseApi;
+import com.lxr.iot.bootstrap.BaseAuthService;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.bootstrap.bean.SendMqttMessage;
 import com.lxr.iot.enums.ConfirmStatus;
@@ -33,6 +34,11 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     @Autowired
     ChannelService mqttChannelService;
 
+    private  final BaseAuthService baseAuthService;
+
+    public MqttHandlerService(BaseAuthService baseAuthService) {
+        this.baseAuthService = baseAuthService;
+    }
 
     /**
      * 登录
@@ -41,8 +47,18 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     @Override
     public boolean login(Channel channel, MqttConnectMessage mqttConnectMessage) {
 //        校验规则 自定义校验规则
-        String deviceId = mqttConnectMessage.payload().clientIdentifier();
+        MqttConnectPayload payload = mqttConnectMessage.payload();
+        String deviceId = payload.clientIdentifier();
         if (StringUtils.isBlank(deviceId)) {
+            MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED;
+            connectBack(channel,connectReturnCode);
+            return false;
+        }
+
+        if(mqttConnectMessage.variableHeader().hasPassword() && mqttConnectMessage.variableHeader().hasUserName()
+                && !baseAuthService.authorized(payload.userName(),payload.password())){
+            MqttConnectReturnCode connectReturnCode = MqttConnectReturnCode.CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD;
+            connectBack(channel,connectReturnCode);
             return false;
         }
         return  Optional.ofNullable(mqttChannelService.getMqttChannel(deviceId))
@@ -59,6 +75,15 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
                 });
 
     }
+
+    private  void  connectBack(Channel channel,  MqttConnectReturnCode connectReturnCode){
+        MqttConnAckVariableHeader mqttConnAckVariableHeader = new MqttConnAckVariableHeader(connectReturnCode, true);
+        MqttFixedHeader mqttFixedHeader = new MqttFixedHeader(
+                MqttMessageType.CONNACK,false, MqttQoS.AT_MOST_ONCE, false, 0x02);
+        MqttConnAckMessage connAck = new MqttConnAckMessage(mqttFixedHeader, mqttConnAckVariableHeader);
+        channel.writeAndFlush(connAck);
+    }
+
 
     /**
      * 发布

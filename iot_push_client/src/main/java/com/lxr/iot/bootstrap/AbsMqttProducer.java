@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
@@ -49,10 +50,24 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
     protected List<MqttTopicSubscription> topics = new ArrayList<>();
 
 
+    private static  final  int _BLACKLOG =   1024;
+
+    private static final  int  CPU =Runtime.getRuntime().availableProcessors();
+
+    private static final  int  SEDU_DAY =10;
+
+    private static final  int TIMEOUT =120;
+
+    private static final  int BUF_SIZE=10*1024*1024;
+
+
+
+
     private  static final CountDownLatch countDownLatch = new CountDownLatch(1);
 
 
     protected   void  connectTo(ConnectOptions connectOptions){
+        checkConnectOptions(connectOptions);
         if(this.nettyBootstrapClient ==null){
             this.nettyBootstrapClient = new NettyBootstrapClient(connectOptions);
         }
@@ -61,6 +76,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         try {
             countDownLatch.await(connectOptions.getConnectTime(), TimeUnit.SECONDS);
         } catch (InterruptedException e) {
+            log.error("InterruptedException",e);
             nettyBootstrapClient.doubleConnect(); // 重新连接
         }
     }
@@ -142,15 +158,20 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
                 countDownLatch.countDown();
                 break;
             case CONNECTION_REFUSED_BAD_USER_NAME_OR_PASSWORD:
-                throw new RuntimeException("用户名密码错误");
+                log.error("login error", new RuntimeException("用户名密码错误"));
+                break;
             case CONNECTION_REFUSED_IDENTIFIER_REJECTED:
-                throw  new RuntimeException("clientId  不允许链接");
+                log.error("login error", new RuntimeException("clientId  不允许链接"));
+                break;
             case CONNECTION_REFUSED_SERVER_UNAVAILABLE:
-                throw new RuntimeException("服务不可用");
+                log.error("login error",  new RuntimeException("服务不可用"));
+                break;
             case CONNECTION_REFUSED_UNACCEPTABLE_PROTOCOL_VERSION:
-                throw new RuntimeException("mqtt 版本不可用");
+                log.error("login error",  new RuntimeException("mqtt 版本不可用"));
+                break;
             case CONNECTION_REFUSED_NOT_AUTHORIZED:
-                throw new RuntimeException("未授权登录");
+                log.error("login error", new RuntimeException("未授权登录"));
+                break;
         }
 
     }
@@ -241,5 +262,10 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         this.mqttListener = mqttListener;
     }
 
-
+    private void checkConnectOptions(ConnectOptions connectOptions){
+        ConnectOptions.MqttOpntions mqtt=connectOptions.getMqtt();
+        Optional.ofNullable(mqtt.getPassword()).ifPresent(s -> mqtt.setHasPassword(true));
+        Optional.ofNullable(mqtt.getUserName()).ifPresent(s -> mqtt.setHasUserName(true));
+        Optional.ofNullable(mqtt.getWillTopic()).ifPresent(s -> mqtt.setWillFlag(true));
+    }
 }
