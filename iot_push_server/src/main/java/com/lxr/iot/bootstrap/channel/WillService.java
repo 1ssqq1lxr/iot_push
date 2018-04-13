@@ -45,7 +45,7 @@ public class WillService  implements BaseApi {
     public void doSend( String deviceId) {  // 客户端断开连接后 开启遗嘱消息发送
         if(  StringUtils.isNotBlank(deviceId)&&(willMeaasges.get(deviceId))!=null){
             WillMeaasge willMeaasge = willMeaasges.get(deviceId);
-            channelService.sendWillMsg(willMeaasge); // 发送遗嘱消息
+            channelService.sendWillMsg(willMeaasge,deviceId); // 发送遗嘱消息
             if(!willMeaasge.isRetain()){ // 移除
                 willMeaasges.remove(deviceId);
                 log.info("deviceId will message["+willMeaasge.getWillMessage()+"] is removed");
