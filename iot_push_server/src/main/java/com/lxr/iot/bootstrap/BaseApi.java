@@ -1,5 +1,8 @@
 package com.lxr.iot.bootstrap;
 
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -54,6 +57,19 @@ public interface BaseApi {
             }
         }
         if(flag){
+            consumer2.accept(t);
+        }
+    }
+
+    default  <T> void   doIfAnd1(@NotNull T t, @NotNull Consumer<T> consumer2, @NotNull Predicate<T>... predicates){
+        Predicate<T> one = predicates[0];
+        int l;
+        if((l=predicates.length)>1){
+            for(int i=1;i<l;i++){
+                one=one.and(predicates[i]);
+            }
+        }
+        if(one.test(t)){
             consumer2.accept(t);
         }
     }

@@ -2,11 +2,15 @@ package com.lxr.iot.bootstrap;
 
 import com.lxr.iot.ip.IpUtils;
 import com.lxr.iot.properties.InitBean;
+import com.lxr.iot.util.RemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -37,9 +41,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
         this.serverBean = serverBean;
     }
 
-    private NioEventLoopGroup bossGroup;
+    private EventLoopGroup bossGroup;
 
-    private NioEventLoopGroup workGroup;
+    private EventLoopGroup workGroup;
 
     ServerBootstrap bootstrap=null ;// 启动辅助类
 
@@ -74,21 +78,39 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
      */
     private void  initEventPool(){
         bootstrap= new ServerBootstrap();
-        bossGroup = new NioEventLoopGroup(serverBean.getBossThread(), new ThreadFactory() {
-            private AtomicInteger index = new AtomicInteger(0);
+        if(useEpoll()){
+            bossGroup = new EpollEventLoopGroup(serverBean.getBossThread(), new ThreadFactory() {
+                private AtomicInteger index = new AtomicInteger(0);
 
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "BOSS_" + index.incrementAndGet());
-            }
-        });
-        workGroup = new NioEventLoopGroup(serverBean.getWorkThread(), new ThreadFactory() {
-            private AtomicInteger index = new AtomicInteger(0);
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "LINUX_BOSS_" + index.incrementAndGet());
+                }
+            });
+            workGroup = new EpollEventLoopGroup(serverBean.getWorkThread(), new ThreadFactory() {
+                private AtomicInteger index = new AtomicInteger(0);
 
-            public Thread newThread(Runnable r) {
-                return new Thread(r, "WORK_" + index.incrementAndGet());
-            }
-        });
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "LINUX_WORK_" + index.incrementAndGet());
+                }
+            });
 
+        }
+        else {
+            bossGroup = new NioEventLoopGroup(serverBean.getBossThread(), new ThreadFactory() {
+                private AtomicInteger index = new AtomicInteger(0);
+
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "BOSS_" + index.incrementAndGet());
+                }
+            });
+            workGroup = new NioEventLoopGroup(serverBean.getWorkThread(), new ThreadFactory() {
+                private AtomicInteger index = new AtomicInteger(0);
+
+                public Thread newThread(Runnable r) {
+                    return new Thread(r, "WORK_" + index.incrementAndGet());
+                }
+            });
+        }
     }
 
     /**
@@ -105,6 +127,9 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
         }
     }
 
-
+    private boolean useEpoll() {
+        return RemotingUtil.isLinuxPlatform()
+                && Epoll.isAvailable();
+    }
 }
 
