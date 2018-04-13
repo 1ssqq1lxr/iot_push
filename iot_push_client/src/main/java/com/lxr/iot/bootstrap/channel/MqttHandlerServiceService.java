@@ -26,7 +26,7 @@ public class MqttHandlerServiceService extends  ClientMqttHandlerService{
 
     @Override
     public void puback(Channel channel, MqttMessage mqttMessage) {
-        MqttPublishVariableHeader messageIdVariableHeader = (MqttPublishVariableHeader) mqttMessage.variableHeader();
+        MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
         Optional.ofNullable(Cache.del(messageId)).ifPresent(sendMqttMessage -> {
             sendMqttMessage.setConfirmStatus(ConfirmStatus.COMPLETE);
