@@ -70,6 +70,7 @@ public class DefaultMqttHandler extends MqttHander {
                 break;
             case PUBLISH:
                 publish(channelHandlerContext.channel(),(MqttPublishMessage)mqttMessage);
+                break;
             case PUBACK: // qos 1回复确认
                 mqttHandlerApi.puback(channelHandlerContext.channel(),mqttMessage);
                 break;
@@ -84,6 +85,7 @@ public class DefaultMqttHandler extends MqttHander {
                 break;
             case SUBACK:
                 mqttHandlerApi.suback(channelHandlerContext.channel(),(MqttSubAckMessage)mqttMessage);
+                break;
             default:
                 break;
         }
