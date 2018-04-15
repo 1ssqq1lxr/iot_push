@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
 public class DefaultAutoService implements BaseAuthService{
     @Override
     public boolean authorized(String username, String password) {
-        return false;
+        return true;
     }
 }
