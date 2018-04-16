@@ -243,6 +243,7 @@ public class MqttChannelService extends AbstractChannelService{
         int messageId = mqttPublishVariableHeader.messageId();
         executorService.execute(() -> {
             if (channel.hasAttr(_login) && mqttChannel != null) {
+                boolean isRetain;
                 switch (mqttFixedHeader.qosLevel()) {
                     case AT_MOST_ONCE: // 至多一次
                         break;
@@ -253,11 +254,7 @@ public class MqttChannelService extends AbstractChannelService{
                         sendPubRec(mqttChannel, messageId);
                         break;
                 }
-                if (!mqttChannel.checkRecevice(messageId)) {
-                    push(mqttPublishVariableHeader.topicName(), mqttFixedHeader.qosLevel(), bytes);
-                    mqttChannel.addRecevice(messageId);
-                }
-                if (mqttFixedHeader.isRetain() && mqttFixedHeader.qosLevel() != MqttQoS.AT_MOST_ONCE) { //是保留消息  qos >0
+                if ((isRetain=mqttFixedHeader.isRetain()) && mqttFixedHeader.qosLevel() != MqttQoS.AT_MOST_ONCE) { //是保留消息  qos >0
                     saveRetain(mqttPublishVariableHeader.topicName(),
                             RetainMessage.builder()
                                     .byteBuf(bytes)
@@ -270,6 +267,10 @@ public class MqttChannelService extends AbstractChannelService{
                                     .qoS(mqttFixedHeader.qosLevel())
                                     .build(), true);
                 }
+                if (!mqttChannel.checkRecevice(messageId)) {
+                    push(mqttPublishVariableHeader.topicName(), mqttFixedHeader.qosLevel(), bytes,isRetain);
+                    mqttChannel.addRecevice(messageId);
+                }
             }
         });
 
@@ -277,7 +278,7 @@ public class MqttChannelService extends AbstractChannelService{
     /**
      * 推送消息给订阅者
      */
-    private  void push( String topic,MqttQoS qos, byte[] bytes){
+    private  void push(String topic, MqttQoS qos, byte[] bytes, boolean isRetain){
         Collection<MqttChannel> subChannels = getChannels(topic, topic1 -> cacheMap.getData(getTopic(topic1)));
         if(!CollectionUtils.isEmpty(subChannels)){
             subChannels.parallelStream().forEach(subChannel -> {
@@ -297,7 +298,7 @@ public class MqttChannelService extends AbstractChannelService{
                             }
                         }
                         else{
-                            if(!subChannel.isCleanSession()){
+                            if(!subChannel.isCleanSession() & !isRetain){
                                 clientSessionService.saveSessionMsg(subChannel.getDeviceId(),
                                         SessionMessage.builder().byteBuf(bytes).qoS(qos).topic(topic).build() );
                                 break;
