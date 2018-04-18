@@ -3,6 +3,8 @@ package com.lxr.iot.bootstrap.channel.cache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -60,15 +62,16 @@ public class CacheMap<K,V>  {
         else{
             Node<K, V> node = datas.get(ks[0]);
             if(node!=null){
-                List<V> data = node.get();
+                List<V> all  = new ArrayList<>();
+                all.addAll(node.get());
                 for(int i=1;i<ks.length && node!=null;i++){
                     node= node.getNext(ks[i]);
                     if(node==null){
                         break ;
                     }
-                    data.addAll(node.get());
+                    all.addAll(node.get());
                 }
-                return data;
+                return all;
             }
             return null;
         }
@@ -136,7 +139,4 @@ public class CacheMap<K,V>  {
         }
     }
 
-    public static void main(String[] args){
-        System.out.println(StringUtils.startsWith("/t1/t2","/t1"));
-    }
 }
