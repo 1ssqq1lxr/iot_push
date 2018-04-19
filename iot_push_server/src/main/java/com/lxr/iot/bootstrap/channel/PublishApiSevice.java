@@ -30,17 +30,17 @@ public class PublishApiSevice {
     /**
      * 写入遗嘱消息
      */
-    protected void writeWillMsg(MqttChannel mqttChannel, WillMeaasge willMeaasge, String deviceId) {
+    protected void writeWillMsg(MqttChannel mqttChannel, WillMeaasge willMeaasge) {
 //        dup保证消息可靠传输，默认为0，只占用一个字节，表示第一次发送。不能用于检测消息重复发送等
         switch (willMeaasge.getQos()){
             case 0: // qos0
-                sendQos0Msg(mqttChannel.getChannel(),willMeaasge.getWillTopic(),deviceId.getBytes());
+                sendQos0Msg(mqttChannel.getChannel(),willMeaasge.getWillTopic(),willMeaasge.getWillMessage().getBytes());
                 break;
             case 1: // qos1
-                sendQosConfirmMsg(MqttQoS.AT_LEAST_ONCE,mqttChannel,willMeaasge.getWillTopic(),deviceId.getBytes());
+                sendQosConfirmMsg(MqttQoS.AT_LEAST_ONCE,mqttChannel,willMeaasge.getWillTopic(),willMeaasge.getWillMessage().getBytes());
                 break;
             case 2: // qos2
-                sendQosConfirmMsg(MqttQoS.EXACTLY_ONCE,mqttChannel,willMeaasge.getWillTopic(),deviceId.getBytes());
+                sendQosConfirmMsg(MqttQoS.EXACTLY_ONCE,mqttChannel,willMeaasge.getWillTopic(),willMeaasge.getWillMessage().getBytes());
                 break;
         }
 

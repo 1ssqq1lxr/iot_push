@@ -88,7 +88,7 @@ public class MqttChannelService extends AbstractChannelService{
                     // 处理遗嘱消息
                     final WillMeaasge buildWill = WillMeaasge.builder().
                             qos(mqttConnectVariableHeader.willQos())
-                            .willMessage(payload.willMessage())
+                            .willMessage(deviceId)
                             .willTopic(payload.willTopic())
                             .isRetain(mqttConnectVariableHeader.isWillRetain())
                             .build();
@@ -372,9 +372,8 @@ public class MqttChannelService extends AbstractChannelService{
     /**
      * 发送 遗嘱消息(有的channel 已经关闭 但是保持了 session  此时加入session 数据中 )
      * @param willMeaasge 遗嘱消息
-     * @param deviceId
      */
-    public void sendWillMsg(WillMeaasge willMeaasge, String deviceId){
+    public void sendWillMsg(WillMeaasge willMeaasge){
         Collection<MqttChannel> mqttChannels = getChannels(willMeaasge.getWillTopic(), topic -> cacheMap.getData(getTopic(topic)));
         if(!CollectionUtils.isEmpty(mqttChannels)){
             mqttChannels.forEach(mqttChannel -> {
@@ -387,7 +386,7 @@ public class MqttChannelService extends AbstractChannelService{
                                         .byteBuf(willMeaasge.getWillMessage().getBytes()).build());
                         break;
                     case OPEN:
-                        writeWillMsg(mqttChannel,willMeaasge,deviceId);
+                        writeWillMsg(mqttChannel,willMeaasge);
                         break;
                 }
             });

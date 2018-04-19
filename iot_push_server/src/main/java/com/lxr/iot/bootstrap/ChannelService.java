@@ -33,7 +33,7 @@ public interface ChannelService {
 
     void closeSuccess(String deviceId,boolean isDisconnect);
 
-    void sendWillMsg(WillMeaasge willMeaasge, String deviceId);
+    void sendWillMsg(WillMeaasge willMeaasge);
 
     String  getDeviceId(Channel channel);
 
