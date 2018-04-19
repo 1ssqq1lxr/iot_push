@@ -65,7 +65,6 @@ public class MqttChannelService extends AbstractChannelService{
      * 登录成功后 回复
      */
     private void replyLogin(Channel channel, MqttConnectMessage mqttConnectMessage) {
-        executorService.execute(() -> {
             MqttFixedHeader mqttFixedHeader1 = mqttConnectMessage.fixedHeader();
             MqttConnectVariableHeader mqttConnectVariableHeader = mqttConnectMessage.variableHeader();
             final MqttConnectPayload payload = mqttConnectMessage.payload();
@@ -137,7 +136,6 @@ public class MqttChannelService extends AbstractChannelService{
 
                 });
             }
-        });
     }
 
 
@@ -179,8 +177,9 @@ public class MqttChannelService extends AbstractChannelService{
                         case CLOSE:
                             switch (mqttChannel.getSubStatus()){
                                 case YES: // 清除订阅  topic
-                                    deleteSubTopic(mqttChannel);
-                                case NO:
+                                    deleteSubTopic(mqttChannel).stream()
+                                        .forEach(s -> cacheMap.putData(getTopic(s),build));
+                                    break;
                             }
                     }
                     mqttChannels.put(deviceId,build);
@@ -366,11 +365,10 @@ public class MqttChannelService extends AbstractChannelService{
      * 清除channel 订阅主题
      * @param mqttChannel
      */
-    public void  deleteSubTopic(MqttChannel mqttChannel){
+    public Set<String>  deleteSubTopic(MqttChannel mqttChannel){
         Set<String> topics = mqttChannel.getTopic();
-        topics.parallelStream().forEach(topic -> {
-            cacheMap.delete(getTopic(topic),mqttChannel);
-        });
+        topics.parallelStream().forEach(topic -> cacheMap.delete(getTopic(topic),mqttChannel));
+        return topics;
     }
 
     /**
