@@ -347,8 +347,6 @@ public class MqttChannelService extends AbstractChannelService{
                             case YES:
                                 deleteSubTopic(mqttChannel1);
                                 break;
-                            case NO:
-                                break;
                         }
                     }
                     if(mqttChannel1.isWill()){     // 发送遗言
