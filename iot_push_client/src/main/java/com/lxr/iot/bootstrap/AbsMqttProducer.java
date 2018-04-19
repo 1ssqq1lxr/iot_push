@@ -266,6 +266,6 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
         ConnectOptions.MqttOpntions mqtt=connectOptions.getMqtt();
         Optional.ofNullable(mqtt.getPassword()).ifPresent(s -> mqtt.setHasPassword(true));
         Optional.ofNullable(mqtt.getUserName()).ifPresent(s -> mqtt.setHasUserName(true));
-        Optional.ofNullable(mqtt.getWillTopic()).ifPresent(s -> mqtt.setWillFlag(true));
+        Optional.ofNullable(mqtt.getWillTopic()).ifPresent(s -> mqtt.setHasWillFlag(true));
     }
 }

@@ -99,8 +99,8 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
                 throw new RuntimeException("未设置用户");
             if (mqtt.isHasPassword()&&mqtt.getPassword()==null)
                 throw new RuntimeException("未设置密码");
-            if(!mqtt.isWillFlag()){
-                mqtt.setWillRetain(false);
+            if(!mqtt.isHasWillFlag()){
+                mqtt.setHasWillRetain(false);
                 mqtt.setWillQos(0);
                 mqtt.setWillMessage(null);
                 mqtt.setWillTopic(null);

@@ -17,9 +17,6 @@ package com.lxr.iot.util;
  * limitations under the License.
  */
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

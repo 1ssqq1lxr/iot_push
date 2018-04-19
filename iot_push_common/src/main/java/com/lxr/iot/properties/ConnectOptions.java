@@ -66,13 +66,13 @@ public class ConnectOptions {
 
         private  boolean hasPassword;
 
-        private  boolean isWillRetain;
+        private  boolean hasWillRetain;
 
         private  int willQos;
 
-        private  boolean isWillFlag;
+        private  boolean hasWillFlag;
 
-        private  boolean isCleanSession;
+        private  boolean hasCleanSession;
 
         private int KeepAliveTime;
 

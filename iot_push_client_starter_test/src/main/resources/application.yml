@@ -3,7 +3,7 @@ lxr:
   iot:
     client:
        connectTime: 10 # 链接超时
-       serverIp: 192.168.0.213
+       serverIp: 192.168.0.176
        port: 1884 #端口
        keepalive: true #Socket参数，连接保活，默认值为False。启用该功能时，TCP会主动探测空闲连接的有效性。可以将此功能视为TCP的心跳机制，需要注意的是：默认的心跳间隔是7200s即2小时。Netty默认关闭该功能
        reuseaddr: true #地址复用，默认值False。有四种情况可以使用：(1).当有一个有相同本地地址和端口的socket1处于TIME_WAIT状态时，而你希望启动的程序的socket2要占用该地址和端口，比如重启服务且保持先前端口。(2).有多块网卡或用IP Alias技术的机器在同一端口启动多个进程，但每个进程绑定的本地IP地址不能相同。(3).单个进程绑定相同的端口到多个socket上，但每个socket绑定的ip地址不同。(4).完全相同的地址和端口的重复绑定。但这只用于UDP的多播，不用于TCP。
@@ -12,7 +12,7 @@ lxr:
        revbuf: 10485760 # Socket参数，TCP数据接收缓冲区大小。
        heart: 60 # 读超时时间
        backlog: 1024 #  Socket参数，服务端接受连接的队列长度，如果队列已满，客户端连接将被拒绝
-       ssl: true # 使用ssl加密
+       ssl: false # 使用ssl加密
        initalDelay: 10 # mqtt qos1 qos2 消息 重发延迟
        period: 10 # mqtt qos1 qos2 消息 重发周期
        jksFile:  /securesocket.jks # ssl 加密 jks文件地址
@@ -21,16 +21,16 @@ lxr:
        workThread:  1
        mqtt:
           clientIdentifier: client-1
-          isWillFlag: false
-          isCleanSession: true
+          hasWillFlag: true
+          hasCleanSession: true
           keepAliveTimeSeconds: 3000
           hasUserName: true
           hasPassword: true
-          willTopic:  /test # isWillFlag = true 时候配置  设备离线得时候 往这个主题默认发送离线设备id
+          willTopic:  /lose/device # isWillFlag = true 时候配置  设备离线得时候 往这个主题默认发送离线设备id
           password:  123 # hasPassword = true 时候配置
           userName: 123 # hasUserName = true 时候配置
-          isWillRetain: true # isWillFlag = true 时候配置
-          willQos:  0 # isWillFlag = true 时候配置
+          hasWillRetain: false # isWillFlag = true 时候配置
+          willQos:  1 # isWillFlag = true 时候配置
           KeepAliveTime:  10 # 心跳时长
 
 server:
