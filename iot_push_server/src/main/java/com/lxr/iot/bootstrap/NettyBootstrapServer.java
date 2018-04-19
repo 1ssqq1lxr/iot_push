@@ -11,6 +11,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -53,7 +54,7 @@ public class NettyBootstrapServer extends AbstractBootstrapServer {
     public void start() {
         initEventPool();
         bootstrap.group(bossGroup, workGroup)
-                .channel(NioServerSocketChannel.class)
+                .channel(useEpoll()?EpollServerSocketChannel.class:NioServerSocketChannel.class)
                 .option(ChannelOption.SO_REUSEADDR, serverBean.isReuseaddr())
                 .option(ChannelOption.SO_BACKLOG, serverBean.getBacklog())
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
