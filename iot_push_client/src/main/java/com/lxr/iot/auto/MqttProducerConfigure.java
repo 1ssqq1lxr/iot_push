@@ -75,8 +75,6 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
                 }
             });
         });
-
-
         return mqttProducer;
     }
     private void checkArgs(ConnectOptions connectOptions) {
