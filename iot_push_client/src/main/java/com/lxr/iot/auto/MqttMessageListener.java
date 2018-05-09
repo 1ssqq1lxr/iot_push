@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface MqttMessageListener {
 
-    String topic() ;
+    String[] topic() ;
 
     MqttQoS qos() default MqttQoS.AT_MOST_ONCE;
 

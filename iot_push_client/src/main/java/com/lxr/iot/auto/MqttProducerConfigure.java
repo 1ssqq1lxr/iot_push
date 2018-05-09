@@ -4,6 +4,7 @@ import com.lxr.iot.bootstrap.MqttProducer;
 import com.lxr.iot.bootstrap.Producer;
 import com.lxr.iot.bootstrap.Bean.SubMessage;
 import com.lxr.iot.properties.ConnectOptions;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
@@ -17,8 +18,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 自动配置类
@@ -50,7 +54,6 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
         MqttProducer mqttProducer = new MqttProducer();
         Map<String, Object> beansWithAnnotation = this.applicationContext.getBeansWithAnnotation(MqttMessageListener.class);
         checkArgs(connectOptions);
-        final SubMessage[] build = new SubMessage[1];
         Optional.of(beansWithAnnotation).ifPresent((Map<String, Object> mqttListener) -> {
             beansWithAnnotation.forEach((name, bean) -> {
                 Class<?> clazz = AopUtils.getTargetClass(bean);
@@ -58,16 +61,22 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
                     throw new IllegalStateException(clazz + " is not instance of " + MqttListener.class.getName());
                 }
                 MqttMessageListener annotation = clazz.getAnnotation(MqttMessageListener.class);
+                String[] topics = annotation.topic();
                 MqttListener listener = (MqttListener) bean;
                 mqttProducer.setMqttListener(listener);
-                build[0] = SubMessage.builder()
-                        .qos(annotation.qos())
-                        .topic(annotation.topic())
-                        .build();
+                mqttProducer.connect(connectOptions);
+                if(StringUtils.isNoneBlank(topics)){
+                    List<SubMessage> collect = Arrays.stream(topics)
+                            .map(topic -> SubMessage.builder()
+                                    .qos(annotation.qos())
+                                    .topic(topic)
+                                    .build()).collect(Collectors.toList());
+                    mqttProducer.sub((SubMessage[])collect.toArray());
+                }
             });
         });
-        mqttProducer.connect(connectOptions);
-        mqttProducer.sub(build[0]);
+
+
         return mqttProducer;
     }
     private void checkArgs(ConnectOptions connectOptions) {
