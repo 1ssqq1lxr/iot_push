@@ -66,12 +66,13 @@ public class MqttProducerConfigure   implements ApplicationContextAware,Disposab
                 mqttProducer.setMqttListener(listener);
                 mqttProducer.connect(connectOptions);
                 if(StringUtils.isNoneBlank(topics)){
+                    SubMessage[] SubMessages  = new SubMessage[topics.length];
                     List<SubMessage> collect = Arrays.stream(topics)
                             .map(topic -> SubMessage.builder()
                                     .qos(annotation.qos())
                                     .topic(topic)
                                     .build()).collect(Collectors.toList());
-                    mqttProducer.sub((SubMessage[])collect.toArray());
+                    mqttProducer.sub(collect.toArray(SubMessages));
                 }
             });
         });
