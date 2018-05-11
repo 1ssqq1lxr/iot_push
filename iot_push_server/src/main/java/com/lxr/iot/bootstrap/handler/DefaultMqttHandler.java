@@ -34,9 +34,9 @@ public class DefaultMqttHandler extends MqttHander {
     ChannelService channelService;
 
 
-    public DefaultMqttHandler(MqttHandlerIntf mqttHandlerApi, MqttHandlerIntf mqttHandlerApi1) {
+    public DefaultMqttHandler(MqttHandlerIntf mqttHandlerApi) {
         super(mqttHandlerApi);
-        this.mqttHandlerApi = mqttHandlerApi1;
+        this.mqttHandlerApi = mqttHandlerApi;
     }
 
     @Override
