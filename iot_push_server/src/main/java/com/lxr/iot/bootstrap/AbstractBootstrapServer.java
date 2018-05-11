@@ -20,6 +20,8 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import java.security.KeyStore;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 抽象类 负责加载edec handler
@@ -62,7 +64,7 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
     }
 
     private  void intProtocolHandler(ChannelPipeline channelPipeline,InitBean serverBean){
-                switch (serverBean.getProtocolEnum()){
+                switch (serverBean.getProtocol()){
                     case MQTT:
                         channelPipeline.addLast("encoder", MqttEncoder.INSTANCE);
                         channelPipeline.addLast("decoder", new MqttDecoder());
@@ -91,6 +93,8 @@ public abstract class AbstractBootstrapServer implements BootstrapServer {
     }
 
     private void initSsl(InitBean serverBean){
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.submit(() -> {});
         String algorithm = SystemPropertyUtil.get("ssl.KeyManagerFactory.algorithm");
         if (algorithm == null) {
             algorithm = "SunX509";
