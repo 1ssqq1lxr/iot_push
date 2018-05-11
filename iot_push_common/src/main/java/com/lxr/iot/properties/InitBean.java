@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class InitBean {
 
-    private ProtocolEnum protocolEnum;
+    private ProtocolEnum protocol;
 
     private int port ;
 
