@@ -82,8 +82,8 @@ public class ServerAutoConfigure {
         if(serverBean.getWorkThread()<1){
             serverBean.setWorkThread(CPU*2);
         }
-        if(serverBean.getProtocolEnum()==null){
-            serverBean.setProtocolEnum(ProtocolEnum.MQTT);
+        if(serverBean.getProtocol()==null){
+            serverBean.setProtocol(ProtocolEnum.MQTT);
         }
         return new InitServer(serverBean);
     }
