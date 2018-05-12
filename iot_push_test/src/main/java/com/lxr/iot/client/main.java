@@ -29,8 +29,6 @@ public class main {
         connectOptions.setTcpNodelay(true);
         connectOptions.setKeepalive(true);
         ConnectOptions.MqttOpntions mqttOpntions = new ConnectOptions.MqttOpntions();
-        mqttOpntions.setCleanSession(true);
-        mqttOpntions.setWillFlag(false);
         mqttOpntions.setClientIdentifier("111");
         mqttOpntions.setHasPassword(false);
         mqttOpntions.setHasPassword(false);
