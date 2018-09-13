@@ -40,7 +40,6 @@ public abstract class ScanRunnable  implements Runnable {
                     doInfo(poll);
                     queue.offer(poll);
                 }
-                break;
             } catch (InterruptedException e) {
                 log.error("scan InterruptedException",e);
             }
