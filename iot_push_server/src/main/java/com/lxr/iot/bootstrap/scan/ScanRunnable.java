@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 扫描未确认信息
@@ -19,9 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public abstract class ScanRunnable  implements Runnable {
 
 
-
-    private ConcurrentLinkedQueue<SendMqttMessage> queue  = new ConcurrentLinkedQueue<>();
-
+    LinkedBlockingQueue<SendMqttMessage> queue =new LinkedBlockingQueue();
 
     public  boolean addQueue(SendMqttMessage t){
         return queue.add(t);
@@ -32,21 +31,18 @@ public abstract class ScanRunnable  implements Runnable {
     }
 
 
-
     @Override
     public void run() {
         for(;;){
-            if(!queue.isEmpty()){
-                List<SendMqttMessage> list =new LinkedList<>();
-                SendMqttMessage poll ;
-                for(;(poll=queue.poll())!=null;){
-                    if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
-                        list.add(poll);
-                        doInfo(poll);
-                    }
-                    break;
+            try {
+                SendMqttMessage  poll= queue.take();
+                if(poll.getConfirmStatus()!= ConfirmStatus.COMPLETE){
+                    doInfo(poll);
+                    queue.offer(poll);
                 }
-                addQueues(list);
+                break;
+            } catch (InterruptedException e) {
+                log.error("scan InterruptedException",e);
             }
         }
     }
