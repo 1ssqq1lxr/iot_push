@@ -13,13 +13,13 @@ import com.lxr.iot.properties.ConnectOptions;
  **/
 public class main {
 
-    public static void main(String[] strings){
+    public static void main(String[] strings) throws InterruptedException {
         Producer producer = new MqttProducer();
         ConnectOptions connectOptions = new ConnectOptions();
         connectOptions.setBacklog(1024);
         connectOptions.setConnectTime(1000l);
         connectOptions.setSsl(false);
-        connectOptions.setServerIp("127.0.0.1");
+        connectOptions.setServerIp("192.168.91.1");
         connectOptions.setPort(1884);
         connectOptions.setBossThread(1);
         connectOptions.setWorkThread(8);
@@ -32,6 +32,7 @@ public class main {
         mqttOpntions.setClientIdentifier("111");
         mqttOpntions.setHasPassword(false);
         mqttOpntions.setHasPassword(false);
+        mqttOpntions.setClientIdentifier("client-2");
         connectOptions.setMqtt(mqttOpntions);
         producer.setMqttListener(new MqttListener() {
             @Override
@@ -45,7 +46,9 @@ public class main {
         });
         producer.connect(connectOptions);
 //        producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
-        producer.pub("/t1/t2","hah",2);
+        producer.pub("/test","123123",2);
+        producer.pub("/haha","123213123",2);
+        Thread.sleep(1000000l);
     }
 
 }

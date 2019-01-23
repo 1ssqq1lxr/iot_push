@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service
-@MqttMessageListener(qos = MqttQoS.AT_LEAST_ONCE,topic = "/collect")
+@MqttMessageListener(qos = MqttQoS.AT_LEAST_ONCE,topic = {"/test","/haha"})
 public class SubListener implements MqttListener {
 
     @Override
