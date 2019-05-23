@@ -365,7 +365,7 @@ public class MqttChannelService extends AbstractChannelService{
      */
     public Set<String>  deleteSubTopic(MqttChannel mqttChannel){
         Set<String> topics = mqttChannel.getTopic();
-        topics.parallelStream().forEach(topic -> cacheMap.delete(getTopic(topic),mqttChannel));
+        topics.parallelStream().forEach(topic -> deleteChannel(topic,mqttChannel));
         return topics;
     }
 
