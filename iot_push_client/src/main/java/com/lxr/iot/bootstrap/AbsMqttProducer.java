@@ -191,6 +191,7 @@ public abstract class AbsMqttProducer extends MqttApi implements  Producer {
 
 
         public void doubleConnect(){
+              log.info("断线重连中..............................................");
             ChannelFuture connect = bootstrap.connect(connectOptions.getServerIp(), connectOptions.getPort());
             connect.addListener((ChannelFutureListener) future -> {
                 Thread.sleep(2000);
