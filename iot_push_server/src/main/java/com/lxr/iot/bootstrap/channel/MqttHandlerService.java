@@ -169,7 +169,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void puback(Channel channel, MqttMessage mqttMessage) {
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
-        mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId).setConfirmStatus(ConfirmStatus.COMPLETE); // 复制为空
+        Optional.ofNullable( mqttChannelService.getMqttChannel(deviceId))
+                .ifPresent(mqttChannel -> Optional.ofNullable( mqttChannel.getSendMqttMessage(messageId))
+                           .ifPresent(sendMqttMessage ->sendMqttMessage .setConfirmStatus(ConfirmStatus.COMPLETE)));
     }
 
 
