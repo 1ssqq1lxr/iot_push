@@ -50,6 +50,20 @@ public class MqttChannel {
 
     private ConcurrentHashMap<Integer,SendMqttMessage>  message ; // messageId - message(qos1)  // 待确认消息
 
+    
+    
+   private  AtomicInteger index = new AtomicInteger(1);
+    
+    
+    public    int  messageId(){
+        for (;;) {
+            int current = index.get();
+            int next = (current >= Short.MAX_VALUE ? 0: current + 1);
+            if (index.compareAndSet(current, next)) {
+                return current;
+            }
+        }
+    }
 
     private Set<Integer>  receive;
 
