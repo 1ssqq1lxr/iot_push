@@ -49,7 +49,7 @@ public class PublishApiSevice {
 
     protected void sendQosConfirmMsg(MqttQoS qos, MqttChannel mqttChannel, String topic, byte[] bytes) {
         if(mqttChannel.isLogin()){
-            int messageId = MessageId.messageId();
+            int messageId = mqttChannel.messageId();
             switch (qos){
                 case AT_LEAST_ONCE:
                     mqttChannel.addSendMqttMessage(messageId,sendQos1Msg(mqttChannel.getChannel(),topic,false,bytes,messageId));
