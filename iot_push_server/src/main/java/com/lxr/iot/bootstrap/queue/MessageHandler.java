@@ -1,43 +1,36 @@
-package com.lxr.iot.bootstrap.scan;
+package com.lxr.iot.bootstrap.queue;
 
+
+import com.lmax.disruptor.EventHandler;
 import com.lxr.iot.bootstrap.bean.SendMqttMessage;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-/**
- * 扫描消息确认
- *
- * @author lxr
- * @create 2018-01-08 19:22
- **/
-@Slf4j
-public class SacnScheduled extends ScanRunnable {
+@Component
+public class MessageHandler implements EventHandler<MessageEvent> {
 
-    private final long time;
+    private final MessageTransfer messageTransfer;
 
-    public SacnScheduled(long time) {
-        this.time = time;
+    public MessageHandler(MessageTransfer messageTransfer) {
+        this.messageTransfer = messageTransfer;
     }
 
-    private boolean checkTime(long time) {
-        return System.currentTimeMillis()-time>=10*1000;
-    }
 
     @Override
-    public void doInfo(SendMqttMessage poll) {
-        if(checkTime(poll.getTime()) && poll.getChannel().isActive()){
-            poll.setTime(System.currentTimeMillis());
-            switch (poll.getConfirmStatus()){
+    public void onEvent(MessageEvent messageEvent, long l, boolean b) throws Exception {
+        SendMqttMessage message=messageEvent.getMessage();
+        if(message.getChannel().isActive()){
+            switch (message.getConfirmStatus()){
                 case PUB:
-                    pubMessage(poll.getChannel(),poll);
+                    pubMessage(message.getChannel(),message);
                     break;
                 case PUBREL:
-                    sendAck(MqttMessageType.PUBREL,poll);
+                    sendAck(MqttMessageType.PUBREL,message);
                     break;
                 case PUBREC:
-                    sendAck(MqttMessageType.PUBREC,poll);
+                    sendAck(MqttMessageType.PUBREC,message);
                     break;
             }
         }

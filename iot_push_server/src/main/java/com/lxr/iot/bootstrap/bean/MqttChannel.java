@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * channel 封装类
@@ -52,7 +53,7 @@ public class MqttChannel {
 
     
     
-   private  AtomicInteger index = new AtomicInteger(1);
+   private  AtomicInteger index ;
     
     
     public    int  messageId(){

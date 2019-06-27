@@ -3,14 +3,12 @@ package com.lxr.iot.bootstrap.channel;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.BaseAuthService;
 import com.lxr.iot.bootstrap.ChannelService;
-import com.lxr.iot.bootstrap.bean.MqttChannel;
-import com.lxr.iot.bootstrap.bean.SendMqttMessage;
+import com.lxr.iot.bootstrap.queue.MessageTransfer;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.mqtt.ServerMqttHandlerService;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
 import io.netty.handler.timeout.IdleStateEvent;
-import jdk.nashorn.internal.runtime.regexp.joni.encoding.ObjPtr;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +34,13 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     @Autowired
     ChannelService mqttChannelService;
 
+
+    private  final MessageTransfer messageTransfer;
+
     private  final BaseAuthService baseAuthService;
 
-    public MqttHandlerService(BaseAuthService baseAuthService) {
+    public MqttHandlerService(MessageTransfer messageTransfer, BaseAuthService baseAuthService) {
+        this.messageTransfer = messageTransfer;
         this.baseAuthService = baseAuthService;
     }
 
@@ -169,9 +171,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void puback(Channel channel, MqttMessage mqttMessage) {
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
-        Optional.ofNullable( mqttChannelService.getMqttChannel(deviceId))
-                .ifPresent(mqttChannel -> Optional.ofNullable( mqttChannel.getSendMqttMessage(messageId))
-                           .ifPresent(sendMqttMessage ->sendMqttMessage .setConfirmStatus(ConfirmStatus.COMPLETE)));
+        Optional.ofNullable(mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId))
+                .ifPresent(msg->msg.setConfirmStatus(ConfirmStatus.COMPLETE)); // 复制为空
+        messageTransfer.removeQueue(channel,messageId);
     }
 
 
@@ -192,7 +194,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
         MqttMessageIdVariableHeader messageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = messageIdVariableHeader.messageId();
         Optional.ofNullable(mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId))
-                .ifPresent(msg->msg.setConfirmStatus(ConfirmStatus.PUBREL)); // 复制为空
+                .ifPresent(msg-> msg.setConfirmStatus(ConfirmStatus.PUBREL)); // 复制为空
         mqttChannelService.doPubrec(channel, messageId);
     }
 
@@ -203,9 +205,9 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
     public void pubrel(Channel channel, MqttMessage mqttMessage ) {
         MqttMessageIdVariableHeader mqttMessageIdVariableHeader = (MqttMessageIdVariableHeader) mqttMessage.variableHeader();
         int messageId = mqttMessageIdVariableHeader.messageId();
-        Optional.ofNullable(mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel))
-                .getSendMqttMessage(messageId)
+        Optional.ofNullable(mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId)
         ).ifPresent(msg-> msg .setConfirmStatus(ConfirmStatus.COMPLETE));
+        messageTransfer.removeQueue(channel,messageId);
         mqttChannelService.doPubrel(channel, messageId);
     }
 
@@ -218,6 +220,7 @@ public class  MqttHandlerService extends ServerMqttHandlerService implements  Ba
         int messageId = mqttMessageIdVariableHeader.messageId();
         Optional.ofNullable(mqttChannelService.getMqttChannel(mqttChannelService.getDeviceId(channel)).getSendMqttMessage(messageId))
                 .ifPresent(msg->msg.setConfirmStatus(ConfirmStatus.COMPLETE));
+        messageTransfer.removeQueue(channel,messageId);
     }
 
     @Override

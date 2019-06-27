@@ -7,12 +7,11 @@ import com.lxr.iot.bootstrap.bean.RetainMessage;
 import com.lxr.iot.bootstrap.BaseApi;
 import com.lxr.iot.bootstrap.ChannelService;
 import com.lxr.iot.bootstrap.channel.cache.CacheMap;
-import com.lxr.iot.bootstrap.scan.ScanRunnable;
+import com.lxr.iot.bootstrap.queue.MessageTransfer;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.zookeeper.Op;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -52,8 +51,8 @@ public abstract class AbstractChannelService extends PublishApiSevice implements
 
     protected  static  Cache<String, Collection<MqttChannel>> mqttChannelCache = CacheBuilder.newBuilder().maximumSize(100).build();
 
-    public AbstractChannelService(ScanRunnable scanRunnable) {
-        super(scanRunnable);
+    public AbstractChannelService(MessageTransfer transfer ) {
+        super(transfer);
     }
 
 

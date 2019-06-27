@@ -1,7 +1,7 @@
 package com.lxr.iot.bootstrap.channel;
 
 import com.lxr.iot.bootstrap.bean.*;
-import com.lxr.iot.bootstrap.scan.ScanRunnable;
+import com.lxr.iot.bootstrap.queue.MessageTransfer;
 import com.lxr.iot.enums.ConfirmStatus;
 import com.lxr.iot.enums.SessionStatus;
 import com.lxr.iot.enums.SubStatus;
@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * channel事件处理service
@@ -41,11 +42,11 @@ public class MqttChannelService extends AbstractChannelService{
     @Autowired
     private WillService willService;
 
-    private final ScanRunnable scanRunnable;
+    private final MessageTransfer transfer;
 
-    public MqttChannelService(ScanRunnable scanRunnable) {
-        super(scanRunnable);
-        this.scanRunnable = scanRunnable;
+    public MqttChannelService(MessageTransfer transfer) {
+        super(transfer);
+        this.transfer = transfer;
     }
 
 
@@ -77,6 +78,7 @@ public class MqttChannelService extends AbstractChannelService{
                     .topic(new CopyOnWriteArraySet<>())
                     .message(new ConcurrentHashMap<>())
                     .receive(new CopyOnWriteArraySet<>())
+                    .index(new AtomicInteger(1))
                     .build();
             if (connectSuccess(deviceId, build)) { // 初始化存储mqttchannel
                 if (mqttConnectVariableHeader.isWillFlag()) { // 遗嘱消息标志

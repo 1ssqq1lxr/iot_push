@@ -2,8 +2,6 @@ package com.lxr.iot.auto;
 
 import com.lxr.iot.bootstrap.BootstrapServer;
 import com.lxr.iot.bootstrap.NettyBootstrapServer;
-import com.lxr.iot.bootstrap.bean.SendMqttMessage;
-import com.lxr.iot.bootstrap.scan.ScanRunnable;
 import com.lxr.iot.properties.InitBean;
 
 /**

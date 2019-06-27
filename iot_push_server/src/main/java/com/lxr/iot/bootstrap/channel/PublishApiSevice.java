@@ -3,9 +3,8 @@ package com.lxr.iot.bootstrap.channel;
 import com.lxr.iot.bootstrap.bean.MqttChannel;
 import com.lxr.iot.bootstrap.bean.SendMqttMessage;
 import com.lxr.iot.bootstrap.bean.WillMeaasge;
-import com.lxr.iot.bootstrap.scan.ScanRunnable;
+import com.lxr.iot.bootstrap.queue.MessageTransfer;
 import com.lxr.iot.enums.ConfirmStatus;
-import com.lxr.iot.util.MessageId;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.mqtt.*;
@@ -20,10 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PublishApiSevice {
 
-    private  final    ScanRunnable scanRunnable;
+    private  final MessageTransfer transfer ;
 
-    public PublishApiSevice(ScanRunnable scanRunnable) {
-        this.scanRunnable = scanRunnable;
+    public PublishApiSevice(MessageTransfer transfer) {
+        this.transfer = transfer;
     }
 
 
@@ -155,8 +154,8 @@ public class PublishApiSevice {
                 .topic(topic)
                 .qos(mqttQoS)
                 .byteBuf(datas)
-                .time(System.currentTimeMillis()).build();
-        scanRunnable.addQueue(build);
+                 .build();
+        transfer.addQueue(build);
         return build;
     }
 

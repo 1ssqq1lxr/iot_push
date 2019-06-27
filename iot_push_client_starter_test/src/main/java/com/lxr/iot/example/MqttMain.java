@@ -22,7 +22,7 @@ public class MqttMain {
         connectOptions.setJksStorePassword("mu$tch8ng3");
         connectOptions.setJksFile("/securesocket.jks");
         connectOptions.setJksCertificatePassword("inc0rrect");
-        connectOptions.setServerIp("192.168.0.176");
+        connectOptions.setServerIp("192.168.109.1");
         connectOptions.setPort(1884);
         connectOptions.setBossThread(1);
         connectOptions.setWorkThread(8);
@@ -54,7 +54,7 @@ public class MqttMain {
         });
         producer.connect(connectOptions);
 //        producer.sub(SubMessage.builder().qos(MqttQoS.AT_LEAST_ONCE).topic("/t1/t2").build());
-        producer.pub("/t1/t2","hah",2);
+        producer.pub("/test","hah",2);
     }
 
 }
