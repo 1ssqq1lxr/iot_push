@@ -322,7 +322,6 @@ public class MqttChannelService extends AbstractChannelService{
     @Override
     public void closeSuccess(String deviceId,boolean isDisconnect) {
         if(StringUtils.isNotBlank(deviceId)){
-            executorService.execute(() -> {
                 MqttChannel mqttChannel = mqttChannels.get(deviceId);
                 Optional.ofNullable(mqttChannel).ifPresent(mqttChannel1 -> {
                     mqttChannel1.setSessionStatus(SessionStatus.CLOSE); // 设置关闭
@@ -357,7 +356,6 @@ public class MqttChannelService extends AbstractChannelService{
                         }
                     }
                 });
-            });
         }
     }
 
