@@ -1,5 +1,6 @@
 package com.lxr.iot.bootstrap.queue;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.YieldingWaitStrategy;
@@ -16,7 +17,7 @@ public class DisruptorMessageStarter implements  MessageStarter<MessageEvent> , 
 
     private  Disruptor<MessageEvent> disruptor = new Disruptor<>(MessageEvent::new,
             1024, DaemonThreadFactory.INSTANCE, ProducerType.MULTI,
-            new YieldingWaitStrategy());
+            new BlockingWaitStrategy());
 
     private final EventHandler<MessageEvent> eventHandler;
 
