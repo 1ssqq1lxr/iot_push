@@ -121,4 +121,8 @@ public class DefaultMqttHandler extends MqttHander {
     }
 
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        mqttProducer.getNettyBootstrapClient().doubleConnect();
+    }
 }
