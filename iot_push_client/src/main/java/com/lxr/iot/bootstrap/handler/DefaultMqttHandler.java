@@ -114,7 +114,7 @@ public class DefaultMqttHandler extends MqttHander {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        mqttProducer.getNettyBootstrapClient().doubleConnect();
+//        mqttProducer.getNettyBootstrapClient().doubleConnect();
         if(mqttListener!=null){
             mqttListener.callThrowable(cause);
         }
