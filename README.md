@@ -48,9 +48,11 @@
   * @Autowired Procuder producer 即可使用;
     
   * 编码 [java](https://github.com/1ssqq1lxr/iot_push/blob/master/iot_push_client_starter_test/src/main/java/com/lxr/iot/example/MqttMain.java)
-    
- ### 交流群号 658212670
- ![image](image/icon.jpg)
+
+qq群号： 789331252    
+### 关注公众号，输入 `物联网`  扫码加入交流群
+![image](image/icon.jpg)
+
 
  
 
